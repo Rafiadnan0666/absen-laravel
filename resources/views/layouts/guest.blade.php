@@ -1,30 +1,66 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>@yield('title', 'Auth - ABS')</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
+    <!-- Font Awesome Icons -->
+    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+    <!-- Soft UI Dashboard CSS -->
+    <link href="{{ asset('assets/css/soft-ui-dashboard-tailwind.css') }}" rel="stylesheet" />
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+<body class="m-0 font-sans antialiased font-normal text-base leading-default bg-gray-50 text-slate-500">
+    <!-- Navbar -->
+    <nav class="relative flex flex-wrap items-center justify-between px-4 py-3 mx-6 mt-4 transition-all duration-250 ease-soft-in rounded-2xl shadow-soft-xl bg-white">
+        <a href="/" class="block px-0 py-2 m-0 text-lg whitespace-nowrap text-slate-700 font-bold">
+            <i class="fas fa-fingerprint mr-2 text-purple-600"></i>
+            {{ config('app.name', 'ABS') }}
+        </a>
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+        <div class="flex items-center mt-2 grow sm:mt-0 sm:mr-6 md:mr-0 lg:flex lg:basis-auto">
+            <ul class="flex flex-row justify-end pl-0 mb-0 list-none md-max:w-full">
+                @guest
+                    <li class="flex items-center">
+                        <a href="{{ route('login') }}" class="inline-block px-6 py-2 mb-0 font-bold text-center text-slate-700 uppercase align-middle transition-all bg-transparent border border-solid rounded-lg shadow-none cursor-pointer hover:scale-102 active:shadow-soft-xs border-slate-300 leading-pro text-xs ease-soft-in tracking-tight-soft hover:bg-gray-100">
+                            <i class="fas fa-sign-in-alt mr-1"></i> Log In
+                        </a>
+                    </li>
+                @endguest
+            </ul>
+        </div>
+    </nav>
 
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-    </head>
-    <body class="font-sans text-gray-900 antialiased">
-        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
-            <div>
-                <a href="/">
-                    <x-application-logo class="w-20 h-20 fill-current text-gray-500" />
-                </a>
-            </div>
-
-            <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
-                {{ $slot }}
+    <main class="w-full px-6 py-12 mx-auto">
+        <div class="flex items-center justify-center min-h-[70vh]">
+            <div class="w-full max-w-md">
+                <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border">
+                    <div class="p-4 pb-0 mb-0 bg-white border-b-0 border-b-solid rounded-t-2xl border-b-transparent">
+                        <h4 class="font-bold text-slate-700 text-center text-2xl">
+                            @yield('header', 'Welcome')
+                        </h4>
+                    </div>
+                    <div class="flex-auto p-6">
+                        {{ $slot }}
+                    </div>
+                </div>
+                
+                <div class="text-center mt-6">
+                    <a href="/" class="text-sm font-semibold text-slate-500 hover:text-slate-700">
+                        <i class="fas fa-arrow-left mr-1"></i> Back to Home
+                    </a>
+                </div>
             </div>
         </div>
-    </body>
+    </main>
+
+    <!-- Plugin JS -->
+    <script src="{{ asset('assets/js/soft-ui-dashboard-tailwind.js') }}"></script>
+</body>
 </html>

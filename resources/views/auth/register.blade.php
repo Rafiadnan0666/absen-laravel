@@ -1,33 +1,46 @@
-<x-guest-layout>
+@extends('auth.layout')
+
+@section('title', 'Register - ABS')
+
+@section('header', 'Create Account')
+
+@section('content')
     <form method="POST" action="{{ route('register') }}">
         @csrf
 
-        <!-- Nama Lengkap -->
-        <div>
-            <x-input-label for="nama_lengkap" :value="__('Nama Lengkap')" />
-            <x-text-input id="nama_lengkap" class="block mt-1 w-full" type="text" name="nama_lengkap" :value="old('nama_lengkap')" required autofocus />
+        <!-- Full Name -->
+        <div class="mb-4">
+            <label for="nama_lengkap" class="inline-block mb-2 text-sm font-bold text-slate-700">Full Name</label>
+            <input id="nama_lengkap" type="text" name="nama_lengkap" :value="old('nama_lengkap')" required autofocus
+                class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                placeholder="Enter your full name">
             <x-input-error :messages="$errors->get('nama_lengkap')" class="mt-2" />
         </div>
 
         <!-- Email Address -->
-        <div class="mt-4">
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
+        <div class="mb-4">
+            <label for="email" class="inline-block mb-2 text-sm font-bold text-slate-700">Email</label>
+            <input id="email" type="email" name="email" :value="old('email')" required autocomplete="username"
+                class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                placeholder="Enter your email">
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
-        <!-- No HP -->
-        <div class="mt-4">
-            <x-input-label for="no_hp" :value="__('No HP')" />
-            <x-text-input id="no_hp" class="block mt-1 w-full" type="text" name="no_hp" :value="old('no_hp')" />
+        <!-- Phone -->
+        <div class="mb-4">
+            <label for="no_hp" class="inline-block mb-2 text-sm font-bold text-slate-700">Phone Number</label>
+            <input id="no_hp" type="text" name="no_hp" :value="old('no_hp')"
+                class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                placeholder="Enter your phone number">
             <x-input-error :messages="$errors->get('no_hp')" class="mt-2" />
         </div>
 
         <!-- Department -->
-        <div class="mt-4">
-            <x-input-label for="department_id" :value="__('Department')" />
-            <select id="department_id" name="department_id" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
-                <option value="">-- Pilih Department --</option>
+        <div class="mb-4">
+            <label for="department_id" class="inline-block mb-2 text-sm font-bold text-slate-700">Department</label>
+            <select id="department_id" name="department_id" required
+                class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none">
+                <option value="">Select Department</option>
                 @foreach($departments as $dept)
                     <option value="{{ $dept->id }}" {{ old('department_id') == $dept->id ? 'selected' : '' }}>{{ $dept->nama_department }}</option>
                 @endforeach
@@ -36,10 +49,11 @@
         </div>
 
         <!-- Job Title -->
-        <div class="mt-4">
-            <x-input-label for="job_title_id" :value="__('Job Title')" />
-            <select id="job_title_id" name="job_title_id" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
-                <option value="">-- Pilih Job Title --</option>
+        <div class="mb-4">
+            <label for="job_title_id" class="inline-block mb-2 text-sm font-bold text-slate-700">Job Title</label>
+            <select id="job_title_id" name="job_title_id" required
+                class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none">
+                <option value="">Select Job Title</option>
                 @foreach($jobTitles as $job)
                     <option value="{{ $job->id }}" {{ old('job_title_id') == $job->id ? 'selected' : '' }}>{{ $job->nama_jabatan }}</option>
                 @endforeach
@@ -48,10 +62,11 @@
         </div>
 
         <!-- Role -->
-        <div class="mt-4">
-            <x-input-label for="role_id" :value="__('Role')" />
-            <select id="role_id" name="role_id" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
-                <option value="">-- Pilih Role --</option>
+        <div class="mb-4">
+            <label for="role_id" class="inline-block mb-2 text-sm font-bold text-slate-700">Role</label>
+            <select id="role_id" name="role_id" required
+                class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none">
+                <option value="">Select Role</option>
                 @foreach($roles as $role)
                     <option value="{{ $role->id }}" {{ old('role_id') == $role->id ? 'selected' : '' }}>{{ $role->nama_role }}</option>
                 @endforeach
@@ -59,11 +74,12 @@
             <x-input-error :messages="$errors->get('role_id')" class="mt-2" />
         </div>
 
-        <!-- Tipe Gaji -->
-        <div class="mt-4">
-            <x-input-label for="tipe_gaji" :value="__('Tipe Gaji')" />
-            <select id="tipe_gaji" name="tipe_gaji" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
-                <option value="">-- Pilih Tipe Gaji --</option>
+        <!-- Salary Type -->
+        <div class="mb-4">
+            <label for="tipe_gaji" class="inline-block mb-2 text-sm font-bold text-slate-700">Salary Type</label>
+            <select id="tipe_gaji" name="tipe_gaji" required
+                class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none">
+                <option value="">Select Salary Type</option>
                 <option value="hourly" {{ old('tipe_gaji') == 'hourly' ? 'selected' : '' }}>Hourly</option>
                 <option value="daily" {{ old('tipe_gaji') == 'daily' ? 'selected' : '' }}>Daily</option>
                 <option value="monthly" {{ old('tipe_gaji') == 'monthly' ? 'selected' : '' }}>Monthly</option>
@@ -71,42 +87,49 @@
             <x-input-error :messages="$errors->get('tipe_gaji')" class="mt-2" />
         </div>
 
-        <!-- Jumlah Gaji -->
-        <div class="mt-4">
-            <x-input-label for="jumlah_gaji" :value="__('Jumlah Gaji')" />
-            <x-text-input id="jumlah_gaji" class="block mt-1 w-full" type="number" step="0.01" name="jumlah_gaji" :value="old('jumlah_gaji')" required />
+        <!-- Salary Amount -->
+        <div class="mb-4">
+            <label for="jumlah_gaji" class="inline-block mb-2 text-sm font-bold text-slate-700">Salary Amount</label>
+            <input id="jumlah_gaji" type="number" step="0.01" name="jumlah_gaji" :value="old('jumlah_gaji')" required
+                class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                placeholder="Enter salary amount">
             <x-input-error :messages="$errors->get('jumlah_gaji')" class="mt-2" />
         </div>
 
-        <!-- Tanggal Masuk -->
-        <div class="mt-4">
-            <x-input-label for="tanggal_masuk" :value="__('Tanggal Masuk')" />
-            <x-text-input id="tanggal_masuk" class="block mt-1 w-full" type="date" name="tanggal_masuk" :value="old('tanggal_masuk', date('Y-m-d'))" required />
+        <!-- Join Date -->
+        <div class="mb-4">
+            <label for="tanggal_masuk" class="inline-block mb-2 text-sm font-bold text-slate-700">Join Date</label>
+            <input id="tanggal_masuk" type="date" name="tanggal_masuk" :value="old('tanggal_masuk', date('Y-m-d'))" required
+                class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none">
             <x-input-error :messages="$errors->get('tanggal_masuk')" class="mt-2" />
         </div>
 
         <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-            <x-text-input id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="new-password" />
+        <div class="mb-4">
+            <label for="password" class="inline-block mb-2 text-sm font-bold text-slate-700">Password</label>
+            <input id="password" type="password" name="password" required autocomplete="new-password"
+                class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                placeholder="Create a password">
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
 
         <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-            <x-text-input id="password_confirmation" class="block mt-1 w-full" type="password" name="password_confirmation" required autocomplete="new-password" />
+        <div class="mb-6">
+            <label for="password_confirmation" class="inline-block mb-2 text-sm font-bold text-slate-700">Confirm Password</label>
+            <input id="password_confirmation" type="password" name="password_confirmation" required autocomplete="new-password"
+                class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                placeholder="Confirm your password">
             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
         </div>
 
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
+        <div class="flex items-center justify-between mt-4">
+            <a href="{{ route('login') }}" class="text-sm font-bold text-slate-700 hover:underline">
                 {{ __('Already registered?') }}
             </a>
 
-            <x-primary-button class="ms-4">
+            <button type="submit" class="inline-block px-6 py-3 mb-0 text-xs font-bold text-right uppercase align-middle transition-all border-0 rounded-lg cursor-pointer hover:scale-102 active:opacity-85 leading-pro ease-soft-in tracking-tight-soft bg-150 bg-x-25 bg-gradient-to-tl from-gray-900 to-slate-800 text-white">
                 {{ __('Register') }}
-            </x-primary-button>
+            </button>
         </div>
     </form>
-</x-guest-layout>
+@endsection

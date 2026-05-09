@@ -1,27 +1,26 @@
 <x-guest-layout>
-    <div class="mb-4 text-sm text-gray-600">
-        {{ __('This is a secure area of the application. Please confirm your password before continuing.') }}
-    </div>
+    <div class="neo-card max-w-md mx-auto mt-8">
+        <h1 class="text-3xl font-black mb-4 text-center">CONFIRM PASSWORD</h1>
+        <p class="mb-6 font-bold text-sm">This is a secure area. Please confirm your password before continuing.</p>
 
-    <form method="POST" action="{{ route('password.confirm') }}">
-        @csrf
+        <form method="POST" action="{{ route('password.confirm') }}">
+            @csrf
 
-        <!-- Password -->
-        <div>
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
+            <!-- Password -->
+            <div class="mb-6">
+                <label for="password" class="block text-lg font-black mb-2">PASSWORD</label>
+                <x-text-input id="password" class="neo-input"
                             type="password"
                             name="password"
                             required autocomplete="current-password" />
+                <x-input-error :messages="$errors->get('password')" class="mt-2" />
+            </div>
 
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
-
-        <div class="flex justify-end mt-4">
-            <x-primary-button>
-                {{ __('Confirm') }}
-            </x-primary-button>
-        </div>
-    </form>
+            <div class="flex justify-end">
+                <button type="submit" class="neo-btn bg-green-200">
+                    {{ __('Confirm') }}
+                </button>
+            </div>
+        </form>
+    </div>
 </x-guest-layout>

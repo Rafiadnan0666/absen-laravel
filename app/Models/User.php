@@ -49,6 +49,11 @@ class User extends Authenticatable
         return $this->hasMany(UserShift::class);
     }
 
+    public function shift()
+    {
+        return $this->hasOne(UserShift::class)->whereDate('tanggal_shift', today())->with('shift');
+    }
+
     public function attendances()
     {
         return $this->hasMany(Attendance::class);
@@ -82,6 +87,14 @@ class User extends Authenticatable
     public function announcements()
     {
         return $this->hasMany(Announcement::class, 'dibuat_oleh');
+    }
+
+    /**
+     * Check if the user has a specific role
+     */
+    public function hasRole($role)
+    {
+        return $this->role && $this->role->nama_role === $role;
     }
 
     public function approvedLeaves()
