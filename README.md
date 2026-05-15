@@ -9,12 +9,12 @@
 
 ## Overview
 
-**ABS (Attendance & Employee Management System)** is a comprehensive, production-ready web application for managing employee attendance, leaves, payroll, and reimbursements. Built with Laravel 13, Tailwind CSS, and Alpine.js.
+**ABS (Attendance & Employee Management System)** is a comprehensive, production-ready web application for managing employee attendance, leaves, payroll, and reimbursements. Built with Laravel 13, Tailwind CSS, Alpine.js, and Leaflet for location tracking.
 
 ## Features
 
 ### 👨‍💼 Employee Panel
-- **Smart Attendance** - Check-in/check-out with GPS location tracking
+- **Smart Attendance** - Check-in/check-out with GPS location tracking via Leaflet maps
 - **Leave Management** - Request leaves with date range and reason
 - **Reimbursements** - Submit expense claims with approval workflow
 - **Payroll View** - View salary slips and payment history
@@ -29,28 +29,29 @@
 ### ⚙️ Admin Panel
 - **User Management** - Create, edit, and manage employee accounts
 - **Department Management** - Organize employees by department
-- **Role & Permission System** - Granular access control
+- **Role & Permission System** - Granular access control (Admin, HR, Employee)
 - **Shift Management** - Configure work schedules and shifts
 - **Location Management** - Manage office locations for attendance
 - **Holiday Calendar** - Set company holidays
 - **Salary Rules** - Configure salary calculation rules
 - **Overtime Rules** - Define overtime policies
 - **System Settings** - Configure application settings
-- **Reports & Analytics** - Dashboard with key metrics
+- **Dashboard Analytics** - Key metrics and reports
 
 ## Technology Stack
 
 - **Backend:** Laravel 13.x (PHP 8.3)
-- **Frontend:** Tailwind CSS 3.x, Alpine.js
-- **Database:** MySQL
-- **Authentication:** Laravel Breeze
-- **Icons:** Font Awesome 6.x
+- **Frontend:** Tailwind CSS 3.x, Alpine.js 3.x
+- **Maps:** Leaflet.js (OpenStreetMap)
+- **Database:** MySQL 8.0+
+- **Authentication:** Laravel Breeze + Fortify
+- **Icons:** Font Awesome 7.0.1
 
 ## Installation
 
 ### Prerequisites
 - PHP 8.3+
-- Composer
+- Composer 2.x
 - Node.js 18+
 - MySQL 8.0+
 
@@ -58,8 +59,8 @@
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
-   cd abs
+   git clone https://github.com/Rafiadnan0666/absen-laravel.git
+   cd absen-laravel
    ```
 
 2. **Install PHP dependencies**
@@ -75,7 +76,16 @@
 4. **Configure environment**
    ```bash
    cp .env.example .env
-   # Edit .env with your database credentials
+   ```
+   
+   Edit `.env` with your database credentials:
+   ```
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=your_database_name
+   DB_USERNAME=your_username
+   DB_PASSWORD=your_password
    ```
 
 5. **Generate application key**
@@ -88,27 +98,41 @@
    php artisan migrate
    ```
 
-7. **Build frontend assets**
+7. **(Optional) Seed database with sample data**
+   ```bash
+   php artisan db:seed
+   ```
+
+8. **Build frontend assets**
    ```bash
    npm run build
    ```
 
-8. **Start the development server**
+9. **Start the development server**
    ```bash
    php artisan serve
    ```
 
+10. **Access the application**
+    - Visit: `http://localhost:8000`
+    - Login to access the dashboard
+
+## Location Tracking
+
+The system includes GPS-based attendance tracking using Leaflet maps and OpenStreetMap:
+
+- Employees can get their current location using the "Get My Location" button
+- Location is displayed on an interactive map
+- Coordinates are stored with attendance records
+- Supports both check-in and check-out location tracking
+
 ## Default Roles
 
-| Role | Description |
+| Role | Access Level |
 |------|-------------|
 | Admin | Full system access |
 | HR | HR management and approvals |
 | Employee | Standard user access |
-
-## Default Admin Credentials
-
-After running migrations, create an admin user through the registration page or database seeder.
 
 ## Project Structure
 
@@ -130,9 +154,12 @@ abs/
 ├── routes/
 │   ├── web.php          # Main routes
 │   └── auth.php         # Authentication routes
-└── database/
-    ├── migrations/      # Database migrations
-    └── seeders/         # Database seeders
+├── database/
+│   ├── migrations/      # Database migrations
+│   └── seeders/         # Database seeders
+└── public/
+    ├── assets/          # CSS, JS, images
+    └── build/           # Compiled assets
 ```
 
 ## Security Features
@@ -143,22 +170,49 @@ abs/
 - XSS protection
 - SQL injection prevention
 - Account status management (active/inactive)
+- Session-based authentication
 
 ## Production Deployment
 
-1. Set `APP_ENV=production` in `.env`
-2. Set `APP_DEBUG=false` in `.env`
-3. Run `php artisan config:cache`
-4. Run `php artisan view:cache`
-5. Configure web server (Apache/Nginx)
+1. **Configure environment**
+   ```bash
+   # In .env file
+   APP_ENV=production
+   APP_DEBUG=false
+   ```
 
-## Screenshots
+2. **Optimize Laravel**
+   ```bash
+   php artisan config:cache
+   php artisan route:cache
+   php artisan view:cache
+   php artisan optimize
+   ```
 
-The system includes:
-- Professional landing page with features
-- Three distinct dashboard panels (Admin, HR, Employee)
-- Clean, modern UI with gradient styling
-- Responsive design for mobile and tablet
+3. **Configure web server**
+   
+   For Apache, ensure `.htaccess` is configured properly. For Nginx, configure your server block to point to the `public` directory.
+
+4. **Set proper permissions**
+   ```bash
+   chmod -R 775 storage bootstrap/cache
+   ```
+
+## Troubleshooting
+
+### Location Tracking Not Working
+- Ensure the browser has location permissions enabled
+- Use HTTPS (or localhost) for geolocation to work
+- Check browser console for errors
+
+### Icons Not Displaying
+- Verify Font Awesome CDN is loading correctly
+- Clear browser cache
+- Check network tab for 404 errors
+
+### Build Issues
+- Ensure Node.js 18+ is installed
+- Delete `node_modules` and reinstall: `rm -rf node_modules && npm install`
 
 ## License
 
@@ -171,3 +225,4 @@ For issues and feature requests, please create an issue on GitHub.
 ---
 
 <p align="center">Built with ❤️ using Laravel</p>
+<p align="center">Version 1.0.0 | Last Updated: May 2026</p>

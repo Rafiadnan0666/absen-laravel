@@ -38,24 +38,36 @@
                             @endif
                         </div>
                     @else
-                        <form action="{{ route('employee.attendances.store') }}" method="POST">
+                        <form action="{{ route('employee.attendances.store') }}" method="POST" id="checkInForm">
                             @csrf
                             <div class="mb-4">
                                 <label class="font-bold text-slate-700 block mb-2">Select Location</label>
-                                <select name="location_id" class="border border-solid border-slate-300 rounded-lg px-4 py-2 focus:border-blue-500 focus:shadow-soft-primary-outline w-full" required id="locationSelect">
+                                <select name="location_id" class="border border-solid border-slate-300 rounded-lg px-4 py-2 focus:border-blue-500 focus:shadow-soft-primary-outline w-full" required>
                                     <option value="">Choose location...</option>
                                     @foreach($locations as $location)
                                         <option value="{{ $location->id }}">{{ $location->nama_lokasi }}</option>
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="mb-4" id="mapContainer" style="height: 200px; display: none;">
-                                <div id="map" style="height: 100%; width: 100%;"></div>
+                            
+                            <div class="mb-4">
+                                <button type="button" id="getLocationBtn" class="inline-flex items-center justify-center px-4 py-2 mb-0 font-bold text-center text-purple-700 uppercase align-middle transition-all bg-transparent border border-solid border-purple-500 rounded-lg shadow-none cursor-pointer hover:scale-102 active:shadow-soft-xs bg-gradient-to-tl from-purple-700 to-pink-500 text-white w-full">
+                                    <i class="fas fa-map-marker-alt mr-2"></i> Get My Location
+                                </button>
                             </div>
+                            
+                            <div class="mb-4">
+                                <div id="locationStatus" class="text-sm text-slate-500 mb-2"></div>
+                                <div id="mapContainer" class="h-64 rounded-lg border border-slate-200" style="display: none;">
+                                    <div id="map" class="h-full w-full rounded-lg"></div>
+                                </div>
+                            </div>
+                            
                             <input type="hidden" name="latitude" id="latitudeInput">
                             <input type="hidden" name="longitude" id="longitudeInput">
+                            
                             <button type="submit" class="inline-block px-6 py-3 mb-0 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer hover:scale-102 active:shadow-soft-xs bg-gradient-to-tl from-green-600 to-lime-400 leading-pro ease-soft-in tracking-tight-soft w-full text-lg">
-                                Check In Now
+                                <i class="fas fa-sign-in-alt mr-2"></i> Check In Now
                             </button>
                         </form>
                     @endif
@@ -79,19 +91,30 @@
                             @endif
                         </div>
                     @elseif($todayAttendance && $todayAttendance->check_in)
-                        <form action="{{ route('employee.attendances.checkout') }}" method="POST">
+                        <form action="{{ route('employee.attendances.checkout') }}" method="POST" id="checkOutForm">
                             @csrf
                             <div class="mb-4">
                                 <p class="font-bold text-slate-700">Checked in at: {{ $todayAttendance->check_in }}</p>
                                 <p class="text-sm text-slate-500">Status: {{ strtoupper($todayAttendance->status_hadir) }}</p>
                             </div>
-                            <div class="mb-4" id="mapContainerCheckout" style="height: 200px; display: none;">
-                                <div id="mapCheckout" style="height: 100%; width: 100%;"></div>
+                            
+                            <div class="mb-4">
+                                <button type="button" id="getLocationBtnCheckout" class="inline-flex items-center justify-center px-4 py-2 mb-0 font-bold text-center text-purple-700 uppercase align-middle transition-all bg-transparent border border-solid border-purple-500 rounded-lg shadow-none cursor-pointer hover:scale-102 active:shadow-soft-xs bg-gradient-to-tl from-purple-700 to-pink-500 text-white w-full">
+                                    <i class="fas fa-map-marker-alt mr-2"></i> Get My Location
+                                </button>
                             </div>
+                            
+                            <div class="mb-4">
+                                <div id="locationStatusCheckout" class="text-sm text-slate-500 mb-2"></div>
+                                <div id="mapContainerCheckout" class="h-64 rounded-lg border border-slate-200" style="display: none;">
+                                    <div id="mapCheckout" class="h-full w-full rounded-lg"></div>
+                                </div>
+                            </div>
+                            
                             <input type="hidden" name="latitude" id="latitudeInputCheckout">
                             <input type="hidden" name="longitude" id="longitudeInputCheckout">
-                            <button type="submit" style="border: black solid 3px" class="inline-block px-6 py-3 mb-0 font-bold text-center text-black border-black uppercase align-middle transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer hover:scale-102 active:shadow-soft-xs bg-gradient-to-tl from-yellow-600 to-amber-400 leading-pro ease-soft-in tracking-tight-soft w-full text-lg">
-                                Check Out Now
+                            <button type="submit" class="inline-block px-6 py-3 mb-0 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer hover:scale-102 active:shadow-soft-xs bg-gradient-to-tl from-yellow-600 to-amber-400 leading-pro ease-soft-in tracking-tight-soft w-full text-lg">
+                                <i class="fas fa-sign-out-alt mr-2"></i> Check Out Now
                             </button>
                         </form>
                     @else
@@ -191,101 +214,125 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize map for check-in
-    var map = L.map('map').setView([0, 0], 2);
+    // Check-in map
+    var map, marker;
+    var mapInitialized = false;
     
-    // Add OpenStreetMap tiles
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
-    
-    var marker = null;
-    
-    // Function to set map view and add marker
-    function setMapView(lat, lng) {
-        map.setView([lat, lng], 15);
-        if (marker) {
-            marker.setLatLng([lat, lng]);
-        } else {
-            marker = L.marker([lat, lng]).addTo(map);
-        }
+    function initMapCheckIn(lat, lng) {
+        if (mapInitialized) return;
         
-        // Update hidden inputs
+        document.getElementById('mapContainer').style.display = 'block';
+        map = L.map('map').setView([lat, lng], 15);
+        
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+        
+        marker = L.marker([lat, lng], {draggable: true}).addTo(map);
+        
+        map.on('click', function(e) {
+            marker.setLatLng(e.latlng);
+            document.getElementById('latitudeInput').value = e.latlng.lat;
+            document.getElementById('longitudeInput').value = e.latlng.lng;
+        });
+        
+        marker.on('dragend', function(e) {
+            document.getElementById('latitudeInput').value = e.target.getLatLng().lat;
+            document.getElementById('longitudeInput').value = e.target.getLatLng().lng;
+        });
+        
         document.getElementById('latitudeInput').value = lat;
         document.getElementById('longitudeInput').value = lng;
+        mapInitialized = true;
+        
+        setTimeout(function() {
+            map.invalidateSize();
+        }, 100);
     }
     
-    // Show map container when form is visible
-    document.getElementById('mapContainer').style.display = 'block';
-    
-    // Add click event to map to allow manual selection
-    map.on('click', function(e) {
-        setMapView(e.latlng.lat, e.latlng.lng);
+    // Get location button for check-in
+    document.getElementById('getLocationBtn').addEventListener('click', function() {
+        var btn = this;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Getting location...';
+        
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                var lat = position.coords.latitude;
+                var lng = position.coords.longitude;
+                
+                document.getElementById('locationStatus').innerHTML = '<i class="fas fa-check-circle text-green-500"></i> Location found!';
+                initMapCheckIn(lat, lng);
+                
+                btn.innerHTML = '<i class="fas fa-check mr-2"></i> Location Found';
+            }, function(error) {
+                document.getElementById('locationStatus').innerHTML = '<i class="fas fa-exclamation-circle text-red-500"></i> Could not get location: ' + error.message;
+                btn.innerHTML = '<i class="fas fa-map-marker-alt mr-2"></i> Get My Location';
+            });
+        } else {
+            document.getElementById('locationStatus').innerHTML = '<i class="fas fa-exclamation-circle text-red-500"></i> Geolocation not supported';
+            btn.innerHTML = '<i class="fas fa-map-marker-alt mr-2"></i> Get My Location';
+        }
     });
     
-    // Try to get user's current location
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function(position) {
-            var lat = position.coords.latitude;
-            var lng = position.coords.longitude;
-            setMapView(lat, lng);
-        }, function(error) {
-            console.log("Geolocation failed: ", error);
-            // Default to center of Indonesia if geolocation fails
-            setMapView(-6.2088, 106.8456);
-        });
-    } else {
-        // Geolocation not supported
-        setMapView(-6.2088, 106.8456);
-    }
+    // Check-out map
+    var mapCheckout, markerCheckout;
+    var mapCheckoutInitialized = false;
     
-    // Initialize map for check-out
-    var mapCheckout = L.map('mapCheckout').setView([0, 0], 2);
-    
-    // Add OpenStreetMap tiles
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(mapCheckout);
-    
-    var markerCheckout = null;
-    
-    // Function to set map view and add marker for checkout
-    function setMapViewCheckout(lat, lng) {
-        mapCheckout.setView([lat, lng], 15);
-        if (markerCheckout) {
-            markerCheckout.setLatLng([lat, lng]);
-        } else {
-            markerCheckout = L.marker([lat, lng]).addTo(mapCheckout);
-        }
+    function initMapCheckOut(lat, lng) {
+        if (mapCheckoutInitialized) return;
         
-        // Update hidden inputs
+        document.getElementById('mapContainerCheckout').style.display = 'block';
+        mapCheckout = L.map('mapCheckout').setView([lat, lng], 15);
+        
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(mapCheckout);
+        
+        markerCheckout = L.marker([lat, lng], {draggable: true}).addTo(mapCheckout);
+        
+        mapCheckout.on('click', function(e) {
+            markerCheckout.setLatLng(e.latlng);
+            document.getElementById('latitudeInputCheckout').value = e.latlng.lat;
+            document.getElementById('longitudeInputCheckout').value = e.latlng.lng;
+        });
+        
+        markerCheckout.on('dragend', function(e) {
+            document.getElementById('latitudeInputCheckout').value = e.target.getLatLng().lat;
+            document.getElementById('longitudeInputCheckout').value = e.target.getLatLng().lng;
+        });
+        
         document.getElementById('latitudeInputCheckout').value = lat;
         document.getElementById('longitudeInputCheckout').value = lng;
+        mapCheckoutInitialized = true;
+        
+        setTimeout(function() {
+            mapCheckout.invalidateSize();
+        }, 100);
     }
     
-    // Show map container for checkout
-    document.getElementById('mapContainerCheckout').style.display = 'block';
-    
-    // Add click event to map to allow manual selection for checkout
-    mapCheckout.on('click', function(e) {
-        setMapViewCheckout(e.latlng.lat, e.latlng.lng);
+    // Get location button for check-out
+    document.getElementById('getLocationBtnCheckout').addEventListener('click', function() {
+        var btn = this;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Getting location...';
+        
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                var lat = position.coords.latitude;
+                var lng = position.coords.longitude;
+                
+                document.getElementById('locationStatusCheckout').innerHTML = '<i class="fas fa-check-circle text-green-500"></i> Location found!';
+                initMapCheckOut(lat, lng);
+                
+                btn.innerHTML = '<i class="fas fa-check mr-2"></i> Location Found';
+            }, function(error) {
+                document.getElementById('locationStatusCheckout').innerHTML = '<i class="fas fa-exclamation-circle text-red-500"></i> Could not get location: ' + error.message;
+                btn.innerHTML = '<i class="fas fa-map-marker-alt mr-2"></i> Get My Location';
+            });
+        } else {
+            document.getElementById('locationStatusCheckout').innerHTML = '<i class="fas fa-exclamation-circle text-red-500"></i> Geolocation not supported';
+            btn.innerHTML = '<i class="fas fa-map-marker-alt mr-2"></i> Get My Location';
+        }
     });
-    
-    // Try to get user's current location for checkout
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function(position) {
-            var lat = position.coords.latitude;
-            var lng = position.coords.longitude;
-            setMapViewCheckout(lat, lng);
-        }, function(error) {
-            console.log("Geolocation failed: ", error);
-            // Default to center of Indonesia if geolocation fails
-            setMapViewCheckout(-6.2088, 106.8456);
-        });
-    } else {
-        // Geolocation not supported
-        setMapViewCheckout(-6.2088, 106.8456);
-    }
 });
 </script>
 @endpush
