@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('reimbursements', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('kategori');
             $table->decimal('jumlah', 15, 2);
             $table->text('deskripsi');
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');

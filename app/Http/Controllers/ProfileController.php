@@ -34,7 +34,11 @@ class ProfileController extends Controller
 
         $request->user()->save();
 
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        if ($request->ajax()) {
+            return response()->json(['success' => true, 'message' => 'Profile updated successfully']);
+        }
+
+        return Redirect::back()->with('status', 'profile-updated');
     }
 
     /**

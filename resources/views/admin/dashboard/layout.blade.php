@@ -219,7 +219,7 @@
             </li>
 
             <li class="mt-0.5 w-full">
-              <a class="py-2.7 text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors hover:bg-blue-500/10 rounded-lg" href="{{ route('profile.edit') }}">
+              <a class="py-2.7 text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors hover:bg-blue-500/10 rounded-lg cursor-pointer" @click="$dispatch('open-profile-modal')">
                 <div class="shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
                   <i class="fas fa-user text-slate-700 w-4 h-4"></i>
                 </div>
@@ -270,10 +270,10 @@
                 </a>
               </li>
               <li class="flex items-center pl-4">
-                <a href="{{ route('profile.edit') }}" class="block px-0 py-2 font-semibold transition-all ease-nav-brand text-sm text-slate-500">
+                <button @click="$dispatch('open-profile-modal')" class="block px-0 py-2 font-semibold transition-all ease-nav-brand text-sm text-slate-500 hover:text-purple-600">
                   <i class="fa fa-user sm:mr-1"></i>
                   <span class="hidden sm:inline">{{ auth()->user()->nama_lengkap ?? auth()->user()->name }}</span>
-                </a>
+                </button>
               </li>
             </ul>
           </div>
@@ -284,6 +284,8 @@
 
       @yield('content')
     </main>
+
+    @include('components.profile-modal')
 
     <!-- Plugin JS -->
     <script src="{{ asset('assets/js/soft-ui-dashboard-tailwind.js') }}"></script>
