@@ -33,7 +33,13 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    $user = auth()->user();
+    if ($user->role && $user->role->nama_role === 'admin') {
+        return redirect()->route('admin.dashboard');
+    } elseif ($user->role && $user->role->nama_role === 'hr') {
+        return redirect()->route('hr.dashboard');
+    }
+    return redirect()->route('employee.dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
@@ -44,6 +50,9 @@ Route::middleware('auth')->group(function () {
 
 
 Route::get('/admin/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
+Route::get('/admin/settings', [App\Http\Controllers\Admin\SettingsController::class, 'index'])->name('admin.settings.index');
+Route::post('/admin/settings/general', [App\Http\Controllers\Admin\SettingsController::class, 'general'])->name('admin.settings.general');
+Route::post('/admin/settings/clear-cache', [App\Http\Controllers\Admin\SettingsController::class, 'clearCache'])->name('admin.settings.clearCache');
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

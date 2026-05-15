@@ -26,7 +26,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($reimbursements)
+                        @forelse($reimbursements as $item)
                         <tr>
                             <td class="font-bold">{{ $item->user->nama_lengkap ?? 'N/A' }}</td>
                             <td>

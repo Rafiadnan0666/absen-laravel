@@ -26,7 +26,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($attendances)
+                        @forelse($attendances as $item)
                         <tr>
                             <td class="font-bold">{{ $item->user->nama_lengkap ?? 'N/A' }}</td>
                             <td>{{ \Carbon\Carbon::parse($item->tanggal)->format('d M Y') }}</td>

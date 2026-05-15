@@ -27,7 +27,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($payrolls)
+                        @forelse($payrolls as $item)
                         <tr>
                             <td class="font-bold">{{ $item->user->nama_lengkap ?? 'N/A' }}</td>
                             <td>{{ \Carbon\Carbon::parse($item->periode_mulai)->format('M Y') }}</td>

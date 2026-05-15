@@ -30,13 +30,21 @@ class AuthenticatedSessionController extends Controller
 
         $user = auth()->user();
         
+        // Check if user account is active
+        if ($user->status_akun !== 'active') {
+            Auth::guard('web')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+            return redirect()->route('login')->with('error', 'Your account is inactive. Please contact administrator.');
+        }
+
         // Role-based redirect
-        if ($user->role->nama_role === 'admin') {
+        if ($user->role && $user->role->nama_role === 'admin') {
             return redirect()->intended(route('admin.dashboard', absolute: false));
-        } elseif ($user->role->nama_role === 'hr') {
+        } elseif ($user->role && $user->role->nama_role === 'hr') {
             return redirect()->intended(route('hr.dashboard', absolute: false));
         } else {
-            return redirect()->intended(route('dashboard', absolute: false));
+            return redirect()->intended(route('employee.dashboard', absolute: false));
         }
     }
 

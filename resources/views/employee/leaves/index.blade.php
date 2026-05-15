@@ -42,7 +42,7 @@
                             <td class="px-4 py-3 text-sm text-slate-500">{{ \Carbon\Carbon::parse($leave->tanggal_mulai)->format('d M') }} - {{ \Carbon\Carbon::parse($leave->tanggal_selesai)->format('d M Y') }}</td>
                             <td class="px-4 py-3 text-sm text-slate-500">{{ Str::limit($leave->alasan, 40) }}</td>
                             <td class="px-4 py-3">
-                                <span class="inline-block py-1 px-2 text-xs rounded-lg text-white font-bold bg-gradient-to-tl
+                                <span class="inline-block py-1 px-2 text-xs rounded-lg text-black font-bold bg-gradient-to-tl
                                     @if($leave->status_pengajuan == 'approved') from-green-600 to-lime-400
                                     @elseif($leave->status_pengajuan == 'pending') from-yellow-600 to-orange-400
                                     @else from-red-600 to-rose-400 @endif">

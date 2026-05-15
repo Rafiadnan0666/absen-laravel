@@ -27,7 +27,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($leaves)
+                        @forelse($leaves as $item)
                         <tr>
                             <td class="font-bold">{{ $item->user->nama_lengkap ?? 'N/A' }}</td>
                             <td>
