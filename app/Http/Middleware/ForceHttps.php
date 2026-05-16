@@ -10,10 +10,10 @@ class ForceHttps
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (!$request->secure() && app()->environment('production')) {
-            return redirect()->secure($request->getRequestUri());
+        if ($request->secure() || config('app.env') !== 'production') {
+            return $next($request);
         }
 
-        return $next($request);
+        return redirect()->secure($request->getRequestUri());
     }
 }
