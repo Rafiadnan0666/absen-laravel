@@ -3,75 +3,66 @@
 @section('title', 'Salary Rules - Admin')
 
 @section('content')
-<div class="flex flex-wrap -mx-3">
-  <div class="flex-none w-full max-w-full p-3">
-    <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 border-transparent border-solid shadow-soft-xl rounded-2xl bg-clip-border">
-      <div class="p-6 pb-0 mb-0 bg-white border-b-0 border-b-solid rounded-t-2xl border-b-transparent">
-        <div class="flex justify-between items-center">
-          <h6 class="text-xl font-bold">Salary Rules</h6>
-          <a href="{{ route('admin.salary-rules.create') }}" class="inline-block px-6 py-3 mb-0 text-xs font-bold text-right uppercase align-middle transition-all border-0 rounded-lg cursor-pointer hover:scale-102 active:opacity-85 leading-pro ease-soft-in tracking-tight-soft bg-150 bg-x-25 bg-gradient-to-tl from-gray-900 to-slate-800 text-white">
-            <i class="fas fa-plus mr-1"></i> Add Salary Rule
-          </a>
-        </div>
+<div class="space-y-6">
+  <div class="neo-card">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-2xl font-bold">Salary Rules</h2>
+      <a href="{{ route('admin.salary-rules.create') }}" class="neo-btn-primary">
+        <i class="fas fa-plus mr-1"></i> Add Salary Rule
+      </a>
+    </div>
+
+    @if(session('success'))
+      <div class="neo-badge neo-badge-green mb-4">
+        {{ session('success') }}
       </div>
-      <div class="flex-auto p-6 px-0 pt-0 pb-2">
-        @if(session('success'))
-          <div class="p-4 mb-4 mx-6 text-sm text-green-800 rounded-lg bg-green-50" role="alert">
-            {{ session('success') }}
-          </div>
-        @endif
-        <div class="overflow-x-auto">
-          <table class="items-center w-full mb-0 align-top border-gray-200 text-slate-500">
-            <thead class="align-bottom">
-              <tr>
-                <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">ID</th>
-                <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">Type</th>
-                <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">Overtime Rate</th>
-                <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">Late Penalty/Min</th>
-                <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">Absent Penalty</th>
-                <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              @forelse($salaryRules as $rule)
-              <tr>
-                <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
-                  <p class="mb-0 font-semibold leading-normal text-sm">{{ $rule->id }}</p>
-                </td>
-                <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
-                  <span class="bg-gradient-to-tl from-blue-600 to-cyan-400 px-2 py-1 text-xs rounded-2xl inline-block whitespace-nowrap text-center text-white">{{ ucfirst($rule->tipe_gaji) }}</span>
-                </td>
-                <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
-                  <p class="mb-0 leading-normal text-xs text-slate-400">{{ $rule->rate_lembur }}</p>
-                </td>
-                <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
-                  <p class="mb-0 leading-normal text-xs text-slate-400">{{ $rule->penalti_telat_per_menit }}</p>
-                </td>
-                <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
-                  <p class="mb-0 leading-normal text-xs text-slate-400">{{ $rule->penalti_tidak_hadir }}</p>
-                </td>
-                <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent text-center">
-                  <a href="{{ route('admin.salary-rules.show', $rule) }}" class="text-xs font-semibold inline-block px-2 py-1 mb-0 text-center uppercase align-middle leading-normal cursor-pointer bg-gradient-to-tl from-slate-600 to-slate-300 text-white rounded-2xl">View</a>
-                  <a href="{{ route('admin.salary-rules.edit', $rule) }}" class="text-xs font-semibold inline-block px-2 py-1 mb-0 text-center uppercase align-middle leading-normal cursor-pointer bg-gradient-to-tl from-blue-600 to-cyan-400 text-white rounded-2xl">Edit</a>
-                  <form action="{{ route('admin.salary-rules.destroy', $rule) }}" method="POST" class="inline" onsubmit="return confirm('Delete this rule?')">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="text-xs font-semibold inline-block px-2 py-1 mb-0 text-center uppercase align-middle leading-normal cursor-pointer bg-gradient-to-tl from-red-600 to-rose-400 text-white rounded-2xl">Delete</button>
-                  </form>
-                </td>
-              </tr>
-              @empty
-              <tr>
-                <td colspan="6" class="p-4 text-center text-slate-400">No salary rules found</td>
-              </tr>
-              @endforelse
-            </tbody>
-          </table>
-          <div class="p-4">
-            {{ $salaryRules->links() }}
-          </div>
-        </div>
-      </div>
+    @endif
+
+    <div class="neo-table-container">
+      <table class="neo-table w-full">
+        <thead>
+          <tr>
+            <th class="neo-label">ID</th>
+            <th class="neo-label">Type</th>
+            <th class="neo-label">Overtime Rate</th>
+            <th class="neo-label">Late Penalty/Min</th>
+            <th class="neo-label">Absent Penalty</th>
+            <th class="neo-label">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @forelse($salaryRules as $rule)
+          <tr>
+            <td>
+              <span class="neo-label">{{ $rule->id }}</span>
+            </td>
+            <td>
+              <span class="neo-badge">{{ ucfirst($rule->tipe_gaji) }}</span>
+            </td>
+            <td>{{ $rule->rate_lembur }}</td>
+            <td>{{ $rule->penalti_telat_per_menit }}</td>
+            <td>{{ $rule->penalti_tidak_hadir }}</td>
+            <td class="text-center">
+              <a href="{{ route('admin.salary-rules.show', $rule) }}" class="neo-btn-secondary inline-block">View</a>
+              <a href="{{ route('admin.salary-rules.edit', $rule) }}" class="neo-btn-secondary inline-block">Edit</a>
+              <form action="{{ route('admin.salary-rules.destroy', $rule) }}" method="POST" class="inline" onsubmit="return confirm('Delete this rule?')">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="neo-btn-danger">Delete</button>
+              </form>
+            </td>
+          </tr>
+          @empty
+          <tr>
+            <td colspan="6" class="text-center p-4">No salary rules found</td>
+          </tr>
+          @endforelse
+        </tbody>
+      </table>
+    </div>
+
+    <div class="mt-4">
+      {{ $salaryRules->links() }}
     </div>
   </div>
 </div>

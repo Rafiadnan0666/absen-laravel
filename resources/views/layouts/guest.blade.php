@@ -5,59 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Auth - ABS')</title>
-    
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link href="{{ asset('assets/css/soft-ui-dashboard-tailwind.css') }}" rel="stylesheet" />
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-
-<body class="m-0 font-sans antialiased font-normal text-base leading-default bg-gray-50 text-slate-500">
-    <!-- Navbar -->
-    <nav class="relative flex flex-wrap items-center justify-between px-4 py-3 mx-6 mt-4 transition-all duration-250 ease-soft-in rounded-2xl shadow-soft-xl bg-white">
-        <a href="/" class="block px-0 py-2 m-0 text-lg whitespace-nowrap text-slate-700 font-bold">
-            <i class="fas fa-fingerprint mr-2 text-purple-600"></i>
-            {{ config('app.name', 'ABS') }}
+<body class="font-mono min-h-screen bg-neo-bg flex flex-col">
+    <nav class="neo-card mx-4 mt-4 mb-0 flex justify-between items-center">
+        <a href="/" class="font-black text-xl">
+            <span class="text-neo-purple">⚡</span> {{ config('app.name', 'ABS') }}
         </a>
-
-        <div class="flex items-center mt-2 grow sm:mt-0 sm:mr-6 md:mr-0 lg:flex lg:basis-auto">
-            <ul class="flex flex-row justify-end pl-0 mb-0 list-none md-max:w-full">
-                @guest
-                    <li class="flex items-center">
-                        <a href="{{ route('login') }}" class="inline-block px-6 py-2 mb-0 font-bold text-center text-slate-700 uppercase align-middle transition-all bg-transparent border border-solid rounded-lg shadow-none cursor-pointer hover:scale-102 active:shadow-soft-xs border-slate-300 leading-pro text-xs ease-soft-in tracking-tight-soft hover:bg-gray-100">
-                            <i class="fas fa-sign-in-alt mr-1"></i> Log In
-                        </a>
-                    </li>
-                @endguest
-            </ul>
-        </div>
+        @guest
+            <a href="{{ route('login') }}" class="neo-btn-primary neo-btn-sm">LOG IN</a>
+        @endguest
     </nav>
 
-    <main class="w-full px-6 py-12 mx-auto">
-        <div class="flex items-center justify-center min-h-[70vh]">
-            <div class="w-full max-w-md">
-                <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border">
-                    <div class="p-4 pb-0 mb-0 bg-white border-b-0 border-b-solid rounded-t-2xl border-b-transparent">
-                        <h4 class="font-bold text-slate-700 text-center text-2xl">
-                            @yield('header', 'Welcome')
-                        </h4>
-                    </div>
-                    <div class="flex-auto p-6">
-                        {{ $slot }}
-                    </div>
-                </div>
-                
-                <div class="text-center mt-6">
-                    <a href="/" class="text-sm font-semibold text-slate-500 hover:text-slate-700">
-                        <i class="fas fa-arrow-left mr-1"></i> Back to Home
-                    </a>
-                </div>
+    <main class="flex-1 flex items-center justify-center p-8">
+        <div class="w-full max-w-md">
+            <div class="neo-card">
+                <h4 class="font-black text-2xl text-center mb-6 border-b-3 border-black pb-4">
+                    @yield('header', 'Welcome')
+                </h4>
+                {{ $slot }}
+            </div>
+            <div class="text-center mt-6">
+                <a href="/" class="neo-btn-secondary neo-btn-sm">← BACK TO HOME</a>
             </div>
         </div>
     </main>
-
-    <!-- Plugin JS -->
-    <script src="{{ asset('assets/js/soft-ui-dashboard-tailwind.js') }}"></script>
 </body>
 </html>

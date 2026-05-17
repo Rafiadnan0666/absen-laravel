@@ -5,33 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ config('app.name', 'ABS') }} - @yield('title', 'Dashboard')</title>
-    
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link href="{{ asset('assets/css/soft-ui-dashboard-tailwind.css') }}" rel="stylesheet" />
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="m-0 font-sans antialiased font-normal text-base leading-default bg-gray-50 text-slate-500">
+<body class="font-mono min-h-screen">
     <div class="min-h-screen">
         @include('layouts.navigation')
 
         @if(isset($header) || isset($title))
-        <header class="bg-white shadow-soft-xl mx-4 mt-4 rounded-2xl">
-            <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
-                <h2 class="text-2xl font-black text-slate-700">
+        <header class="neo-card mx-4 mt-4 mb-4 rounded-none">
+            <div class="max-w-7xl mx-auto py-4 px-4">
+                <h2 class="text-2xl font-black">
                     {{ $header ?? $title ?? 'Dashboard' }}
                 </h2>
             </div>
         </header>
         @endif
 
-        <main class="max-w-7xl mx-auto p-4 sm:p-6">
+        <main class="max-w-7xl mx-auto p-4">
             {{ $slot }}
         </main>
     </div>
-
-    <script src="{{ asset('assets/js/soft-ui-dashboard-tailwind.js') }}"></script>
 </body>
 </html>

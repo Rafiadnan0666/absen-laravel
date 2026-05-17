@@ -2,210 +2,153 @@
 
 @section('page-title', 'Check In/Out')
 
+@push('styles')
+<style>
+    .toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999; }
+    .toast { padding: 14px 20px; border: 3px solid #000; font-weight: 700; font-size: 14px; margin-bottom: 10px; box-shadow: 4px 4px 0 #000; transform: translateX(400px); transition: transform 0.3s ease; }
+    .toast.show { transform: translateX(0); }
+    .toast-success { background: #10b981; color: white; }
+    .toast-error { background: #ef4444; color: white; }
+    .location-box { padding: 16px; border: 3px solid #000; margin-top: 12px; font-size: 14px; }
+    .location-box.success { background: #d1fae5; }
+    .location-box.error { background: #fee2e2; }
+    .location-box.loading { background: #e0e7ff; }
+    .map-frame { height: 220px; margin-top: 12px; border: 3px solid #000; overflow: hidden; }
+</style>
+@endpush
+
 @section('content')
-    <h1 class="text-4xl font-black mb-8 text-slate-700">Check In / Check Out</h1>
+    <h1 class="neo-section-title">Check In / Check Out</h1>
+
+    <div id="toastContainer" class="toast-container"></div>
 
     @if(session('success'))
-        <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border mb-6">
-            <div class="flex-auto p-4">
-                <p class="font-bold text-green-600">{{ session('success') }}</p>
-            </div>
-        </div>
+    <div class="neo-alert-success mb-6">{{ session('success') }}</div>
     @endif
 
     @if(session('error'))
-        <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border mb-6">
-            <div class="flex-auto p-4">
-                <p class="font-bold text-red-500">{{ session('error') }}</p>
-            </div>
-        </div>
+    <div class="neo-alert-danger mb-6">{{ session('error') }}</div>
     @endif
 
-    <div class="flex flex-wrap -mx-3 mb-6">
-        <!-- Check In Card -->
-        <div class="w-full max-w-full px-3 mb-6 lg:mb-0 lg:w-1/2">
-            <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border">
-                <div class="p-4 pb-0 mb-0 bg-white border-b-0 border-b-solid rounded-t-2xl border-b-transparent">
-                    <h6 class="mb-0 font-bold text-slate-700 text-2xl">Check In</h6>
-                </div>
-                <div class="flex-auto p-4">
-                    @if($todayAttendance && $todayAttendance->check_in)
-                        <div class="relative w-full px-5 py-5 mx-auto overflow-hidden bg-green-50 border border-solid shadow-none rounded-2xl border-green-100 bg-clip-border">
-                            <p class="font-bold text-slate-700">Already checked in at {{ $todayAttendance->check_in }}</p>
-                            <p class="text-sm text-slate-500">Status: {{ strtoupper($todayAttendance->status_hadir) }}</p>
-                            @if($todayAttendance->menit_telat > 0)
-                                <p class="text-sm text-red-500">Late by {{ $todayAttendance->menit_telat }} minutes</p>
-                            @endif
-                        </div>
-                    @else
-                        <form action="{{ route('employee.attendances.store') }}" method="POST" id="checkInForm">
-                            @csrf
-                            <div class="mb-4">
-                                <label class="font-bold text-slate-700 block mb-2">Select Location</label>
-                                <select name="location_id" class="border border-solid border-slate-300 rounded-lg px-4 py-2 focus:border-blue-500 focus:shadow-soft-primary-outline w-full" required>
-                                    <option value="">Choose location...</option>
-                                    @foreach($locations as $location)
-                                        <option value="{{ $location->id }}">{{ $location->nama_lokasi }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            
-                            <div class="mb-4">
-                                <button type="button" id="getLocationBtn" class="inline-flex items-center justify-center px-4 py-2 mb-0 font-bold text-center text-purple-700 uppercase align-middle transition-all bg-transparent border border-solid border-purple-500 rounded-lg shadow-none cursor-pointer hover:scale-102 active:shadow-soft-xs bg-gradient-to-tl from-purple-700 to-pink-500 text-white w-full">
-                                    <i class="fas fa-map-marker-alt mr-2"></i> Get My Location
-                                </button>
-                            </div>
-                            
-                            <div class="mb-4">
-                                <div id="locationStatus" class="text-sm text-slate-500 mb-2"></div>
-                                <div id="mapContainer" class="h-64 rounded-lg border border-slate-200" style="display: none;">
-                                    <div id="map" class="h-full w-full rounded-lg"></div>
-                                </div>
-                            </div>
-                            
-                            <input type="hidden" name="latitude" id="latitudeInput">
-                            <input type="hidden" name="longitude" id="longitudeInput">
-                            
-                            <button type="submit" class="inline-block px-6 py-3 mb-0 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer hover:scale-102 active:shadow-soft-xs bg-gradient-to-tl from-green-600 to-lime-400 leading-pro ease-soft-in tracking-tight-soft w-full text-lg">
-                                <i class="fas fa-sign-in-alt mr-2"></i> Check In Now
-                            </button>
-                        </form>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div class="neo-card p-6">
+            <h3 class="neo-label text-lg mb-4">Check In</h3>
+            
+            @if($todayAttendance && $todayAttendance->check_in)
+                <div class="neo-card-green p-4">
+                    <p class="font-bold">Checked in at {{ $todayAttendance->check_in }}</p>
+                    <p class="text-sm mt-1">Status: <span class="font-bold">{{ strtoupper($todayAttendance->status_hadir) }}</span></p>
+                    @if($todayAttendance->menit_telat > 0)
+                        <p class="text-sm text-neo-red mt-1">Late: {{ $todayAttendance->menit_telat }} minutes</p>
                     @endif
                 </div>
-            </div>
+            @else
+                <form action="{{ route('employee.attendances.store') }}" method="POST">
+                    @csrf
+                    <div class="neo-form-group">
+                        <label class="neo-label">Office Location</label>
+                        <select name="location_id" class="neo-select" required>
+                            <option value="">Select office...</option>
+                            @foreach($locations as $location)
+                                <option value="{{ $location->id }}">{{ $location->nama_lokasi }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    
+                    <button type="button" id="btnGetLocationCheckin" class="neo-btn-secondary w-full mb-3" onclick="getLocationCheckin()">
+                        Get My GPS Location
+                    </button>
+                    
+                    <div id="statusCheckin" style="display:none;" class="location-box mb-3"></div>
+                    <div id="mapCheckinBox" class="map-frame" style="display:none;">
+                        <div id="mapCheckin" style="width:100%;height:100%;"></div>
+                    </div>
+                    
+                    <input type="hidden" name="latitude" id="latCheckin" value="">
+                    <input type="hidden" name="longitude" id="lngCheckin" value="">
+                    
+                    <button type="submit" class="neo-btn-green w-full text-lg py-4">
+                        Check In Now
+                    </button>
+                </form>
+            @endif
         </div>
 
-        <!-- Check Out Card -->
-        <div class="w-full max-w-full px-3 lg:w-1/2">
-            <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border">
-                <div class="p-4 pb-0 mb-0 bg-white border-b-0 border-b-solid rounded-t-2xl border-b-transparent">
-                    <h6 class="mb-0 font-bold text-slate-700 text-2xl">Check Out</h6>
-                </div>
-                <div class="flex-auto p-4">
-                    @if($todayAttendance && $todayAttendance->check_out)
-                        <div class="relative w-full px-5 py-5 mx-auto overflow-hidden bg-green-50 border border-solid shadow-none rounded-2xl border-green-100 bg-clip-border">
-                            <p class="font-bold text-slate-700">Already checked out at {{ $todayAttendance->check_out }}</p>
-                            <p class="text-sm text-slate-500">Work Hours: {{ $todayAttendance->jam_kerja ?? '-' }}</p>
-                            @if($todayAttendance->jam_lembur)
-                                <p class="text-sm text-blue-500">Overtime: {{ $todayAttendance->jam_lembur }}</p>
-                            @endif
-                        </div>
-                    @elseif($todayAttendance && $todayAttendance->check_in)
-                        <form action="{{ route('employee.attendances.checkout') }}" method="POST" id="checkOutForm">
-                            @csrf
-                            <div class="mb-4">
-                                <p class="font-bold text-slate-700">Checked in at: {{ $todayAttendance->check_in }}</p>
-                                <p class="text-sm text-slate-500">Status: {{ strtoupper($todayAttendance->status_hadir) }}</p>
-                            </div>
-                            
-                            <div class="mb-4">
-                                <button type="button" id="getLocationBtnCheckout" class="inline-flex items-center justify-center px-4 py-2 mb-0 font-bold text-center text-purple-700 uppercase align-middle transition-all bg-transparent border border-solid border-purple-500 rounded-lg shadow-none cursor-pointer hover:scale-102 active:shadow-soft-xs bg-gradient-to-tl from-purple-700 to-pink-500 text-white w-full">
-                                    <i class="fas fa-map-marker-alt mr-2"></i> Get My Location
-                                </button>
-                            </div>
-                            
-                            <div class="mb-4">
-                                <div id="locationStatusCheckout" class="text-sm text-slate-500 mb-2"></div>
-                                <div id="mapContainerCheckout" class="h-64 rounded-lg border border-slate-200" style="display: none;">
-                                    <div id="mapCheckout" class="h-full w-full rounded-lg"></div>
-                                </div>
-                            </div>
-                            
-                            <input type="hidden" name="latitude" id="latitudeInputCheckout">
-                            <input type="hidden" name="longitude" id="longitudeInputCheckout">
-                            <button type="submit" class="inline-block px-6 py-3 mb-0 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer hover:scale-102 active:shadow-soft-xs bg-gradient-to-tl from-yellow-600 to-amber-400 leading-pro ease-soft-in tracking-tight-soft w-full text-lg">
-                                <i class="fas fa-sign-out-alt mr-2"></i> Check Out Now
-                            </button>
-                        </form>
-                    @else
-                        <div class="relative w-full px-5 py-5 mx-auto overflow-hidden bg-gray-50 border border-solid shadow-none rounded-2xl border-gray-100 bg-clip-border">
-                            <p class="font-bold text-slate-500">You need to check in first</p>
-                        </div>
+        <div class="neo-card p-6">
+            <h3 class="neo-label text-lg mb-4">Check Out</h3>
+            
+            @if($todayAttendance && $todayAttendance->check_out)
+                <div class="neo-card-green p-4">
+                    <p class="font-bold">Checked out at {{ $todayAttendance->check_out }}</p>
+                    <p class="text-sm mt-1">Work Hours: {{ $todayAttendance->jam_kerja ?? '-' }}</p>
+                    @if($todayAttendance->jam_lembur)
+                        <p class="text-sm text-neo-blue mt-1">Overtime: {{ $todayAttendance->jam_lembur }}</p>
                     @endif
                 </div>
-            </div>
+            @elseif($todayAttendance && $todayAttendance->check_in)
+                <form action="{{ route('employee.attendances.checkout') }}" method="POST">
+                    @csrf
+                    <div class="neo-card-purple p-4 mb-4">
+                        <p class="font-bold">Checked in at: {{ $todayAttendance->check_in }}</p>
+                        <p class="text-sm">Status: {{ strtoupper($todayAttendance->status_hadir) }}</p>
+                    </div>
+                    
+                    <button type="button" id="btnGetLocationCheckout" class="neo-btn-secondary w-full mb-3" onclick="getLocationCheckout()">
+                        Get My GPS Location
+                    </button>
+                    
+                    <div id="statusCheckout" style="display:none;" class="location-box mb-3"></div>
+                    <div id="mapCheckoutBox" class="map-frame" style="display:none;">
+                        <div id="mapCheckout" style="width:100%;height:100%;"></div>
+                    </div>
+                    
+                    <input type="hidden" name="latitude" id="latCheckout" value="">
+                    <input type="hidden" name="longitude" id="lngCheckout" value="">
+                    
+                    <button type="submit" class="neo-btn-pink w-full text-lg py-4">
+                        Check Out Now
+                    </button>
+                </form>
+            @else
+                <div class="neo-card p-4">
+                    <p class="font-bold">Please check in first</p>
+                </div>
+            @endif
         </div>
     </div>
 
     @if($userShift)
-    <div class="flex flex-wrap -mx-3 mb-6">
-        <div class="w-full max-w-full px-3">
-            <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border">
-                <div class="p-4 pb-0 mb-0 bg-white border-b-0 border-b-solid rounded-t-2xl border-b-transparent">
-                    <h6 class="mb-0 font-bold text-slate-700 text-2xl">Today's Shift</h6>
-                </div>
-                <div class="flex-auto p-4">
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div class="relative w-full px-3 py-3 mx-auto overflow-hidden bg-white border border-solid shadow-none rounded-2xl border-slate-100 bg-clip-border text-center">
-                            <p class="leading-tight text-sm text-slate-400">Shift Name</p>
-                            <h6 class="mb-1 font-bold text-slate-700">{{ $userShift->shift->nama_shift }}</h6>
-                        </div>
-                        <div class="relative w-full px-3 py-3 mx-auto overflow-hidden bg-white border border-solid shadow-none rounded-2xl border-slate-100 bg-clip-border text-center">
-                            <p class="leading-tight text-sm text-slate-400">Start Time</p>
-                            <h6 class="mb-1 font-bold text-slate-700">{{ $userShift->shift->jam_masuk }}</h6>
-                        </div>
-                        <div class="relative w-full px-3 py-3 mx-auto overflow-hidden bg-white border border-solid shadow-none rounded-2xl border-slate-100 bg-clip-border text-center">
-                            <p class="leading-tight text-sm text-slate-400">End Time</p>
-                            <h6 class="mb-1 font-bold text-slate-700">{{ $userShift->shift->jam_pulang }}</h6>
-                        </div>
-                        <div class="relative w-full px-3 py-3 mx-auto overflow-hidden bg-white border border-solid shadow-none rounded-2xl border-slate-100 bg-clip-border text-center">
-                            <p class="leading-tight text-sm text-slate-400">Late Tolerance</p>
-                            <h6 class="mb-1 font-bold text-slate-700">{{ $userShift->shift->toleransi_telat_menit }} min</h6>
-                        </div>
-                    </div>
-                </div>
+    <div class="neo-card p-6 mb-6">
+        <h3 class="neo-label text-lg mb-4">Today's Shift</h3>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="neo-card text-center">
+                <p class="neo-label mb-1">Shift</p>
+                <p class="font-bold">{{ $userShift->shift->nama_shift }}</p>
+            </div>
+            <div class="neo-card text-center">
+                <p class="neo-label mb-1">Start</p>
+                <p class="font-bold">{{ $userShift->shift->jam_masuk }}</p>
+            </div>
+            <div class="neo-card text-center">
+                <p class="neo-label mb-1">End</p>
+                <p class="font-bold">{{ $userShift->shift->jam_pulang }}</p>
+            </div>
+            <div class="neo-card text-center">
+                <p class="neo-label mb-1">Tolerance</p>
+                <p class="font-bold">{{ $userShift->shift->toleransi_telat_menit }} min</p>
             </div>
         </div>
     </div>
     @endif
 
     @if($todayAttendance)
-    <div class="flex flex-wrap -mx-3 mb-6">
-        <div class="w-full max-w-full px-3">
-            <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border">
-                <div class="p-4 pb-0 mb-0 bg-white border-b-0 border-b-solid rounded-t-2xl border-b-transparent">
-                    <h6 class="mb-0 font-bold text-slate-700 text-2xl">Today's Attendance</h6>
-                </div>
-                <div class="flex-auto p-4">
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div>
-                            <p class="leading-tight text-sm text-slate-400">Status</p>
-                            <h6 class="mb-1 font-bold text-slate-700">
-                                <span class="inline-block py-1 px-2 text-xs rounded-lg text-white font-bold bg-gradient-to-tl
-                                    @if($todayAttendance->status_hadir == 'present') from-green-600 to-lime-400
-                                    @elseif($todayAttendance->status_hadir == 'late') from-yellow-600 to-orange-400
-                                    @else from-red-600 to-rose-400 @endif">
-                                    {{ strtoupper($todayAttendance->status_hadir) }}
-                                </span>
-                            </h6>
-                        </div>
-                        <div>
-                            <p class="leading-tight text-sm text-slate-400">Check In</p>
-                            <h6 class="mb-1 font-bold text-slate-700">{{ $todayAttendance->check_in ?? '-' }}</h6>
-                        </div>
-                        <div>
-                            <p class="leading-tight text-sm text-slate-400">Check Out</p>
-                            <h6 class="mb-1 font-bold text-slate-700">{{ $todayAttendance->check_out ?? '-' }}</h6>
-                        </div>
-                        <div>
-                            <p class="leading-tight text-sm text-slate-400">Work Hours</p>
-                            <h6 class="mb-1 font-bold text-slate-700">{{ $todayAttendance->jam_kerja ?? '-' }}</h6>
-                        </div>
-                        <div>
-                            <p class="leading-tight text-sm text-slate-400">Late (min)</p>
-                            <h6 class="mb-1 font-bold text-red-500">{{ $todayAttendance->menit_telat ?? 0 }}</h6>
-                        </div>
-                        <div>
-                            <p class="leading-tight text-sm text-slate-400">Early Out (min)</p>
-                            <h6 class="mb-1 font-bold text-red-500">{{ $todayAttendance->menit_pulang_cepat ?? 0 }}</h6>
-                        </div>
-                        <div>
-                            <p class="leading-tight text-sm text-slate-400">Overtime</p>
-                            <h6 class="mb-1 font-bold text-blue-500">{{ $todayAttendance->jam_lembur ?? '-' }}</h6>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <div class="neo-card p-6">
+        <h3 class="neo-label text-lg mb-4">Today's Attendance</h3>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="neo-card"><p class="neo-label mb-1">Status</p><p class="font-bold">{{ strtoupper($todayAttendance->status_hadir) }}</p></div>
+            <div class="neo-card"><p class="neo-label mb-1">Check In</p><p class="font-bold">{{ $todayAttendance->check_in ?? '-' }}</p></div>
+            <div class="neo-card"><p class="neo-label mb-1">Check Out</p><p class="font-bold">{{ $todayAttendance->check_out ?? '-' }}</p></div>
+            <div class="neo-card"><p class="neo-label mb-1">Work Hours</p><p class="font-bold">{{ $todayAttendance->jam_kerja ?? '-' }}</p></div>
         </div>
     </div>
     @endif
@@ -213,126 +156,146 @@
 
 @push('scripts')
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Check-in map
-    var map, marker;
-    var mapInitialized = false;
+    function showToast(msg, type) {
+        const container = document.getElementById('toastContainer');
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+        toast.innerHTML = msg;
+        container.appendChild(toast);
+        setTimeout(() => toast.classList.add('show'), 10);
+        setTimeout(() => { toast.classList.remove('show'); setTimeout(()=>toast.remove(),300); }, 3000);
+    }
+
+    var mapCheckin, markerCheckin, mapInitCheckin = false;
     
-    function initMapCheckIn(lat, lng) {
-        if (mapInitialized) return;
+    function getLocationCheckin() {
+        const btn = document.getElementById('btnGetLocationCheckin');
+        const status = document.getElementById('statusCheckin');
         
-        document.getElementById('mapContainer').style.display = 'block';
-        map = L.map('map').setView([lat, lng], 15);
+        btn.innerHTML = 'Getting...';
+        btn.disabled = true;
+        status.style.display = 'block';
+        status.className = 'location-box loading';
+        status.innerHTML = 'Requesting GPS...';
         
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; OpenStreetMap contributors'
-        }).addTo(map);
+        if(!navigator.geolocation) {
+            status.className = 'location-box error';
+            status.innerHTML = 'GPS not supported';
+            btn.innerHTML = 'Get My GPS Location';
+            btn.disabled = false;
+            showToast('GPS not supported','error');
+            return;
+        }
         
-        marker = L.marker([lat, lng], {draggable: true}).addTo(map);
-        
-        map.on('click', function(e) {
-            marker.setLatLng(e.latlng);
-            document.getElementById('latitudeInput').value = e.latlng.lat;
-            document.getElementById('longitudeInput').value = e.latlng.lng;
-        });
-        
-        marker.on('dragend', function(e) {
-            document.getElementById('latitudeInput').value = e.target.getLatLng().lat;
-            document.getElementById('longitudeInput').value = e.target.getLatLng().lng;
-        });
-        
-        document.getElementById('latitudeInput').value = lat;
-        document.getElementById('longitudeInput').value = lng;
-        mapInitialized = true;
-        
-        setTimeout(function() {
-            map.invalidateSize();
-        }, 100);
+        navigator.geolocation.getCurrentPosition(
+            (pos) => {
+                const lat = pos.coords.latitude, lng = pos.coords.longitude;
+                document.getElementById('latCheckin').value = lat;
+                document.getElementById('lngCheckin').value = lng;
+                status.className = 'location-box success';
+                status.innerHTML = `Captured! (${lat.toFixed(4)}, ${lng.toFixed(4)})`;
+                btn.innerHTML = 'Location Captured';
+                btn.classList.remove('neo-btn-secondary');
+                btn.classList.add('neo-btn-green');
+                initMapCheckin(lat, lng);
+                showToast('GPS Location captured!','success');
+            },
+            (err) => {
+                let msg = 'Cannot get location';
+                if(err.code===1) msg='Permission denied';
+                else if(err.code===2) msg='Location unavailable';
+                status.className = 'location-box error';
+                status.innerHTML = msg;
+                btn.innerHTML = 'Get My GPS Location';
+                btn.disabled = false;
+                showToast(msg,'error');
+            }
+        );
     }
     
-    // Get location button for check-in
-    document.getElementById('getLocationBtn').addEventListener('click', function() {
-        var btn = this;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Getting location...';
+    function initMapCheckin(lat, lng) {
+        if(mapInitCheckin) return;
+        document.getElementById('mapCheckinBox').style.display = 'block';
+        mapCheckin = L.map('mapCheckin').setView([lat,lng],16);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mapCheckin);
+        markerCheckin = L.marker([lat,lng],{draggable:true}).addTo(mapCheckin);
+        mapCheckin.on('click', (e) => {
+            markerCheckin.setLatLng(e.latlng);
+            document.getElementById('latCheckin').value = e.latlng.lat;
+            document.getElementById('lngCheckin').value = e.latlng.lng;
+        });
+        markerCheckin.on('dragend', (e) => {
+            document.getElementById('latCheckin').value = e.target.getLatLng().lat;
+            document.getElementById('lngCheckin').value = e.target.getLatLng().lng;
+        });
+        mapInitCheckin = true;
+        setTimeout(()=>mapCheckin.invalidateSize(),100);
+    }
+
+    var mapCheckout, markerCheckout, mapInitCheckout = false;
+    
+    function getLocationCheckout() {
+        const btn = document.getElementById('btnGetLocationCheckout');
+        const status = document.getElementById('statusCheckout');
         
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(function(position) {
-                var lat = position.coords.latitude;
-                var lng = position.coords.longitude;
-                
-                document.getElementById('locationStatus').innerHTML = '<i class="fas fa-check-circle text-green-500"></i> Location found!';
-                initMapCheckIn(lat, lng);
-                
-                btn.innerHTML = '<i class="fas fa-check mr-2"></i> Location Found';
-            }, function(error) {
-                document.getElementById('locationStatus').innerHTML = '<i class="fas fa-exclamation-circle text-red-500"></i> Could not get location: ' + error.message;
-                btn.innerHTML = '<i class="fas fa-map-marker-alt mr-2"></i> Get My Location';
-            });
-        } else {
-            document.getElementById('locationStatus').innerHTML = '<i class="fas fa-exclamation-circle text-red-500"></i> Geolocation not supported';
-            btn.innerHTML = '<i class="fas fa-map-marker-alt mr-2"></i> Get My Location';
+        btn.innerHTML = 'Getting...';
+        btn.disabled = true;
+        status.style.display = 'block';
+        status.className = 'location-box loading';
+        status.innerHTML = 'Requesting GPS...';
+        
+        if(!navigator.geolocation) {
+            status.className = 'location-box error';
+            status.innerHTML = 'GPS not supported';
+            btn.innerHTML = 'Get My GPS Location';
+            btn.disabled = false;
+            showToast('GPS not supported','error');
+            return;
         }
-    });
+        
+        navigator.geolocation.getCurrentPosition(
+            (pos) => {
+                const lat = pos.coords.latitude, lng = pos.coords.longitude;
+                document.getElementById('latCheckout').value = lat;
+                document.getElementById('lngCheckout').value = lng;
+                status.className = 'location-box success';
+                status.innerHTML = `Captured! (${lat.toFixed(4)}, ${lng.toFixed(4)})`;
+                btn.innerHTML = 'Location Captured';
+                btn.classList.remove('neo-btn-secondary');
+                btn.classList.add('neo-btn-green');
+                initMapCheckout(lat, lng);
+                showToast('GPS Location captured!','success');
+            },
+            (err) => {
+                let msg = 'Cannot get location';
+                if(err.code===1) msg='Permission denied';
+                else if(err.code===2) msg='Location unavailable';
+                status.className = 'location-box error';
+                status.innerHTML = msg;
+                btn.innerHTML = 'Get My GPS Location';
+                btn.disabled = false;
+                showToast(msg,'error');
+            }
+        );
+    }
     
-    // Check-out map
-    var mapCheckout, markerCheckout;
-    var mapCheckoutInitialized = false;
-    
-    function initMapCheckOut(lat, lng) {
-        if (mapCheckoutInitialized) return;
-        
-        document.getElementById('mapContainerCheckout').style.display = 'block';
-        mapCheckout = L.map('mapCheckout').setView([lat, lng], 15);
-        
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; OpenStreetMap contributors'
-        }).addTo(mapCheckout);
-        
-        markerCheckout = L.marker([lat, lng], {draggable: true}).addTo(mapCheckout);
-        
-        mapCheckout.on('click', function(e) {
+    function initMapCheckout(lat, lng) {
+        if(mapInitCheckout) return;
+        document.getElementById('mapCheckoutBox').style.display = 'block';
+        mapCheckout = L.map('mapCheckout').setView([lat,lng],16);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mapCheckout);
+        markerCheckout = L.marker([lat,lng],{draggable:true}).addTo(mapCheckout);
+        mapCheckout.on('click', (e) => {
             markerCheckout.setLatLng(e.latlng);
-            document.getElementById('latitudeInputCheckout').value = e.latlng.lat;
-            document.getElementById('longitudeInputCheckout').value = e.latlng.lng;
+            document.getElementById('latCheckout').value = e.latlng.lat;
+            document.getElementById('lngCheckout').value = e.latlng.lng;
         });
-        
-        markerCheckout.on('dragend', function(e) {
-            document.getElementById('latitudeInputCheckout').value = e.target.getLatLng().lat;
-            document.getElementById('longitudeInputCheckout').value = e.target.getLatLng().lng;
+        markerCheckout.on('dragend', (e) => {
+            document.getElementById('latCheckout').value = e.target.getLatLng().lat;
+            document.getElementById('lngCheckout').value = e.target.getLatLng().lng;
         });
-        
-        document.getElementById('latitudeInputCheckout').value = lat;
-        document.getElementById('longitudeInputCheckout').value = lng;
-        mapCheckoutInitialized = true;
-        
-        setTimeout(function() {
-            mapCheckout.invalidateSize();
-        }, 100);
+        mapInitCheckout = true;
+        setTimeout(()=>mapCheckout.invalidateSize(),100);
     }
-    
-    // Get location button for check-out
-    document.getElementById('getLocationBtnCheckout').addEventListener('click', function() {
-        var btn = this;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Getting location...';
-        
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(function(position) {
-                var lat = position.coords.latitude;
-                var lng = position.coords.longitude;
-                
-                document.getElementById('locationStatusCheckout').innerHTML = '<i class="fas fa-check-circle text-green-500"></i> Location found!';
-                initMapCheckOut(lat, lng);
-                
-                btn.innerHTML = '<i class="fas fa-check mr-2"></i> Location Found';
-            }, function(error) {
-                document.getElementById('locationStatusCheckout').innerHTML = '<i class="fas fa-exclamation-circle text-red-500"></i> Could not get location: ' + error.message;
-                btn.innerHTML = '<i class="fas fa-map-marker-alt mr-2"></i> Get My Location';
-            });
-        } else {
-            document.getElementById('locationStatusCheckout').innerHTML = '<i class="fas fa-exclamation-circle text-red-500"></i> Geolocation not supported';
-            btn.innerHTML = '<i class="fas fa-map-marker-alt mr-2"></i> Get My Location';
-        }
-    });
-});
 </script>
 @endpush

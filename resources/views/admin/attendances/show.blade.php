@@ -3,87 +3,87 @@
 @section('title', 'View Attendance - Admin')
 
 @section('content')
-<div class="flex flex-wrap -mx-3">
-  <div class="flex-none w-full max-w-full p-3">
-    <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 border-transparent border-solid shadow-soft-xl rounded-2xl bg-clip-border">
-      <div class="p-6 pb-0 mb-0 bg-white border-b-0 border-b-solid rounded-t-2xl border-b-transparent">
-        <div class="flex justify-between items-center">
-          <h6 class="text-xl font-bold">Attendance Details</h6>
-          <a href="{{ route('admin.attendances.index') }}" class="inline-block px-6 py-3 mb-0 text-xs font-bold text-right uppercase align-middle transition-all border-0 rounded-lg cursor-pointer hover:scale-102 active:opacity-85 leading-pro ease-soft-in tracking-tight-soft bg-150 bg-x-25 bg-gradient-to-tl from-slate-600 to-slate-300 text-white">
-            <i class="fas fa-arrow-left mr-1"></i> Back
-          </a>
-        </div>
+<div class="space-y-6">
+  <div class="neo-card">
+    <div class="mb-6 border-b-3 border-black pb-4">
+      <div class="flex justify-between items-center">
+        <h6 class="text-xl font-bold">ATTENDANCE DETAILS</h6>
+        <a href="{{ route('admin.attendances.index') }}" class="neo-btn-secondary">
+          <i class="fas fa-arrow-left mr-1"></i> Back
+        </a>
       </div>
-      <div class="flex-auto p-6">
-        <div class="mb-4">
-          <label class="inline-block mb-2 text-sm font-bold text-slate-700">ID</label>
-          <p class="text-sm text-slate-500">{{ $attendance->id }}</p>
-        </div>
-        <div class="mb-4">
-          <label class="inline-block mb-2 text-sm font-bold text-slate-700">Employee</label>
-          <p class="text-sm text-slate-500">{{ $attendance->user->nama_lengkap ?? 'N/A' }} ({{ $attendance->user->email ?? 'N/A' }})</p>
-        </div>
-        <div class="mb-4">
-          <label class="inline-block mb-2 text-sm font-bold text-slate-700">Date</label>
-          <p class="text-sm text-slate-500">{{ $attendance->tanggal->format('d M Y') }}</p>
-        </div>
-        <div class="mb-4">
-          <label class="inline-block mb-2 text-sm font-bold text-slate-700">Check In</label>
-          <p class="text-sm text-slate-500">{{ $attendance->check_in ? $attendance->check_in->format('H:i:s') : '-' }}</p>
-        </div>
-        <div class="mb-4">
-          <label class="inline-block mb-2 text-sm font-bold text-slate-700">Check Out</label>
-          <p class="text-sm text-slate-500">{{ $attendance->check_out ? $attendance->check_out->format('H:i:s') : '-' }}</p>
-        </div>
-        <div class="mb-4">
-          <label class="inline-block mb-2 text-sm font-bold text-slate-700">Status</label>
-          <span class="px-2 py-1 text-xs rounded-2xl inline-block whitespace-nowrap text-center text-white
-            @if($attendance->status_hadir == 'present') bg-gradient-to-tl from-green-600 to-lime-400
-            @elseif($attendance->status_hadir == 'late') bg-gradient-to-tl from-yellow-600 to-yellow-400
-            @else bg-gradient-to-tl from-red-600 to-rose-400 @endif">
-            {{ strtoupper($attendance->status_hadir) }}
-          </span>
-        </div>
-        <div class="mb-4">
-          <label class="inline-block mb-2 text-sm font-bold text-slate-700">Work Hours</label>
-          <p class="text-sm text-slate-500">{{ $attendance->jam_kerja ? $attendance->jam_kerja->format('H:i') : '-' }}</p>
-        </div>
-        <div class="mb-4">
-          <label class="inline-block mb-2 text-sm font-bold text-slate-700">Overtime Hours</label>
-          <p class="text-sm text-slate-500">{{ $attendance->jam_lembur ? $attendance->jam_lembur->format('H:i') : '-' }}</p>
-        </div>
-        <div class="mb-4">
-          <label class="inline-block mb-2 text-sm font-bold text-slate-700">Late Minutes</label>
-          <p class="text-sm text-slate-500">{{ $attendance->menit_telat ?? '-' }} minutes</p>
-        </div>
-        <div class="mb-4">
-          <label class="inline-block mb-2 text-sm font-bold text-slate-700">Early Leave Minutes</label>
-          <p class="text-sm text-slate-500">{{ $attendance->menit_pulang_cepat ?? '-' }} minutes</p>
-        </div>
-        <div class="mb-4">
-          <label class="inline-block mb-2 text-sm font-bold text-slate-700">Location</label>
-          <p class="text-sm text-slate-500">{{ $attendance->location->nama_lokasi ?? 'N/A' }}</p>
-        </div>
-        <div class="mb-4">
-          <label class="inline-block mb-2 text-sm font-bold text-slate-700">Face Verified</label>
-          @if($attendance->face_verified)
-            <span class="bg-gradient-to-tl from-green-600 to-lime-400 px-2 py-1 text-xs rounded-2xl inline-block whitespace-nowrap text-center text-white">Yes</span>
-          @else
-            <span class="bg-gradient-to-tl from-red-600 to-rose-400 px-2 py-1 text-xs rounded-2xl inline-block whitespace-nowrap text-center text-white">No</span>
-          @endif
-        </div>
-        <div class="flex justify-end mt-6">
-          <a href="{{ route('admin.attendances.edit', $attendance) }}" class="inline-block px-6 py-3 mb-0 text-xs font-bold text-right uppercase align-middle transition-all border-0 rounded-lg cursor-pointer hover:scale-102 active:opacity-85 leading-pro ease-soft-in tracking-tight-soft bg-150 bg-x-25 bg-gradient-to-tl from-blue-600 to-cyan-400 text-white mr-2">
-            <i class="fas fa-edit mr-1"></i> Edit
-          </a>
-          <form action="{{ route('admin.attendances.destroy', $attendance) }}" method="POST" class="inline" onsubmit="return confirm('Delete this attendance record?')">
-            @csrf
-            @method('DELETE')
-            <button type="submit" class="inline-block px-6 py-3 mb-0 text-xs font-bold text-right uppercase align-middle transition-all border-0 rounded-lg cursor-pointer hover:scale-102 active:opacity-85 leading-pro ease-soft-in tracking-tight-soft bg-150 bg-x-25 bg-gradient-to-tl from-red-600 to-rose-400 text-white">
-              <i class="fas fa-trash mr-1"></i> Delete
-            </button>
-          </form>
-        </div>
+    </div>
+
+    <div class="space-y-4">
+      <div class="flex flex-col">
+        <label class="neo-label">ID</label>
+        <p class="text-sm font-bold">{{ $attendance->id }}</p>
+      </div>
+      <div class="flex flex-col">
+        <label class="neo-label">EMPLOYEE</label>
+        <p class="text-sm">{{ $attendance->user->nama_lengkap ?? 'N/A' }} ({{ $attendance->user->email ?? 'N/A' }})</p>
+      </div>
+      <div class="flex flex-col">
+        <label class="neo-label">DATE</label>
+        <p class="text-sm">{{ $attendance->tanggal->format('d M Y') }}</p>
+      </div>
+      <div class="flex flex-col">
+        <label class="neo-label">CHECK IN</label>
+        <p class="text-sm">{{ $attendance->check_in ? $attendance->check_in->format('H:i:s') : '-' }}</p>
+      </div>
+      <div class="flex flex-col">
+        <label class="neo-label">CHECK OUT</label>
+        <p class="text-sm">{{ $attendance->check_out ? $attendance->check_out->format('H:i:s') : '-' }}</p>
+      </div>
+      <div class="flex flex-col">
+        <label class="neo-label">STATUS</label>
+        @if($attendance->status_hadir == 'present')
+          <span class="neo-badge neo-badge-green">PRESENT</span>
+        @elseif($attendance->status_hadir == 'late')
+          <span class="neo-badge neo-badge-yellow">LATE</span>
+        @else
+          <span class="neo-badge neo-badge-red">ABSENT</span>
+        @endif
+      </div>
+      <div class="flex flex-col">
+        <label class="neo-label">WORK HOURS</label>
+        <p class="text-sm">{{ $attendance->jam_kerja ? $attendance->jam_kerja->format('H:i') : '-' }}</p>
+      </div>
+      <div class="flex flex-col">
+        <label class="neo-label">OVERTIME HOURS</label>
+        <p class="text-sm">{{ $attendance->jam_lembur ? $attendance->jam_lembur->format('H:i') : '-' }}</p>
+      </div>
+      <div class="flex flex-col">
+        <label class="neo-label">LATE MINUTES</label>
+        <p class="text-sm">{{ $attendance->menit_telat ?? '-' }} minutes</p>
+      </div>
+      <div class="flex flex-col">
+        <label class="neo-label">EARLY LEAVE MINUTES</label>
+        <p class="text-sm">{{ $attendance->menit_pulang_cepat ?? '-' }} minutes</p>
+      </div>
+      <div class="flex flex-col">
+        <label class="neo-label">LOCATION</label>
+        <p class="text-sm">{{ $attendance->location->nama_lokasi ?? 'N/A' }}</p>
+      </div>
+      <div class="flex flex-col">
+        <label class="neo-label">FACE VERIFIED</label>
+        @if($attendance->face_verified)
+          <span class="neo-badge neo-badge-green">YES</span>
+        @else
+          <span class="neo-badge neo-badge-red">NO</span>
+        @endif
+      </div>
+      <div class="flex gap-2 mt-6">
+        <a href="{{ route('admin.attendances.edit', $attendance) }}" class="neo-btn-primary">
+          <i class="fas fa-edit mr-1"></i> Edit
+        </a>
+        <form action="{{ route('admin.attendances.destroy', $attendance) }}" method="POST" class="inline" onsubmit="return confirm('Delete this attendance record?')">
+          @csrf
+          @method('DELETE')
+          <button type="submit" class="neo-btn-danger">
+            <i class="fas fa-trash mr-1"></i> Delete
+          </button>
+        </form>
       </div>
     </div>
   </div>

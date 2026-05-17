@@ -4,27 +4,34 @@
 @section('subtitle', 'Sign in')
 
 @section('content')
-@if(session('status'))<div class="status">{{ session('status') }}</div>@endif
+@if(session('status'))<div class="neo-alert-success mb-4">{{ session('status') }}</div>@endif
 
 <form method="POST" action="{{ route('login') }}">
 @csrf
-<label>Email</label>
-<input type="email" name="email" value="{{ old('email') }}" required autofocus placeholder="email">
-@error('email')<div class="error">{{ $message }}</div>@enderror
 
-<label>Password</label>
-<input type="password" name="password" required placeholder="••••••">
-@error('password')<div class="error">{{ $message }}</div>@enderror
-
-<div class="flex" style="margin-bottom:12px;">
-<label style="font-weight:400;"><input type="checkbox" name="remember" class="checkbox">Remember</label>
-@if(Route::has('password.request'))<a href="{{ route('password.request') }}">Forgot?</a>@endif
+<div class="neo-form-group">
+<label for="email" class="neo-label">Email</label>
+<input type="email" name="email" id="email" value="{{ old('email') }}" required autofocus placeholder="email@example.com" class="neo-input">
+@error('email')<div class="neo-alert-danger mt-2 py-2 px-3 text-sm">{{ $message }}</div>@enderror
 </div>
 
-<button type="submit" class="btn"><i class="fas fa-sign-in-alt"></i> Sign In</button>
+<div class="neo-form-group">
+<label for="password" class="neo-label">Password</label>
+<input type="password" name="password" id="password" required placeholder="••••••••" class="neo-input">
+@error('password')<div class="neo-alert-danger mt-2 py-2 px-3 text-sm">{{ $message }}</div>@enderror
+</div>
+
+<div class="flex items-center justify-between mb-4">
+<label style="display: flex; align-items: center; gap: 0.5rem; font-weight: normal;">
+<input type="checkbox" name="remember" class="neo-checkbox">Remember
+</label>
+@if(Route::has('password.request'))<a href="{{ route('password.request') }}" class="neo-link">Forgot?</a>@endif
+</div>
+
+<button type="submit" class="neo-btn-primary w-full"><i class="fas fa-sign-in-alt"></i> Sign In</button>
 </form>
 
 @section('footer')
-<p>No account? <a href="{{ route('register') }}">Sign up</a></p>
+<p class="text-center">No account? <a href="{{ route('register') }}" class="neo-link"><strong>Sign up</strong></a></p>
 @endsection
 @endsection
