@@ -1,245 +1,175 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="{{ config('app.name', 'ABS') }} - Modern Attendance & Employee Management System">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ config('app.name', 'ABS') }}</title>
     <link rel="icon" type="image/png" href="{{ asset('assets/img/favicon.png') }}">
-    <title>{{ config('app.name', 'ABS') }} - Attendance & Employee Management System</title>
-    
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link href="{{ asset('assets/css/soft-ui-dashboard-tailwind.css') }}" rel="stylesheet" />
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    <link href="{{ asset('assets/css/soft-ui-dashboard-tailwind.css') }}" rel="stylesheet">
     <style>
-        .hero-pattern {
-            background-color: #ffffff;
-            background-image: radial-gradient(circle at 20% 50%, rgba(124, 58, 237, 0.05) 0%, transparent 50%),
-                              radial-gradient(circle at 80% 20%, rgba(219, 39, 119, 0.05) 0%, transparent 50%);
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Space Grotesk', sans-serif; background: #f5f5f5; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+        .neo { background: #fff; border: 3px solid #1a1a1a; border-radius: 16px; box-shadow: 6px 6px 0 #1a1a1a; }
+        .btn { display: inline-block; border: 3px solid #1a1a1a; border-radius: 10px; padding: 14px 28px; font-weight: 700; text-decoration: none; box-shadow: 4px 4px 0 #1a1a1a; transition: all 0.1s; }
+        .btn:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 #1a1a1a; }
+        .btn-yellow { background: #ffde59; color: #1a1a1a; }
+        .btn-black { background: #1a1a1a; color: #fff; }
+        .btn-blue { background: #7aa2f7; color: #1a1a1a; }
+        .btn-pink { background: #ff8ba7; color: #1a1a1a; }
+        .btn-green { background: #98ff98; color: #1a1a1a; }
+        .logo { width: 48px; height: 48px; background: #ffde59; border: 3px solid #1a1a1a; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 3px 3px 0 #1a1a1a; }
     </style>
 </head>
-
-<body class="m-0 font-sans antialiased font-normal text-base leading-default hero-pattern text-slate-500">
-    <nav class="relative flex flex-wrap items-center justify-between px-4 py-3 mx-6 mt-4 transition-all duration-250 ease-soft-in rounded-2xl shadow-soft-xl bg-white/80 backdrop-blur-sm">
-        <div class="flex items-center justify-between w-full px-4 py-1 mx-auto flex-wrap-inherit">
-            <a href="/" class="block px-0 py-2 m-0 text-xl whitespace-nowrap text-slate-700 font-black">
-                <i class="fas fa-fingerprint mr-2 text-purple-600"></i>
-                {{ config('app.name', 'ABS') }}
-            </a>
-
-            <div class="flex items-center mt-2 grow sm:mt-0 sm:mr-6 md:mr-0 lg:flex lg:basis-auto">
-                <ul class="flex flex-row justify-end pl-0 mb-0 list-none md-max:w-full gap-3">
-                    @if (Route::has('login'))
-                        @auth
-                            <li class="flex items-center">
-                                <a href="{{ url('/dashboard') }}" class="inline-block px-6 py-2 mb-0 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer hover:scale-102 active:shadow-soft-xs bg-gradient-to-tl from-purple-700 to-pink-500 leading-pro text-xs ease-soft-in tracking-tight-soft">
-                                    <i class="fas fa-tachometer-alt mr-1"></i> Dashboard
-                                </a>
-                            </li>
-                        @else
-                            <li class="flex items-center">
-                                <a href="{{ route('login') }}" class="inline-block px-6 py-2 mb-0 font-bold text-center text-slate-700 uppercase align-middle transition-all bg-transparent border border-solid rounded-lg shadow-none cursor-pointer hover:scale-102 active:shadow-soft-xs border-slate-300 leading-pro text-xs ease-soft-in tracking-tight-soft hover:bg-gray-50">
-                                    <i class="fas fa-sign-in-alt mr-1"></i> Login
-                                </a>
-                            </li>
-                            @if (Route::has('register'))
-                                <li class="flex items-center">
-                                    <a href="{{ route('register') }}" class="inline-block px-6 py-2 mb-0 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer hover:scale-102 active:shadow-soft-xs bg-gradient-to-tl from-purple-700 to-pink-500 leading-pro text-xs ease-soft-in tracking-tight-soft">
-                                        <i class="fas fa-user-plus mr-1"></i> Get Started
-                                    </a>
-                                </li>
-                            @endif
-                        @endauth
-                    @endif
-                </ul>
-            </div>
+<body>
+    <!-- Marquee Top -->
+    <div style="background:#1a1a1a;border-bottom:3px solid #1a1a1a;overflow:hidden;padding:14px 0;">
+        <div style="display:flex;animation:scroll 15s linear infinite;white-space:nowrap;">
+            <span style="color:#ffde59;font-size:15px;font-weight:700;margin-right:60px;">✨ ATTENDANCE • GPS TRACKING • LEAVE MANAGEMENT • PAYROLL • REIMBURSEMENTS • EMPLOYEES • HR PANEL • ADMIN • ANALYTICS • SHIFTS • DEPARTMENTS • ROLES • LEAFLET MAPS • LARAVEL 13 •</span>
+            <span style="color:#ffde59;font-size:15px;font-weight:700;margin-right:60px;">✨ ATTENDANCE • GPS TRACKING • LEAVE MANAGEMENT • PAYROLL • REIMBURSEMENTS • EMPLOYEES • HR PANEL • ADMIN • ANALYTICS • SHIFTS • DEPARTMENTS • ROLES • LEAFLET MAPS • LARAVEL 13 •</span>
+            <span style="color:#ffde59;font-size:15px;font-weight:700;margin-right:60px;">✨ ATTENDANCE • GPS TRACKING • LEAVE MANAGEMENT • PAYROLL • REIMBURSEMENTS • EMPLOYEES • HR PANEL • ADMIN • ANALYTICS • SHIFTS • DEPARTMENTS • ROLES • LEAFLET MAPS • LARAVEL 13 •</span>
+            <span style="color:#ffde59;font-size:15px;font-weight:700;margin-right:60px;">✨ ATTENDANCE • GPS TRACKING • LEAVE MANAGEMENT • PAYROLL • REIMBURSEMENTS • EMPLOYEES • HR PANEL • ADMIN • ANALYTICS • SHIFTS • DEPARTMENTS • ROLES • LEAFLET MAPS • LARAVEL 13 •</span>
         </div>
-    </nav>
+    </div>
+    <style>@keyframes scroll{0%{transform:translateX(0)}100%{transform:translateX(-25%)}}</style>
 
-    <main class="w-full px-6 py-12 mx-auto">
-        <div class="flex flex-wrap -mx-3 items-center">
-            <div class="w-full max-w-full px-3 mb-8 lg:mb-0 lg:w-1/2">
-                <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border p-8">
-                    <span class="text-purple-600 font-bold text-sm uppercase tracking-wider mb-2">Attendance Management System</span>
-                    <h1 class="text-4xl font-black mb-4 text-slate-700">Modern Employee Management Solution</h1>
-                    <p class="text-lg text-slate-500 mb-6">Track attendance, manage leaves, process payroll, and monitor employee performance all in one powerful system.</p>
-                    
-                    <div class="flex flex-wrap gap-4">
-                        @guest
-                            <a href="{{ route('register') }}" class="inline-block px-8 py-3 mb-0 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer hover:scale-102 active:shadow-soft-xs bg-gradient-to-tl from-purple-700 to-pink-500 leading-pro text-sm ease-soft-in tracking-tight-soft">
-                                <i class="fas fa-rocket mr-2"></i> Start Free Trial
-                            </a>
-                            <a href="{{ route('login') }}" class="inline-block px-8 py-3 mb-0 font-bold text-center text-slate-700 uppercase align-middle transition-all bg-transparent border border-solid rounded-lg shadow-none cursor-pointer hover:scale-102 active:shadow-soft-xs border-slate-300 leading-pro text-sm ease-soft-in tracking-tight-soft">
-                                <i class="fas fa-play mr-2"></i> Watch Demo
-                            </a>
-                        @else
-                            <a href="{{ url('/dashboard') }}" class="inline-block px-8 py-3 mb-0 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer hover:scale-102 active:shadow-soft-xs bg-gradient-to-tl from-purple-700 to-pink-500 leading-pro text-sm ease-soft-in tracking-tight-soft">
-                                <i class="fas fa-tachometer-alt mr-2"></i> Go to Dashboard
-                            </a>
-                        @endguest
-                    </div>
-
-                    <div class="flex items-center gap-6 mt-8">
-                        <div class="text-center">
-                            <span class="block text-2xl font-black text-slate-700">500+</span>
-                            <span class="text-xs text-slate-400">Active Users</span>
-                        </div>
-                        <div class="text-center">
-                            <span class="block text-2xl font-black text-slate-700">99.9%</span>
-                            <span class="text-xs text-slate-400">Uptime</span>
-                        </div>
-                        <div class="text-center">
-                            <span class="block text-2xl font-black text-slate-700">24/7</span>
-                            <span class="text-xs text-slate-400">Support</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="w-full max-w-full px-3 lg:w-1/2">
-                <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border overflow-hidden">
-                    <div class="bg-gradient-to-tl from-purple-700 to-pink-500 p-8 text-center">
-                        <i class="fas fa-fingerprint text-white text-8xl mb-4"></i>
-                        <h3 class="text-white font-black text-3xl mb-2">{{ config('app.name', 'ABS') }}</h3>
-                        <p class="text-white/80 text-sm">Version 1.0.0 | Enterprise Edition</p>
-                    </div>
-                    <div class="p-6">
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="text-center p-4 bg-gray-50 rounded-xl hover:bg-purple-50 transition-colors cursor-pointer">
-                                <i class="fas fa-calendar-check text-3xl text-blue-500 mb-2"></i>
-                                <h4 class="text-slate-700 font-bold text-sm">Smart Attendance</h4>
-                            </div>
-                            <div class="text-center p-4 bg-gray-50 rounded-xl hover:bg-purple-50 transition-colors cursor-pointer">
-                                <i class="fas fa-calendar-times text-3xl text-yellow-500 mb-2"></i>
-                                <h4 class="text-slate-700 font-bold text-sm">Leave Management</h4>
-                            </div>
-                            <div class="text-center p-4 bg-gray-50 rounded-xl hover:bg-purple-50 transition-colors cursor-pointer">
-                                <i class="fas fa-money-bill-wave text-3xl text-green-500 mb-2"></i>
-                                <h4 class="text-slate-700 font-bold text-sm">Payroll Processing</h4>
-                            </div>
-                            <div class="text-center p-4 bg-gray-50 rounded-xl hover:bg-purple-50 transition-colors cursor-pointer">
-                                <i class="fas fa-chart-pie text-3xl text-purple-500 mb-2"></i>
-                                <h4 class="text-slate-700 font-bold text-sm">Analytics & Reports</h4>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="mt-16">
-            <h2 class="text-3xl font-black text-center mb-12 text-slate-700">Powerful Features</h2>
-            <div class="flex flex-wrap -mx-3">
-                <div class="w-full max-w-full px-3 mb-6 md:w-1/2 lg:w-1/3">
-                    <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border p-6 hover:shadow-lg transition-shadow">
-                        <div class="inline-block w-14 h-14 mb-4 text-center rounded-xl bg-gradient-to-tl from-purple-700 to-pink-500 flex items-center justify-center">
-                            <i class="fas fa-fingerprint text-2xl text-white"></i>
-                        </div>
-                        <h4 class="text-slate-700 font-bold mb-2 text-lg">Biometric Attendance</h4>
-                        <p class="text-sm text-slate-500">Advanced attendance tracking with face recognition and GPS location verification.</p>
-                    </div>
-                </div>
-                <div class="w-full max-w-full px-3 mb-6 md:w-1/2 lg:w-1/3">
-                    <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border p-6 hover:shadow-lg transition-shadow">
-                        <div class="inline-block w-14 h-14 mb-4 text-center rounded-xl bg-gradient-to-tl from-blue-600 to-cyan-400 flex items-center justify-center">
-                            <i class="fas fa-users text-2xl text-white"></i>
-                        </div>
-                        <h4 class="text-slate-700 font-bold mb-2 text-lg">Employee Management</h4>
-                        <p class="text-sm text-slate-500">Complete employee profiles, departments, job titles, and organizational structure.</p>
-                    </div>
-                </div>
-                <div class="w-full max-w-full px-3 mb-6 md:w-1/2 lg:w-1/3">
-                    <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border p-6 hover:shadow-lg transition-shadow">
-                        <div class="inline-block w-14 h-14 mb-4 text-center rounded-xl bg-gradient-to-tl from-green-600 to-lime-400 flex items-center justify-center">
-                            <i class="fas fa-calendar-minus text-2xl text-white"></i>
-                        </div>
-                        <h4 class="text-slate-700 font-bold mb-2 text-lg">Leave Management</h4>
-                        <p class="text-sm text-slate-500">Streamlined leave requests with approval workflows and automatic leave balance tracking.</p>
-                    </div>
-                </div>
-                <div class="w-full max-w-full px-3 mb-6 md:w-1/2 lg:w-1/3">
-                    <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border p-6 hover:shadow-lg transition-shadow">
-                        <div class="inline-block w-14 h-14 mb-4 text-center rounded-xl bg-gradient-to-tl from-yellow-600 to-orange-400 flex items-center justify-center">
-                            <i class="fas fa-money-check text-2xl text-white"></i>
-                        </div>
-                        <h4 class="text-slate-700 font-bold mb-2 text-lg">Payroll Processing</h4>
-                        <p class="text-sm text-slate-500">Automated salary calculations, overtime pay, and comprehensive payroll reports.</p>
-                    </div>
-                </div>
-                <div class="w-full max-w-full px-3 mb-6 md:w-1/2 lg:w-1/3">
-                    <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border p-6 hover:shadow-lg transition-shadow">
-                        <div class="inline-block w-14 h-14 mb-4 text-center rounded-xl bg-gradient-to-tl from-red-600 to-rose-400 flex items-center justify-center">
-                            <i class="fas fa-file-invoice-dollar text-2xl text-white"></i>
-                        </div>
-                        <h4 class="text-slate-700 font-bold mb-2 text-lg">Reimbursements</h4>
-                        <p class="text-sm text-slate-500">Easy expense submission with approval workflow and tracking for all employee expenses.</p>
-                    </div>
-                </div>
-                <div class="w-full max-w-full px-3 mb-6 md:w-1/2 lg:w-1/3">
-                    <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border p-6 hover:shadow-lg transition-shadow">
-                        <div class="inline-block w-14 h-14 mb-4 text-center rounded-xl bg-gradient-to-tl from-indigo-600 to-purple-400 flex items-center justify-center">
-                            <i class="fas fa-chart-line text-2xl text-white"></i>
-                        </div>
-                        <h4 class="text-slate-700 font-bold mb-2 text-lg">Analytics & Reports</h4>
-                        <p class="text-sm text-slate-500">Real-time insights and comprehensive reports on attendance, leaves, and payroll.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="mt-16 bg-gradient-to-tl from-purple-700 to-pink-500 rounded-3xl p-12 text-center">
-            <h2 class="text-3xl font-black text-white mb-4">Ready to Get Started?</h2>
-            <p class="text-white/80 mb-8 text-lg">Join hundreds of companies using {{ config('app.name', 'ABS') }} to manage their workforce.</p>
-            @guest
-            <div class="flex justify-center gap-4">
-                <a href="{{ route('register') }}" class="inline-block px-8 py-3 font-bold text-center text-purple-700 uppercase align-middle bg-white rounded-lg shadow-none cursor-pointer hover:scale-102 active:shadow-soft-xs leading-pro text-sm">
-                    <i class="fas fa-rocket mr-2"></i> Start Free Trial
+    <!-- Header -->
+    <header style="background:#fff;border-bottom:3px solid #1a1a1a;padding:20px 0;">
+        <div class="container">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+                <a href="/" style="display:flex;align-items:center;gap:12px;text-decoration:none;">
+                    <div class="logo"><i class="fas fa-fingerprint" style="font-size:20px;"></i></div>
+                    <span style="font-size:22px;font-weight:800;color:#1a1a1a;">{{ config('app.name', 'ABS') }}</span>
                 </a>
-                <a href="{{ route('login') }}" class="inline-block px-8 py-3 font-bold text-center text-white uppercase align-middle border border-white rounded-lg shadow-none cursor-pointer hover:scale-102 active:shadow-soft-xs leading-pro text-sm">
-                    <i class="fas fa-play mr-2"></i> View Demo
-                </a>
+                <div style="display:flex;gap:16px;align-items:center;">
+                    @auth
+                        <a href="{{ url('/dashboard') }}" class="btn btn-black" style="padding:10px 20px;font-size:14px;">Dashboard</a>
+                    @else
+                        <a href="{{ route('login') }}" style="font-size:15px;font-weight:700;color:#1a1a1a;text-decoration:none;">Sign In</a>
+                        @if(Route::has('register'))
+                        <a href="{{ route('register') }}" class="btn btn-yellow" style="padding:10px 20px;font-size:14px;">Get Started</a>
+                        @endif
+                    @endauth
+                </div>
             </div>
-            @else
-            <a href="{{ url('/dashboard') }}" class="inline-block px-8 py-3 font-bold text-center text-purple-700 uppercase align-middle bg-white rounded-lg shadow-none cursor-pointer hover:scale-102 active:shadow-soft-xs leading-pro text-sm">
-                <i class="fas fa-tachometer-alt mr-2"></i> Go to Dashboard
-            </a>
-            @endguest
+        </div>
+    </header>
+
+    <!-- Main -->
+    <main style="padding:60px 0;">
+        <div class="container">
+            <!-- Hero -->
+            <div style="text-align:center;margin-bottom:50px;">
+                <div style="display:inline-block;background:#ffde59;border:2px solid #1a1a1a;border-radius:25px;padding:10px 20px;font-size:13px;font-weight:700;margin-bottom:24px;">
+                    ✨ Laravel 13 • GPS Tracking • Leaflet Maps
+                </div>
+                <h1 style="font-size:56px;font-weight:800;color:#1a1a1a;margin-bottom:20px;line-height:1.05;">
+                    Attendance &<br>
+                    <span style="background:linear-gradient(90deg,#ff8ba7,#bb9af7,#7aa2f7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Employee Management</span>
+                </h1>
+                <p style="font-size:18px;color:#666;max-width:550px;margin:0 auto 35px;line-height:1.6;">
+                    Complete system for managing employee attendance, leaves, payroll, and reimbursements with GPS tracking via Leaflet maps.
+                </p>
+                <div style="display:flex;justify-content:center;gap:20px;margin-bottom:60px;">
+                    @guest
+                        <a href="{{ route('register') }}" class="btn btn-yellow" style="font-size:15px;">Start Free Trial</a>
+                        <a href="{{ route('login') }}" class="btn btn-black" style="font-size:15px;">Sign In</a>
+                    @else
+                        <a href="{{ url('/dashboard') }}" class="btn btn-blue" style="font-size:15px;">Go to Dashboard</a>
+                    @endguest
+                </div>
+            </div>
+
+            <!-- Marquee Tilted -->
+            <div style="margin-bottom:50px;transform:rotate(-2deg);">
+                <div style="background:#7aa2f7;border:3px solid #1a1a1a;overflow:hidden;padding:16px 0;box-shadow:6px 6px 0 #1a1a1a;">
+                    <div style="display:flex;animation:scroll 12s linear infinite;white-space:nowrap;">
+                        <span style="color:#1a1a1a;font-size:16px;font-weight:800;margin-right:60px;">🚀 SMART ATTENDANCE • 📍 GPS LOCATION • 📅 LEAVE MANAGEMENT • 💰 PAYROLL • 💳 REIMBURSEMENTS • 👥 EMPLOYEES • 📊 HR PANEL • ⚙️ ADMIN •</span>
+                        <span style="color:#1a1a1a;font-size:16px;font-weight:800;margin-right:60px;">🚀 SMART ATTENDANCE • 📍 GPS LOCATION • 📅 LEAVE MANAGEMENT • 💰 PAYROLL • 💳 REIMBURSEMENTS • 👥 EMPLOYEES • 📊 HR PANEL • ⚙️ ADMIN •</span>
+                        <span style="color:#1a1a1a;font-size:16px;font-weight:800;margin-right:60px;">🚀 SMART ATTENDANCE • 📍 GPS LOCATION • 📅 LEAVE MANAGEMENT • 💰 PAYROLL • 💳 REIMBURSEMENTS • 👥 EMPLOYEES • 📊 HR PANEL • ⚙️ ADMIN •</span>
+                        <span style="color:#1a1a1a;font-size:16px;font-weight:800;margin-right:60px;">🚀 SMART ATTENDANCE • 📍 GPS LOCATION • 📅 LEAVE MANAGEMENT • 💰 PAYROLL • 💳 REIMBURSEMENTS • 👥 EMPLOYEES • 📊 HR PANEL • ⚙️ ADMIN •</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features -->
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-bottom:50px;">
+                <div class="neo" style="padding:24px;">
+                    <div style="width:48px;height:48px;background:#7aa2f7;border:2px solid #1a1a1a;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;box-shadow:3px 3px 0 #1a1a1a;">
+                        <i class="fas fa-user" style="font-size:20px;"></i>
+                    </div>
+                    <h3 style="font-size:18px;font-weight:800;margin-bottom:10px;">Employee Panel</h3>
+                    <ul style="list-style:none;font-size:13px;color:#666;line-height:2;">
+                        <li>✓ Smart Attendance with GPS</li>
+                        <li>✓ Leave Management</li>
+                        <li>✓ Reimbursements</li>
+                        <li>✓ Payroll View</li>
+                        <li>✓ Announcements</li>
+                    </ul>
+                </div>
+                <div class="neo" style="padding:24px;">
+                    <div style="width:48px;height:48px;background:#ff8ba7;border:2px solid #1a1a1a;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;box-shadow:3px 3px 0 #1a1a1a;">
+                        <i class="fas fa-users" style="font-size:20px;"></i>
+                    </div>
+                    <h3 style="font-size:18px;font-weight:800;margin-bottom:10px;">HR Panel</h3>
+                    <ul style="list-style:none;font-size:13px;color:#666;line-height:2;">
+                        <li>✓ Attendance Monitoring</li>
+                        <li>✓ Leave Approval</li>
+                        <li>✓ Reimbursement Approval</li>
+                        <li>✓ Payroll Management</li>
+                    </ul>
+                </div>
+                <div class="neo" style="padding:24px;">
+                    <div style="width:48px;height:48px;background:#98ff98;border:2px solid #1a1a1a;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;box-shadow:3px 3px 0 #1a1a1a;">
+                        <i class="fas fa-cogs" style="font-size:20px;"></i>
+                    </div>
+                    <h3 style="font-size:18px;font-weight:800;margin-bottom:10px;">Admin Panel</h3>
+                    <ul style="list-style:none;font-size:13px;color:#666;line-height:2;">
+                        <li>✓ User Management</li>
+                        <li>✓ Department & Roles</li>
+                        <li>✓ Shift Management</li>
+                        <li>✓ Location Management</li>
+                        <li>✓ Dashboard Analytics</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Tech Stack -->
+            <div class="neo" style="padding:28px;background:#ffde59;margin-bottom:50px;text-align:center;">
+                <div style="font-size:16px;font-weight:800;margin-bottom:12px;">🛠️ TECHNOLOGY STACK</div>
+                <div style="font-size:14px;font-weight:600;color:#1a1a1a;">
+                    Laravel 13 • PHP 8.3 • Tailwind CSS • Alpine.js • Leaflet Maps • MySQL • Font Awesome
+                </div>
+            </div>
+
+            <!-- CTA -->
+            <div class="neo" style="padding:40px;background:#1a1a1a;text-align:center;margin-bottom:50px;">
+                <h3 style="font-size:28px;font-weight:800;color:#fff;margin-bottom:12px;">Ready to get started?</h3>
+                <p style="color:#ccc;margin-bottom:24px;font-size:15px;">Join 500+ companies managing their workforce with ABS</p>
+                @guest
+                <a href="{{ route('register') }}" class="btn btn-yellow" style="margin-right:12px;">Start Free Trial</a>
+                <a href="{{ route('login') }}" class="btn" style="background:#fff;color:#1a1a1a;">Sign In</a>
+                @else
+                <a href="{{ url('/dashboard') }}" class="btn btn-yellow">Go to Dashboard</a>
+                @endguest
+            </div>
+
+            <!-- Stats -->
+            <div style="display:flex;justify-content:center;gap:50px;">
+                <div><span style="font-size:32px;font-weight:800;">500+</span><br><span style="font-size:13px;color:#666;">Active Users</span></div>
+                <div><span style="font-size:32px;font-weight:800;">50+</span><br><span style="font-size:13px;color:#666;">Companies</span></div>
+                <div><span style="font-size:32px;font-weight:800;">99.9%</span><br><span style="font-size:13px;color:#666;">Uptime</span></div>
+            </div>
         </div>
     </main>
 
-    <footer class="w-full px-6 py-8 mx-auto mt-12">
-        <div class="flex flex-wrap -mx-3 border-t border-gray-200 pt-8">
-            <div class="w-full max-w-full px-3 mb-6 md:w-1/3">
-                <h5 class="text-slate-700 font-bold mb-4">{{ config('app.name', 'ABS') }}</h5>
-                <p class="text-sm text-slate-400">Modern attendance and employee management system for businesses of all sizes.</p>
-            </div>
-            <div class="w-full max-w-full px-3 mb-6 md:w-1/3">
-                <h5 class="text-slate-700 font-bold mb-4">Quick Links</h5>
-                <ul class="text-sm text-slate-400 space-y-2">
-                    <li><a href="#" class="hover:text-purple-600">Features</a></li>
-                    <li><a href="#" class="hover:text-purple-600">Pricing</a></li>
-                    <li><a href="#" class="hover:text-purple-600">Documentation</a></li>
-                    <li><a href="#" class="hover:text-purple-600">Support</a></li>
-                </ul>
-            </div>
-            <div class="w-full max-w-full px-3 mb-6 md:w-1/3">
-                <h5 class="text-slate-700 font-bold mb-4">Contact</h5>
-                <ul class="text-sm text-slate-400 space-y-2">
-                    <li><i class="fas fa-envelope mr-2"></i> support@abs-system.com</li>
-                    <li><i class="fas fa-phone mr-2"></i> +1 (555) 123-4567</li>
-                </ul>
-            </div>
-        </div>
-        <div class="text-center mt-8 pt-8 border-t border-gray-200">
-            <p class="text-sm text-slate-400">
-                © {{ date('Y') }} {{ config('app.name', 'ABS') }}. All rights reserved.
-            </p>
+    <!-- Footer -->
+    <footer style="background:#fff;border-top:3px solid #1a1a1a;padding:24px 0;text-align:center;">
+        <div class="container">
+            <p style="font-size:13px;font-weight:600;">© {{ date('Y') }} {{ config('app.name', 'ABS') }} • Privacy • Terms • Support</p>
         </div>
     </footer>
-
-    <script src="{{ asset('assets/js/soft-ui-dashboard-tailwind.js') }}"></script>
 </body>
 </html>

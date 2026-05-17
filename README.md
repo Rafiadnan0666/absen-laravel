@@ -13,20 +13,20 @@
 
 ## Features
 
-### 👨‍💼 Employee Panel
+### Employee Panel
 - **Smart Attendance** - Check-in/check-out with GPS location tracking via Leaflet maps
 - **Leave Management** - Request leaves with date range and reason
 - **Reimbursements** - Submit expense claims with approval workflow
 - **Payroll View** - View salary slips and payment history
 - **Announcements** - Stay updated with company announcements
 
-### 👥 HR Panel
+### HR Panel
 - **Attendance Monitoring** - View all employee attendance records
 - **Leave Approval** - Approve or reject leave requests
 - **Reimbursement Approval** - Process employee expense claims
 - **Payroll Management** - View and manage payroll records
 
-### ⚙️ Admin Panel
+### Admin Panel
 - **User Management** - Create, edit, and manage employee accounts
 - **Department Management** - Organize employees by department
 - **Role & Permission System** - Granular access control (Admin, HR, Employee)
@@ -224,5 +224,5 @@ For issues and feature requests, please create an issue on GitHub.
 
 ---
 
-<p align="center">Built with ❤️ using Laravel</p>
+<p align="center">Built with Laravel</p>
 <p align="center">Version 1.0.0 | Last Updated: May 2026</p>

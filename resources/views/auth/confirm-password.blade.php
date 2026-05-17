@@ -1,26 +1,33 @@
-<x-guest-layout>
-    <div class="neo-card max-w-md mx-auto mt-8">
-        <h1 class="text-3xl font-black mb-4 text-center">CONFIRM PASSWORD</h1>
-        <p class="mb-6 font-bold text-sm">This is a secure area. Please confirm your password before continuing.</p>
+@extends('auth.layout')
 
-        <form method="POST" action="{{ route('password.confirm') }}">
+@section('title', 'Confirm Password - ABS')
+@section('subtitle', 'Please confirm your password to continue')
+
+@section('content')
+    <p class="text-sm text-slate-600 mb-6">This is a secure area. Please confirm your password before continuing.</p>
+
+    <form method="POST" action="{{ route('password.confirm') }}">
+        @csrf
+
+        <div class="mb-6">
+            <label for="password" class="block text-sm font-semibold text-slate-700 mb-2">Password</label>
+            <input id="password" type="password" name="password" required autocomplete="current-password"
+                class="input-field"
+                placeholder="Enter your password">
+            <x-input-error :messages="$errors->get('password')" class="mt-2 text-sm text-red-500" />
+        </div>
+
+        <button type="submit" class="btn-primary">
+            <i class="fas fa-check mr-2"></i>Confirm
+        </button>
+    </form>
+
+    @section('footer')
+        <form method="POST" action="{{ route('logout') }}" class="text-center">
             @csrf
-
-            <!-- Password -->
-            <div class="mb-6">
-                <label for="password" class="block text-lg font-black mb-2">PASSWORD</label>
-                <x-text-input id="password" class="neo-input"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
-                <x-input-error :messages="$errors->get('password')" class="mt-2" />
-            </div>
-
-            <div class="flex justify-end">
-                <button type="submit" class="neo-btn bg-green-200">
-                    {{ __('Confirm') }}
-                </button>
-            </div>
+            <button type="submit" class="text-sm font-medium text-slate-500 hover:text-slate-700">
+                <i class="fas fa-sign-out-alt mr-1"></i>Sign out
+            </button>
         </form>
-    </div>
-</x-guest-layout>
+    @endsection
+@endsection

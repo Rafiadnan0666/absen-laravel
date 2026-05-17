@@ -1,35 +1,35 @@
-@extends('layouts.guest')
+@extends('auth.layout')
 
 @section('title', 'Forgot Password - ABS')
-
-@section('header', 'Forgot Password')
+@section('subtitle', 'Enter your email to reset your password')
 
 @section('content')
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
-    
-    <p class="mb-6 text-sm text-slate-500 text-center">Enter your email and we'll send a password reset link.</p>
+    <x-auth-session-status class="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg text-sm text-green-700" :status="session('status')" />
+
+    <p class="text-sm text-slate-600 mb-6">Enter your email address and we'll send you a link to reset your password.</p>
 
     <form method="POST" action="{{ route('password.email') }}">
         @csrf
 
-        <!-- Email Address -->
         <div class="mb-6">
-            <label for="email" class="inline-block mb-2 text-sm font-bold text-slate-700">Email</label>
+            <label for="email" class="block text-sm font-semibold text-slate-700 mb-2">Email</label>
             <input id="email" type="email" name="email" :value="old('email')" required autofocus
-                class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
+                class="input-field"
                 placeholder="Enter your email">
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+            <x-input-error :messages="$errors->get('email')" class="mt-2 text-sm text-red-500" />
         </div>
 
-        <div class="flex items-center justify-between mt-4">
-            <a href="{{ route('login') }}" class="text-sm font-bold text-slate-700 hover:underline">
-                {{ __('Back to login') }}
-            </a>
-
-            <button type="submit" class="inline-block px-6 py-3 mb-0 text-xs font-bold text-right uppercase align-middle transition-all border-0 rounded-lg cursor-pointer hover:scale-102 active:opacity-85 leading-pro ease-soft-in tracking-tight-soft bg-150 bg-x-25 bg-gradient-to-tl from-gray-900 to-slate-800 text-white">
-                {{ __('Send Reset Link') }}
-            </button>
-        </div>
+        <button type="submit" class="btn-primary">
+            <i class="fas fa-paper-plane mr-2"></i>Send Reset Link
+        </button>
     </form>
+
+    @section('footer')
+        <p class="text-center text-sm text-slate-600">
+            Remember your password?
+            <a href="{{ route('login') }}" class="font-semibold text-purple-600 hover:text-purple-800 hover:underline">
+                Sign in
+            </a>
+        </p>
+    @endsection
 @endsection
