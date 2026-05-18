@@ -77,7 +77,8 @@ class ReimbursementTest extends TestCase
 
     public function test_hr_can_view_all_pending_reimbursements(): void
     {
-        $user = User::factory()->create();
+        $role = \App\Models\Role::factory()->create(['nama_role' => 'hr']);
+        $user = User::factory()->create(['role_id' => $role->id]);
         Reimbursement::factory()->count(3)->create([
             'status' => 'pending',
         ]);

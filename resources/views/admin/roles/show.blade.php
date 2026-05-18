@@ -43,7 +43,7 @@
           </div>
         </div>
         <div class="mb-4">
-          <label class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700">Users ({{ $role->users->count() }})</label>
+          <label class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700">Users ({{ $users->total() }})</label>
           <div class="overflow-x-auto mt-2">
             <table class="items-center w-full mb-0 align-top border-gray-200 text-slate-500">
               <thead>
@@ -53,7 +53,7 @@
                 </tr>
               </thead>
               <tbody>
-                @forelse($role->users as $user)
+                @forelse($users as $user)
                 <tr>
                   <td class="p-2 text-sm">{{ $user->nama_lengkap }}</td>
                   <td class="p-2 text-sm">{{ $user->email }}</td>
@@ -65,6 +65,9 @@
                 @endforelse
               </tbody>
             </table>
+            <div class="mt-4">
+              {{ $users->links() }}
+            </div>
           </div>
         </div>
       </div>

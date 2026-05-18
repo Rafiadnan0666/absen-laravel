@@ -29,40 +29,39 @@
           <p class="text-sm font-semibold text-slate-700">{{ $shift->nama_shift }}</p>
         </div>
         <div class="mb-4">
-          <label class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700">Check In Time</label>
-          <p class="text-sm text-slate-700">{{ $shift->jam_masuk }}</p>
+          <label class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700">Schedule</label>
+          <p class="text-sm text-slate-700">{{ \Carbon\Carbon::parse($shift->jam_masuk)->format('H:i') }} - {{ \Carbon\Carbon::parse($shift->jam_pulang)->format('H:i') }}</p>
         </div>
         <div class="mb-4">
-          <label class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700">Check Out Time</label>
-          <p class="text-sm text-slate-700">{{ $shift->jam_pulang }}</p>
+          <label class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700">Late Tolerance</label>
+          <p class="text-sm text-slate-700">{{ $shift->toleransi_telat_menit }} minutes</p>
         </div>
         <div class="mb-4">
-          <label class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700">Late Tolerance (minutes)</label>
-          <p class="text-sm text-slate-700">{{ $shift->toleransi_telat_menit }}</p>
-        </div>
-        <div class="mb-4">
-          <label class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700">Created At</label>
-          <p class="text-sm text-slate-700">{{ $shift->created_at->format('d M Y H:i') }}</p>
-        </div>
-        <div class="mb-4">
-          <label class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700">Assigned Users ({{ $shift->userShifts->count() }})</label>
+          <label class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700">User Shifts ({{ $userShifts->total() }})</label>
           <div class="overflow-x-auto mt-2">
             <table class="items-center w-full mb-0 align-top border-gray-200 text-slate-500">
               <thead>
                 <tr>
-                  <th class="px-4 py-2 text-left text-xxs font-bold uppercase">User</th>
+                  <th class="px-4 py-2 text-left text-xxs font-bold uppercase">Employee</th>
                   <th class="px-4 py-2 text-left text-xxs font-bold uppercase">Date</th>
                 </tr>
               </thead>
               <tbody>
-                @foreach($shift->userShifts as $userShift)
+                @forelse($userShifts as $us)
                 <tr>
-                  <td class="p-2 text-sm">{{ $userShift->user->nama_lengkap ?? 'N/A' }}</td>
-                  <td class="p-2 text-sm">{{ $userShift->tanggal_shift }}</td>
+                  <td class="p-2 text-sm">{{ $us->user->nama_lengkap ?? 'N/A' }}</td>
+                  <td class="p-2 text-sm">{{ \Carbon\Carbon::parse($us->tanggal_shift)->format('d M Y') }}</td>
                 </tr>
-                @endforeach
+                @empty
+                <tr>
+                  <td colspan="2" class="p-4 text-center text-slate-400">No user shifts assigned</td>
+                </tr>
+                @endforelse
               </tbody>
             </table>
+            <div class="mt-4">
+              {{ $userShifts->links() }}
+            </div>
           </div>
         </div>
       </div>

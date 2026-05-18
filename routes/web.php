@@ -48,14 +48,12 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-
-Route::get('/admin/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
-Route::get('/admin/settings', [App\Http\Controllers\Admin\SettingsController::class, 'index'])->name('admin.settings.index');
-Route::post('/admin/settings/general', [App\Http\Controllers\Admin\SettingsController::class, 'general'])->name('admin.settings.general');
-Route::post('/admin/settings/clear-cache', [App\Http\Controllers\Admin\SettingsController::class, 'clearCache'])->name('admin.settings.clearCache');
-Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::get('/settings', [App\Http\Controllers\Admin\SettingsController::class, 'index'])->name('settings.index');
+    Route::post('/settings/general', [App\Http\Controllers\Admin\SettingsController::class, 'general'])->name('settings.general');
+    Route::post('/settings/clear-cache', [App\Http\Controllers\Admin\SettingsController::class, 'clearCache'])->name('settings.clearCache');
     Route::resource('users', UserController::class);
     Route::resource('attendances', AttendanceController::class);
     Route::resource('leaves', LeaveController::class);
@@ -93,7 +91,7 @@ Route::middleware(['auth'])->prefix('employee')->name('employee.')->group(functi
     Route::resource('announcements', App\Http\Controllers\Employee\AnnouncementController::class)->only(['index', 'show']);
 });
 
-Route::middleware(['auth'])->prefix('hr')->name('hr.')->group(function () {
+Route::middleware(['auth', 'hr'])->prefix('hr')->name('hr.')->group(function () {
     Route::get('/dashboard', [HRDashboardController::class, 'index'])->name('dashboard');
     Route::resource('attendances', HRAttendanceController::class)->only(['index']);
     Route::resource('leaves', HRLeaveController::class)->only(['index']);

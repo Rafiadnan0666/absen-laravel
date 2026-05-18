@@ -17,7 +17,7 @@ class PayrollDetailController extends Controller
 
     public function create()
     {
-        $payrolls = Payroll::with('user')->get();
+        $payrolls = Payroll::with('user')->latest('periode_mulai')->limit(200)->get();
         return view('admin.payroll-details.create', compact('payrolls'));
     }
 
@@ -41,7 +41,7 @@ class PayrollDetailController extends Controller
 
     public function edit(PayrollDetail $payrollDetail)
     {
-        $payrolls = Payroll::with('user')->get();
+        $payrolls = Payroll::with('user')->latest('periode_mulai')->limit(200)->get();
         return view('admin.payroll-details.edit', compact('payrollDetail', 'payrolls'));
     }
 

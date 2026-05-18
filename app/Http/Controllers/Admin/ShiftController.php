@@ -32,10 +32,10 @@ class ShiftController extends Controller
         return redirect()->route('admin.shifts.index')->with('success', 'Shift created');
     }
 
-    public function show(Shift $shift)
+    public function show(Request $request, Shift $shift)
     {
-        $shift->load('userShifts.user');
-        return view('admin.shifts.show', compact('shift'));
+        $userShifts = $shift->userShifts()->with('user')->paginate(10);
+        return view('admin.shifts.show', compact('shift', 'userShifts'));
     }
 
     public function edit(Shift $shift)

@@ -41,7 +41,7 @@
           <p class="text-sm text-slate-700">{{ $jobTitle->created_at->format('d M Y H:i') }}</p>
         </div>
         <div class="mb-4">
-          <label class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700">Employees ({{ $jobTitle->users->count() }})</label>
+          <label class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700">Employees ({{ $users->total() }})</label>
           <div class="overflow-x-auto mt-2">
             <table class="items-center w-full mb-0 align-top border-gray-200 text-slate-500">
               <thead>
@@ -51,7 +51,7 @@
                 </tr>
               </thead>
               <tbody>
-                @foreach($jobTitle->users as $user)
+                @foreach($users as $user)
                 <tr>
                   <td class="p-2 text-sm">{{ $user->nama_lengkap }}</td>
                   <td class="p-2 text-sm">{{ $user->email }}</td>
@@ -59,6 +59,9 @@
                 @endforeach
               </tbody>
             </table>
+            <div class="mt-4">
+              {{ $users->links() }}
+            </div>
           </div>
         </div>
       </div>

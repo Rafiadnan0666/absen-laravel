@@ -15,12 +15,12 @@ return new class extends Migration
             $table->string('password');
             $table->string('no_hp')->nullable();
             $table->text('alamat')->nullable();
-            $table->foreignId('job_title_id');
-            $table->foreignId('department_id');
-            $table->foreignId('role_id');
-            $table->enum('tipe_gaji', ['hourly', 'daily', 'monthly']);
-            $table->decimal('jumlah_gaji', 15, 2);
-            $table->date('tanggal_masuk');
+            $table->foreignId('job_title_id')->nullable();
+            $table->foreignId('department_id')->nullable();
+            $table->foreignId('role_id')->nullable();
+            $table->enum('tipe_gaji', ['hourly', 'daily', 'monthly'])->nullable();
+            $table->decimal('jumlah_gaji', 15, 2)->nullable();
+            $table->date('tanggal_masuk')->nullable();
             $table->enum('status_akun', ['active', 'inactive'])->default('active');
             $table->json('face_embedding')->nullable();
             $table->rememberToken();

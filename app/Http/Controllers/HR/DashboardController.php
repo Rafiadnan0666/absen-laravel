@@ -15,7 +15,7 @@ class DashboardController extends Controller
     {
         $todayAttendances = Attendance::with('user')->whereDate('tanggal', today())->get();
         $pendingLeaves = Leave::with('user')->where('status_pengajuan', 'pending')->get();
-        $pendingReimbursements = Reimbursement::with('user')->where('status_pengajuan', 'pending')->get();
+        $pendingReimbursements = Reimbursement::with('user')->where('status', 'pending')->get();
         
         return view('hr.dashboard.index', compact('todayAttendances', 'pendingLeaves', 'pendingReimbursements'));
     }

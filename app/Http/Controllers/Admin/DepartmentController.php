@@ -30,10 +30,10 @@ class DepartmentController extends Controller
         return redirect()->route('admin.departments.index')->with('success', 'Department created');
     }
 
-    public function show(Department $department)
+    public function show(Request $request, Department $department)
     {
-        $department->load('users');
-        return view('admin.departments.show', compact('department'));
+        $users = $department->users()->paginate(10);
+        return view('admin.departments.show', compact('department', 'users'));
     }
 
     public function edit(Department $department)

@@ -26,9 +26,9 @@ class LeaveTest extends TestCase
         $user = User::factory()->create();
 
         $response = $this->actingAs($user)->post(route('employee.leaves.store'), [
-            'jenis_cuti' => 'sakit',
+            'tipe_cuti' => 'sick',
             'tanggal_mulai' => now()->addDays(2)->toDateString(),
-            'tanggal_akhir' => now()->addDays(4)->toDateString(),
+            'tanggal_selesai' => now()->addDays(4)->toDateString(),
             'alasan' => 'Sakit flu dan perlu istirahat',
         ]);
 
@@ -36,7 +36,7 @@ class LeaveTest extends TestCase
 
         $this->assertDatabaseHas('leaves', [
             'user_id' => $user->id,
-            'jenis_cuti' => 'sakit',
+            'tipe_cuti' => 'sick',
         ]);
     }
 

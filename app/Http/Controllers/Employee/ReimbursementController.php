@@ -25,12 +25,14 @@ class ReimbursementController extends Controller
     public function store(Request $request)
     {
         $request->validate([
+            'kategori' => 'required|string|max:100',
             'jumlah' => 'required|numeric|min:1000',
             'deskripsi' => 'required|string|max:500',
         ]);
 
         Reimbursement::create([
             'user_id' => auth()->id(),
+            'kategori' => $request->kategori,
             'jumlah' => $request->jumlah,
             'deskripsi' => $request->deskripsi,
             'status' => 'pending',

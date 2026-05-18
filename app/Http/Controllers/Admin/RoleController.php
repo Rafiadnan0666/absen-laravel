@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Permission;
 use App\Models\Role;
+use App\Models\Permission;
 use Illuminate\Http\Request;
 
 class RoleController extends Controller
@@ -24,23 +24,24 @@ class RoleController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nama_role' => 'required|string|max:255|unique:roles',
+            'nama_role' => 'required|string|max:255|unique:roles,nama_role',
             'permissions' => 'array',
             'permissions.*' => 'exists:permissions,id',
         ]);
 
         $role = Role::create(['nama_role' => $validated['nama_role']]);
         if (!empty($validated['permissions'])) {
-            $role->permissions()->sync($validated['permissions']);
+            $role->permissions()->attach($validated['permissions']);
         }
 
         return redirect()->route('admin.roles.index')->with('success', 'Role created');
     }
 
-    public function show(Role $role)
+    public function show(Request $request, Role $role)
     {
-        $role->load('users', 'permissions');
-        return view('admin.roles.show', compact('role'));
+        $users = $role->users()->paginate(10);
+        $role->load('permissions');
+        return view('admin.roles.show', compact('role', 'users'));
     }
 
     public function edit(Role $role)

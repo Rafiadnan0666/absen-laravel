@@ -24,17 +24,16 @@ class JobTitleController extends Controller
         $validated = $request->validate([
             'nama_jabatan' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
-            'default_gaji' => 'nullable|numeric|min:0',
         ]);
 
         JobTitle::create($validated);
         return redirect()->route('admin.job-titles.index')->with('success', 'Job Title created');
     }
 
-    public function show(JobTitle $jobTitle)
+    public function show(Request $request, JobTitle $jobTitle)
     {
-        $jobTitle->load('users');
-        return view('admin.job-titles.show', compact('jobTitle'));
+        $users = $jobTitle->users()->paginate(10);
+        return view('admin.job-titles.show', compact('jobTitle', 'users'));
     }
 
     public function edit(JobTitle $jobTitle)
@@ -45,9 +44,8 @@ class JobTitleController extends Controller
     public function update(Request $request, JobTitle $jobTitle)
     {
         $validated = $request->validate([
-            'nama_jabatan' => 'required|string|max:255',
+            'nama_jabatan' => 'required|string|max:255|unique:job_titles,nama_jabatan,' . $jobTitle->id,
             'deskripsi' => 'nullable|string',
-            'default_gaji' => 'nullable|numeric|min:0',
         ]);
 
         $jobTitle->update($validated);
