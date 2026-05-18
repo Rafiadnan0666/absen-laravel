@@ -46,6 +46,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::post('/tour/dismiss', function () {
+        session()->forget('show_tour');
+        return response()->json(['ok' => true]);
+    })->name('tour.dismiss');
 });
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
@@ -76,8 +80,19 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     Route::post('leaves/{leave}/approve', [LeaveController::class, 'approve'])->name('leaves.approve');
     Route::post('leaves/{leave}/reject', [LeaveController::class, 'reject'])->name('leaves.reject');
+    Route::post('leaves/bulk/approve', [LeaveController::class, 'bulkApprove'])->name('leaves.bulkApprove');
+    Route::post('leaves/bulk/reject', [LeaveController::class, 'bulkReject'])->name('leaves.bulkReject');
+    Route::get('leaves/export', [LeaveController::class, 'export'])->name('leaves.export');
+
     Route::post('reimbursements/{reimbursement}/approve', [ReimbursementController::class, 'approve'])->name('reimbursements.approve');
     Route::post('reimbursements/{reimbursement}/reject', [ReimbursementController::class, 'reject'])->name('reimbursements.reject');
+    Route::post('reimbursements/bulk/approve', [ReimbursementController::class, 'bulkApprove'])->name('reimbursements.bulkApprove');
+    Route::post('reimbursements/bulk/reject', [ReimbursementController::class, 'bulkReject'])->name('reimbursements.bulkReject');
+    Route::get('reimbursements/export', [ReimbursementController::class, 'export'])->name('reimbursements.export');
+
+    Route::get('attendances/export', [AttendanceController::class, 'export'])->name('attendances.export');
+    Route::get('payrolls/export', [PayrollController::class, 'export'])->name('payrolls.export');
+    Route::get('users/export', [UserController::class, 'export'])->name('users.export');
 });
 
 Route::middleware(['auth'])->prefix('employee')->name('employee.')->group(function () {
@@ -94,13 +109,16 @@ Route::middleware(['auth'])->prefix('employee')->name('employee.')->group(functi
 Route::middleware(['auth', 'hr'])->prefix('hr')->name('hr.')->group(function () {
     Route::get('/dashboard', [HRDashboardController::class, 'index'])->name('dashboard');
     Route::resource('attendances', HRAttendanceController::class)->only(['index']);
+    Route::get('attendances/export', [HRAttendanceController::class, 'export'])->name('attendances.export');
     Route::resource('leaves', HRLeaveController::class)->only(['index']);
     Route::post('leaves/{leave}/approve', [HRLeaveController::class, 'approve'])->name('leaves.approve');
     Route::post('leaves/{leave}/reject', [HRLeaveController::class, 'reject'])->name('leaves.reject');
+    Route::get('leaves/export', [HRLeaveController::class, 'export'])->name('leaves.export');
     Route::resource('payrolls', HRPayrollController::class)->only(['index']);
     Route::resource('reimbursements', HRReimbursementController::class)->only(['index']);
     Route::post('reimbursements/{reimbursement}/approve', [HRReimbursementController::class, 'approve'])->name('reimbursements.approve');
     Route::post('reimbursements/{reimbursement}/reject', [HRReimbursementController::class, 'reject'])->name('reimbursements.reject');
+    Route::get('reimbursements/export', [HRReimbursementController::class, 'export'])->name('reimbursements.export');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
 });
 

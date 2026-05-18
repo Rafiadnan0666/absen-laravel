@@ -40,7 +40,14 @@ class LeaveController extends Controller
             return view('admin.leaves._table', compact('leaves'))->render();
         }
 
-        return view('admin.leaves.index', compact('leaves'));
+        $totalLeaves = Leave::count();
+        $pendingCount = Leave::where('status_pengajuan', 'pending')->count();
+        $approvedCount = Leave::where('status_pengajuan', 'approved')->count();
+        $rejectedCount = Leave::where('status_pengajuan', 'rejected')->count();
+
+        return view('admin.leaves.index', compact(
+            'leaves', 'totalLeaves', 'pendingCount', 'approvedCount', 'rejectedCount'
+        ));
     }
 
     public function create()
@@ -116,5 +123,84 @@ class LeaveController extends Controller
             'approved_by' => auth()->id(),
         ]);
         return redirect()->route('admin.leaves.index')->with('success', 'Leave rejected');
+    }
+
+    public function bulkApprove(Request $request)
+    {
+        $ids = $request->input('ids', []);
+        if (empty($ids)) {
+            return redirect()->route('admin.leaves.index')->with('error', 'No items selected');
+        }
+
+        Leave::whereIn('id', $ids)->where('status_pengajuan', 'pending')
+            ->update(['status_pengajuan' => 'approved', 'approved_by' => auth()->id()]);
+
+        return redirect()->route('admin.leaves.index')->with('success', count($ids) . ' leaves approved');
+    }
+
+    public function bulkReject(Request $request)
+    {
+        $ids = $request->input('ids', []);
+        if (empty($ids)) {
+            return redirect()->route('admin.leaves.index')->with('error', 'No items selected');
+        }
+
+        Leave::whereIn('id', $ids)->where('status_pengajuan', 'pending')
+            ->update(['status_pengajuan' => 'rejected', 'approved_by' => auth()->id()]);
+
+        return redirect()->route('admin.leaves.index')->with('success', count($ids) . ' leaves rejected');
+    }
+
+    public function export(Request $request)
+    {
+        $query = Leave::with('user', 'approver');
+
+        if ($request->filled('search')) {
+            $s = $request->search;
+            $query->whereHas('user', fn($q) => $q->where('nama_lengkap', 'like', "%{$s}%"));
+        }
+        if ($request->filled('filterStatus')) {
+            $query->where('status_pengajuan', $request->filterStatus);
+        }
+        if ($request->filled('filterType')) {
+            $query->where('tipe_cuti', $request->filterType);
+        }
+        if ($request->filled('dateFrom')) {
+            $query->whereDate('tanggal_mulai', '>=', $request->dateFrom);
+        }
+        if ($request->filled('dateTo')) {
+            $query->whereDate('tanggal_selesai', '<=', $request->dateTo);
+        }
+
+        $leaves = $query->latest('tanggal_mulai')->get();
+
+        $filename = 'leaves-export-' . now()->format('Y-m-d-His') . '.csv';
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => "attachment; filename={$filename}",
+        ];
+
+        $callback = function () use ($leaves) {
+            $handle = fopen('php://output', 'w');
+            fprintf($handle, "\xEF\xBB\xBF");
+            fputcsv($handle, ['ID', 'Employee', 'Type', 'Start Date', 'End Date', 'Reason', 'Status', 'Approved By']);
+
+            foreach ($leaves as $l) {
+                fputcsv($handle, [
+                    $l->id,
+                    $l->user->nama_lengkap ?? 'N/A',
+                    $l->tipe_cuti,
+                    $l->tanggal_mulai->format('Y-m-d'),
+                    $l->tanggal_selesai->format('Y-m-d'),
+                    $l->alasan,
+                    $l->status_pengajuan,
+                    $l->approver->nama_lengkap ?? '-',
+                ]);
+            }
+
+            fclose($handle);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 }

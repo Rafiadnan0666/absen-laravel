@@ -43,7 +43,19 @@ class AttendanceController extends Controller
             return view('admin.attendances._table', compact('attendances'))->render();
         }
 
-        return view('admin.attendances.index', compact('attendances', 'departments'));
+        $total = Attendance::count();
+        $totalPresent = Attendance::where('status_hadir', 'present')->count();
+        $totalLate = Attendance::where('status_hadir', 'late')->count();
+        $totalAbsent = Attendance::where('status_hadir', 'absent')->count();
+        $todayPresent = Attendance::whereDate('tanggal', today())->where('status_hadir', 'present')->count();
+        $todayLate = Attendance::whereDate('tanggal', today())->where('status_hadir', 'late')->count();
+        $todayAbsent = Attendance::whereDate('tanggal', today())->where('status_hadir', 'absent')->count();
+
+        return view('admin.attendances.index', compact(
+            'attendances', 'departments',
+            'total', 'totalPresent', 'totalLate', 'totalAbsent',
+            'todayPresent', 'todayLate', 'todayAbsent'
+        ));
     }
 
     public function create()
@@ -116,5 +128,61 @@ class AttendanceController extends Controller
     public function calendar()
     {
         return view('admin.attendances.calendar');
+    }
+
+    public function export(Request $request)
+    {
+        $query = Attendance::with('user', 'user.department', 'location');
+
+        if ($request->filled('search')) {
+            $s = $request->search;
+            $query->whereHas('user', fn($q) => $q->where('nama_lengkap', 'like', "%{$s}%"));
+        }
+        if ($request->filled('filterStatus')) {
+            $query->where('status_hadir', $request->filterStatus);
+        }
+        if ($request->filled('filterDept')) {
+            $query->whereHas('user', fn($q) => $q->where('department_id', $request->filterDept));
+        }
+        if ($request->filled('dateFrom')) {
+            $query->whereDate('tanggal', '>=', $request->dateFrom);
+        }
+        if ($request->filled('dateTo')) {
+            $query->whereDate('tanggal', '<=', $request->dateTo);
+        }
+
+        $attendances = $query->latest('tanggal')->get();
+
+        $filename = 'attendances-export-' . now()->format('Y-m-d-His') . '.csv';
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => "attachment; filename={$filename}",
+        ];
+
+        $callback = function () use ($attendances) {
+            $handle = fopen('php://output', 'w');
+            fprintf($handle, "\xEF\xBB\xBF");
+            fputcsv($handle, ['ID', 'Employee', 'Department', 'Date', 'Check In', 'Check Out', 'Status', 'Work Hours', 'Late (min)', 'Early Leave (min)', 'Face Verified']);
+
+            foreach ($attendances as $a) {
+                fputcsv($handle, [
+                    $a->id,
+                    $a->user->nama_lengkap ?? 'N/A',
+                    $a->user->department->nama_department ?? 'N/A',
+                    $a->tanggal->format('Y-m-d'),
+                    $a->check_in ?? '-',
+                    $a->check_out ?? '-',
+                    $a->status_hadir,
+                    $a->jam_kerja ? $a->jam_kerja->format('H:i') : '-',
+                    $a->menit_telat ?? 0,
+                    $a->menit_pulang_cepat ?? 0,
+                    $a->face_verified ? 'Yes' : 'No',
+                ]);
+            }
+
+            fclose($handle);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 }

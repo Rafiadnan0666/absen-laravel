@@ -3,7 +3,7 @@
 @section('page-title', 'Dashboard')
 
 @section('content')
-    <div class="flex items-center justify-between mb-8">
+    <div id="tour-welcome" class="flex items-center justify-between mb-8">
         <div>
             <h1 class="text-4xl font-black text-slate-700">Dashboard</h1>
             <p class="text-slate-400">Welcome back, {{ $user->nama_lengkap }}</p>
@@ -16,7 +16,7 @@
     </div>
 
     <!-- Stats Cards - 4 col grid -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
+    <div id="tour-today-status" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
         <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border p-4">
             <div class="flex items-center justify-between mb-2">
                 <p class="mb-0 text-xs font-semibold text-slate-400">Today's Status</p>
@@ -78,7 +78,7 @@
     <!-- Middle: Attendance Detail (col) + My Info (col) -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         <!-- Today's Attendance Detail (column layout) -->
-        <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border">
+        <div id="tour-attendance-detail" class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border">
             <div class="flex items-center justify-between p-4 pb-0">
                 <h6 class="mb-0 font-bold text-slate-700"><i class="fas fa-calendar-day text-green-500 mr-2"></i>Today's Attendance</h6>
             </div>
@@ -130,7 +130,7 @@
         </div>
 
         <!-- My Info (column layout) -->
-        <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border">
+        <div id="tour-my-info" class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border">
             <div class="flex items-center justify-between p-4 pb-0">
                 <h6 class="mb-0 font-bold text-slate-700"><i class="fas fa-user-circle text-blue-500 mr-2"></i>My Info</h6>
             </div>
@@ -171,7 +171,7 @@
 
     <!-- Today's Shift Info (full width row) -->
     @if($userShift)
-    <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border mb-6">
+    <div id="tour-shift" class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border mb-6">
         <div class="flex items-center justify-between p-4 pb-0">
             <h6 class="mb-0 font-bold text-slate-700"><i class="fas fa-clock text-blue-500 mr-2"></i>Today's Shift</h6>
         </div>
@@ -201,7 +201,7 @@
     <!-- Tables Row: Recent Attendance (col) + My Leaves (col) -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- Recent Attendance -->
-        <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border">
+        <div id="tour-recent-attendance" class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border">
             <div class="flex items-center justify-between p-4 pb-0">
                 <h6 class="mb-0 font-bold text-slate-700"><i class="fas fa-history text-green-500 mr-2"></i>Recent Attendance</h6>
                 <a href="{{ route('employee.attendances.index') }}" class="text-xs font-semibold text-blue-500 hover:text-blue-600">View All →</a>
@@ -242,7 +242,7 @@
         </div>
 
         <!-- My Leaves -->
-        <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border">
+        <div id="tour-leaves" class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border">
             <div class="flex items-center justify-between p-4 pb-0">
                 <h6 class="mb-0 font-bold text-slate-700"><i class="fas fa-calendar-alt text-purple-500 mr-2"></i>My Leaves</h6>
                 <a href="{{ route('employee.leaves.index') }}" class="text-xs font-semibold text-blue-500 hover:text-blue-600">View All →</a>

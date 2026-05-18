@@ -1,5 +1,8 @@
 @forelse($leaves as $leave)
 <tr>
+  <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent text-center">
+    <input type="checkbox" class="bulk-checkbox rounded border-slate-300 text-purple-600 focus:ring-purple-500" value="{{ $leave->id }}">
+  </td>
   <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
     <p class="mb-0 font-semibold leading-normal text-sm">{{ $leave->id }}</p>
   </td>
@@ -45,7 +48,7 @@
 </tr>
 @empty
 <tr>
-  <td colspan="7" class="p-4 text-center text-slate-400">No leave requests found</td>
+  <td colspan="8" class="p-4 text-center text-slate-400">No leave requests found</td>
 </tr>
 @endforelse
 </tbody></table>

@@ -3,7 +3,7 @@
 @section('page-title', 'HR Dashboard')
 
 @section('content')
-    <div class="flex items-center justify-between mb-8">
+    <div id="tour-welcome" class="flex items-center justify-between mb-8">
         <div>
             <h1 class="text-4xl font-black text-slate-700">HR Dashboard</h1>
             <p class="text-slate-400">Manage attendance, leaves & reimbursements</p>
@@ -16,7 +16,7 @@
     </div>
 
     <!-- Stats Cards - 3 col grid -->
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+    <div id="tour-stats" class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border p-4">
             <div class="flex items-center justify-between mb-2">
                 <p class="mb-0 text-xs font-semibold text-slate-400">Today's Attendance</p>
@@ -67,7 +67,7 @@
     </div>
 
     <!-- Today's Attendance Table (full width row) -->
-    <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border mb-6">
+    <div id="tour-today-attendance" class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border mb-6">
         <div class="flex items-center justify-between p-4 pb-0">
             <h6 class="mb-0 font-bold text-slate-700"><i class="fas fa-clipboard-list text-green-500 mr-2"></i>Today's Attendance</h6>
             <a href="{{ route('hr.attendances.index') }}" class="text-xs font-semibold text-blue-500 hover:text-blue-600">View All →</a>
@@ -112,7 +112,7 @@
     <!-- Pending Leaves & Reimbursements side by side (2 col) -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- Pending Leaves -->
-        <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border">
+        <div id="tour-pending-leaves" class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border">
             <div class="flex items-center justify-between p-4 pb-0">
                 <h6 class="mb-0 font-bold text-slate-700"><i class="fas fa-calendar-alt text-purple-500 mr-2"></i>Pending Leaves</h6>
                 <a href="{{ route('hr.leaves.index') }}" class="text-xs font-semibold text-blue-500 hover:text-blue-600">View All →</a>
@@ -161,7 +161,7 @@
         </div>
 
         <!-- Pending Reimbursements -->
-        <div class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border">
+        <div id="tour-pending-reimbursements" class="relative flex flex-col min-w-0 break-words bg-white shadow-soft-xl rounded-2xl bg-clip-border">
             <div class="flex items-center justify-between p-4 pb-0">
                 <h6 class="mb-0 font-bold text-slate-700"><i class="fas fa-receipt text-orange-500 mr-2"></i>Pending Reimbursements</h6>
                 <a href="{{ route('hr.reimbursements.index') }}" class="text-xs font-semibold text-blue-500 hover:text-blue-600">View All →</a>

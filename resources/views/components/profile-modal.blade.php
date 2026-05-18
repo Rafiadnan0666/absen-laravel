@@ -72,15 +72,15 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 p-4 bg-gray-50 rounded-xl">
                         <div class="text-center">
                             <p class="text-xs text-slate-500 mb-1">Department</p>
-                            <span class="text-sm font-bold text-slate-700">{{ auth()->user()->department->nama_department ?? '-' }}</span>
+                            <span class="text-sm font-bold text-slate-700">{{ auth()->user()->department?->nama_department ?? '-' }}</span>
                         </div>
                         <div class="text-center">
                             <p class="text-xs text-slate-500 mb-1">Job Title</p>
-                            <span class="text-sm font-bold text-slate-700">{{ auth()->user()->jobTitle->nama_jabatan ?? '-' }}</span>
+                            <span class="text-sm font-bold text-slate-700">{{ auth()->user()->jobTitle?->nama_jabatan ?? '-' }}</span>
                         </div>
                         <div class="text-center">
                             <p class="text-xs text-slate-500 mb-1">Role</p>
-                            <span class="text-sm font-bold text-purple-600">{{ auth()->user()->role->nama_role ?? '-' }}</span>
+                            <span class="text-sm font-bold text-purple-600">{{ auth()->user()->role?->nama_role ?? '-' }}</span>
                         </div>
                     </div>
                     

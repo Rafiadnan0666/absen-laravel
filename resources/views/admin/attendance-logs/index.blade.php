@@ -1,21 +1,61 @@
 @extends('admin.dashboard.layout')
 
 @section('title', 'Attendance Logs - Admin')
+@section('page-title', 'Attendance Logs')
 
 @section('content')
 <div class="flex flex-wrap -mx-3">
   <div class="flex-none w-full max-w-full p-3">
-    <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 border-transparent border-solid shadow-soft-xl rounded-2xl bg-clip-border">
-      <div class="p-6 pb-0 mb-0 bg-white border-b-0 border-b-solid rounded-t-2xl border-b-transparent">
-        <h6 class="text-xl font-bold">Attendance Logs</h6>
+    <!-- Stats Recap -->
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
+      <div class="bg-white shadow-soft-xl rounded-2xl p-3 text-center">
+        <p class="mb-0 text-xs font-semibold text-slate-400">Total Logs</p>
+        <p class="text-lg font-bold text-slate-700 mb-0">{{ $totalLogs }}</p>
       </div>
-      <div class="flex-auto p-6 px-0 pt-0 pb-2">
+      <div class="bg-white shadow-soft-xl rounded-2xl p-3 text-center">
+        <p class="mb-0 text-xs font-semibold text-green-500">Check In</p>
+        <p class="text-lg font-bold text-green-600 mb-0">{{ $checkInCount }}</p>
+      </div>
+      <div class="bg-white shadow-soft-xl rounded-2xl p-3 text-center">
+        <p class="mb-0 text-xs font-semibold text-red-500">Check Out</p>
+        <p class="text-lg font-bold text-red-600 mb-0">{{ $checkOutCount }}</p>
+      </div>
+    </div>
+
+    <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 border-transparent border-solid shadow-soft-xl rounded-2xl bg-clip-border" x-data="tableFilter({ search: '', filterType: '', filterDevice: '', dateFrom: '', dateTo: '' })" x-init="init()">
+      <div class="p-6 pb-0 mb-0 bg-white border-b-0 border-b-solid rounded-t-2xl border-b-transparent">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+          <h6 class="text-xl font-bold">Attendance Logs</h6>
+          <div class="flex items-center gap-2 w-full sm:w-auto flex-wrap">
+            <div class="relative flex-1 sm:flex-initial">
+              <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+              <input type="text" x-model="filters.search" @input.debounce.300ms="fetch()" placeholder="Search user..." class="w-full sm:w-36 pl-8 pr-3 py-2 text-xs border border-slate-200 rounded-lg focus:border-purple-400 focus:ring-1 focus:ring-purple-400 outline-none">
+            </div>
+            <input type="date" x-model="filters.dateFrom" @change="fetch()" placeholder="From" class="px-2 py-2 text-xs border border-slate-200 rounded-lg focus:border-purple-400 outline-none bg-white w-32">
+            <input type="date" x-model="filters.dateTo" @change="fetch()" placeholder="To" class="px-2 py-2 text-xs border border-slate-200 rounded-lg focus:border-purple-400 outline-none bg-white w-32">
+            <select x-model="filters.filterType" @change="fetch()" class="px-3 py-2 text-xs border border-slate-200 rounded-lg focus:border-purple-400 outline-none bg-white">
+              <option value="">All Types</option>
+              <option value="check_in">Check In</option>
+              <option value="check_out">Check Out</option>
+            </select>
+            <select x-model="filters.filterDevice" @change="fetch()" class="px-3 py-2 text-xs border border-slate-200 rounded-lg focus:border-purple-400 outline-none bg-white">
+              <option value="">All Devices</option>
+              <option value="web">Web</option>
+              <option value="mobile">Mobile</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="flex-auto p-6 px-0 pt-0 pb-2 relative">
         @if(session('success'))
           <div class="p-4 mb-4 mx-6 text-sm text-green-800 rounded-lg bg-green-50" role="alert">
             {{ session('success') }}
           </div>
         @endif
-        <div class="overflow-x-auto">
+        <div x-show="loading" class="filter-loading">
+          <i class="fas fa-spinner fa-spin text-purple-600 text-2xl"></i>
+        </div>
+        <div class="overflow-x-auto" data-table-container>
           <table class="items-center w-full mb-0 align-top border-gray-200 text-slate-500">
             <thead class="align-bottom">
               <tr>
@@ -29,53 +69,9 @@
               </tr>
             </thead>
             <tbody>
-              @forelse($attendanceLogs as $log)
-              <tr>
-                <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
-                  <p class="mb-0 font-semibold leading-normal text-sm">{{ $log->id }}</p>
-                </td>
-                <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
-                  <p class="mb-0 font-semibold leading-normal text-sm">{{ $log->user->name ?? 'N/A' }}</p>
-                </td>
-                <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
-                  <span class="bg-gradient-to-tl {{ $log->tipe_log == 'check_in' ? 'from-green-600 to-lime-400' : 'from-red-600 to-rose-400' }} px-2 py-1 text-xs rounded-2xl inline-block whitespace-nowrap text-center text-white">
-                    {{ ucfirst(str_replace('_', ' ', $log->tipe_log)) }}
-                  </span>
-                </td>
-                <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
-                  <p class="mb-0 leading-normal text-xs text-slate-400">{{ $log->waktu_log->format('d M Y H:i') }}</p>
-                </td>
-                <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
-                  <p class="mb-0 leading-normal text-xs text-slate-400">
-                    @if($log->latitude && $log->longitude)
-                      {{ $log->latitude }}, {{ $log->longitude }}
-                    @else
-                      N/A
-                    @endif
-                  </p>
-                </td>
-                <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
-                  <p class="mb-0 leading-normal text-xs text-slate-400">{{ $log->device ?? 'N/A' }}</p>
-                </td>
-                <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent text-center">
-                  <a href="{{ route('admin.attendance-logs.show', $log) }}" class="text-xs font-semibold inline-block px-2 py-1 mb-0 text-center uppercase align-middle leading-normal cursor-pointer bg-gradient-to-tl from-slate-600 to-slate-300 text-white rounded-2xl">View</a>
-                  <form action="{{ route('admin.attendance-logs.destroy', $log) }}" method="POST" class="inline" onsubmit="return confirm('Delete this log?')">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="text-xs font-semibold inline-block px-2 py-1 mb-0 text-center uppercase align-middle leading-normal cursor-pointer bg-gradient-to-tl from-red-600 to-rose-400 text-white rounded-2xl">Delete</button>
-                  </form>
-                </td>
-              </tr>
-              @empty
-              <tr>
-                <td colspan="7" class="p-4 text-center text-slate-400">No attendance logs found</td>
-              </tr>
-              @endforelse
+              @include('admin.attendance-logs._table')
             </tbody>
           </table>
-          <div class="p-4">
-            {{ $attendanceLogs->links() }}
-          </div>
         </div>
       </div>
     </div>

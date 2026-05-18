@@ -41,7 +41,15 @@ class PayrollController extends Controller
             return view('admin.payrolls._table', compact('payrolls'))->render();
         }
 
-        return view('admin.payrolls.index', compact('payrolls', 'users'));
+        $totalPayroll = Payroll::count();
+        $totalPaid = Payroll::where('status_pembayaran', 'paid')->count();
+        $totalPending = Payroll::where('status_pembayaran', 'pending')->count();
+        $totalAmount = Payroll::sum('total_gaji');
+
+        return view('admin.payrolls.index', compact(
+            'payrolls', 'users',
+            'totalPayroll', 'totalPaid', 'totalPending', 'totalAmount'
+        ));
     }
 
     public function create()
@@ -102,5 +110,60 @@ class PayrollController extends Controller
     {
         $payroll->delete();
         return redirect()->route('admin.payrolls.index')->with('success', 'Payroll deleted');
+    }
+
+    public function export(Request $request)
+    {
+        $query = Payroll::with('user');
+
+        if ($request->filled('search')) {
+            $s = $request->search;
+            $query->whereHas('user', fn($q) => $q->where('nama_lengkap', 'like', "%{$s}%"));
+        }
+        if ($request->filled('filterStatus')) {
+            $query->where('status_pembayaran', $request->filterStatus);
+        }
+        if ($request->filled('filterUserId')) {
+            $query->where('user_id', $request->filterUserId);
+        }
+        if ($request->filled('periodeFrom')) {
+            $query->whereDate('periode_mulai', '>=', $request->periodeFrom);
+        }
+        if ($request->filled('periodeTo')) {
+            $query->whereDate('periode_selesai', '<=', $request->periodeTo);
+        }
+
+        $payrolls = $query->latest('periode_mulai')->get();
+
+        $filename = 'payrolls-export-' . now()->format('Y-m-d-His') . '.csv';
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => "attachment; filename={$filename}",
+        ];
+
+        $callback = function () use ($payrolls) {
+            $handle = fopen('php://output', 'w');
+            fprintf($handle, "\xEF\xBB\xBF");
+            fputcsv($handle, ['ID', 'Employee', 'Period Start', 'Period End', 'Base Salary', 'Overtime', 'Deductions', 'Bonus', 'Total', 'Status']);
+
+            foreach ($payrolls as $p) {
+                fputcsv($handle, [
+                    $p->id,
+                    $p->user->nama_lengkap ?? 'N/A',
+                    $p->periode_mulai->format('Y-m-d'),
+                    $p->periode_selesai->format('Y-m-d'),
+                    $p->gaji_pokok,
+                    $p->total_lembur ?? 0,
+                    $p->total_potongan ?? 0,
+                    $p->bonus ?? 0,
+                    $p->total_gaji,
+                    $p->status_pembayaran,
+                ]);
+            }
+
+            fclose($handle);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 }

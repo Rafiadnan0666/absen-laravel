@@ -1,10 +1,31 @@
 @extends('admin.dashboard.layout')
 
 @section('title', 'Payroll Records - Admin')
+@section('page-title', 'Payroll')
 
 @section('content')
 <div class="flex flex-wrap -mx-3">
   <div class="flex-none w-full max-w-full p-3">
+    <!-- Stats Recap -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+      <div class="bg-white shadow-soft-xl rounded-2xl p-3 text-center">
+        <p class="mb-0 text-xs font-semibold text-slate-400">Total Records</p>
+        <p class="text-lg font-bold text-slate-700 mb-0">{{ $totalPayroll }}</p>
+      </div>
+      <div class="bg-white shadow-soft-xl rounded-2xl p-3 text-center">
+        <p class="mb-0 text-xs font-semibold text-green-500">Paid</p>
+        <p class="text-lg font-bold text-green-600 mb-0">{{ $totalPaid }}</p>
+      </div>
+      <div class="bg-white shadow-soft-xl rounded-2xl p-3 text-center">
+        <p class="mb-0 text-xs font-semibold text-amber-500">Pending</p>
+        <p class="text-lg font-bold text-amber-600 mb-0">{{ $totalPending }}</p>
+      </div>
+      <div class="bg-white shadow-soft-xl rounded-2xl p-3 text-center">
+        <p class="mb-0 text-xs font-semibold text-slate-400">Total Amount</p>
+        <p class="text-lg font-bold text-purple-600 mb-0">Rp {{ number_format($totalAmount, 0, ',', '.') }}</p>
+      </div>
+    </div>
+
     <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 border-transparent border-solid shadow-soft-xl rounded-2xl bg-clip-border" x-data="tableFilter({ search: '', filterStatus: '', filterUserId: '', periodeFrom: '', periodeTo: '' })" x-init="init()">
       <div class="p-6 pb-0 mb-0 bg-white border-b-0 border-b-solid rounded-t-2xl border-b-transparent">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
@@ -29,6 +50,9 @@
             <input type="month" x-model="filters.periodeTo" @change="fetch()" placeholder="To" class="px-2 py-2 text-xs border border-slate-200 rounded-lg focus:border-purple-400 outline-none bg-white w-28">
             <a href="{{ route('admin.payrolls.create') }}" class="inline-block px-6 py-3 mb-0 text-xs font-bold text-right uppercase align-middle transition-all border-0 rounded-lg cursor-pointer hover:scale-102 active:opacity-85 leading-pro ease-soft-in tracking-tight-soft bg-150 bg-x-25 bg-gradient-to-tl from-gray-900 to-slate-800 text-white whitespace-nowrap">
               <i class="fas fa-plus mr-1"></i> Add Payroll
+            </a>
+            <a href="{{ route('admin.payrolls.export', request()->query()) }}" class="inline-block px-4 py-3 mb-0 text-xs font-bold text-right uppercase align-middle transition-all border-0 rounded-lg cursor-pointer hover:scale-102 active:opacity-85 leading-pro ease-soft-in tracking-tight-soft bg-150 bg-x-25 bg-gradient-to-tl from-green-600 to-lime-400 text-white whitespace-nowrap">
+              <i class="fas fa-download mr-1"></i> CSV
             </a>
           </div>
         </div>

@@ -46,7 +46,15 @@ class UserController extends Controller
             return view('admin.users._table', compact('users'))->render();
         }
 
-        return view('admin.users.index', compact('users', 'departments', 'roles'));
+        $totalUsers = User::count();
+        $activeUsers = User::where('status_akun', 'active')->count();
+        $inactiveUsers = User::where('status_akun', 'inactive')->count();
+        $employeeCount = User::whereHas('role', fn($q) => $q->where('nama_role', 'employee'))->count();
+
+        return view('admin.users.index', compact(
+            'users', 'departments', 'roles',
+            'totalUsers', 'activeUsers', 'inactiveUsers', 'employeeCount'
+        ));
     }
 
     public function create()
@@ -128,5 +136,63 @@ class UserController extends Controller
     {
         $user->delete();
         return redirect()->route('admin.users.index')->with('success', 'User deleted successfully');
+    }
+
+    public function export(Request $request)
+    {
+        $query = User::with(['department', 'jobTitle', 'role']);
+
+        if ($request->filled('search')) {
+            $s = $request->search;
+            $query->where(function ($q) use ($s) {
+                $q->where('nama_lengkap', 'like', "%{$s}%")
+                  ->orWhere('email', 'like', "%{$s}%")
+                  ->orWhereHas('department', fn($q) => $q->where('nama_department', 'like', "%{$s}%"))
+                  ->orWhereHas('role', fn($q) => $q->where('nama_role', 'like', "%{$s}%"));
+            });
+        }
+        if ($request->filled('filterStatus')) {
+            $query->where('status_akun', $request->filterStatus);
+        }
+        if ($request->filled('filterDept')) {
+            $query->where('department_id', $request->filterDept);
+        }
+        if ($request->filled('filterRole')) {
+            $query->where('role_id', $request->filterRole);
+        }
+
+        $users = $query->get();
+
+        $filename = 'users-export-' . now()->format('Y-m-d-His') . '.csv';
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => "attachment; filename={$filename}",
+        ];
+
+        $callback = function () use ($users) {
+            $handle = fopen('php://output', 'w');
+            fprintf($handle, "\xEF\xBB\xBF");
+            fputcsv($handle, ['ID', 'Name', 'Email', 'Phone', 'Department', 'Job Title', 'Role', 'Salary Type', 'Salary', 'Join Date', 'Status']);
+
+            foreach ($users as $u) {
+                fputcsv($handle, [
+                    $u->id,
+                    $u->nama_lengkap,
+                    $u->email,
+                    $u->no_hp ?? '-',
+                    $u->department->nama_department ?? 'N/A',
+                    $u->jobTitle->nama_jabatan ?? 'N/A',
+                    $u->role->nama_role ?? 'N/A',
+                    $u->tipe_gaji ?? '-',
+                    $u->jumlah_gaji ?? 0,
+                    $u->tanggal_masuk ? $u->tanggal_masuk->format('Y-m-d') : '-',
+                    $u->status_akun,
+                ]);
+            }
+
+            fclose($handle);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 }

@@ -16,4 +16,19 @@ class SalaryRule extends Model
         'penalti_telat_per_menit' => 'decimal:2',
         'penalti_tidak_hadir' => 'decimal:2',
     ];
+
+    public function scopeByType($query, $tipeGaji)
+    {
+        return $query->where('tipe_gaji', $tipeGaji);
+    }
+
+    public static function getRuleForUser(User $user)
+    {
+        return static::where('tipe_gaji', $user->tipe_gaji)->first();
+    }
+
+    public function users()
+    {
+        return $this->hasMany(User::class, 'tipe_gaji', 'tipe_gaji');
+    }
 }
