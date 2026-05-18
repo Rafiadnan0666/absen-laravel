@@ -35,10 +35,10 @@
                             <td class="font-bold">Rp {{ number_format($item->jumlah, 0, ',', '.') }}</td>
                             <td>{{ Str::limit($item->deskripsi, 30) }}</td>
                             <td>
-                                <span class="neo-btn text-xs px-2 py-1
-                                    @if($item->status_pengajuan == 'approved') bg-green-200
-                                    @elseif($item->status_pengajuan == 'pending') bg-yellow-200
-                                    @else bg-red-200 @endif">
+                                 <span class="neo-btn text-xs px-2 py-1
+                                     @if($item->status_pengajuan == 'approved') bg-green-200
+                                     @elseif($item->status_pengajuan == 'pending') bg-gray-200
+                                     @else bg-red-200 @endif">
                                     {{ strtoupper($item->status_pengajuan) }}
                                 </span>
                             </td>

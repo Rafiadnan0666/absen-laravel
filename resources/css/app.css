@@ -24,7 +24,7 @@
     }
     
     .neo-table th {
-        @apply border-2 border-black bg-yellow-200 font-bold p-3 text-left;
+        @apply border-2 border-black bg-slate-100 font-bold p-3 text-left;
     }
     
     .neo-table td {

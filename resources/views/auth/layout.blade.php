@@ -29,17 +29,17 @@
             padding: 24px;
         }
         .auth-box.register { max-width: 480px; }
-        .logo {
-            width: 36px;
-            height: 36px;
-            background: #ffde59;
-            border: 2px solid #1a1a1a;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 12px;
-        }
+         .logo {
+             width: 36px;
+             height: 36px;
+             background: #4f46e5;
+             border: 2px solid #1a1a1a;
+             border-radius: 8px;
+             display: flex;
+             align-items: center;
+             justify-content: center;
+             margin: 0 auto 12px;
+         }
         h1 { font-size: 18px; font-weight: 700; color: #1a1a1a; text-align: center; margin-bottom: 4px; }
         p { font-size: 11px; color: #666; text-align: center; margin-bottom: 16px; }
         label { display: block; font-size: 10px; font-weight: 700; color: #1a1a1a; margin-bottom: 2px; }
@@ -53,17 +53,17 @@
             margin-bottom: 8px;
         }
         input:focus, select:focus { outline: none; box-shadow: 2px 2px 0 #1a1a1a; }
-        .btn {
-            width: 100%;
-            padding: 8px;
-            background: #ffde59;
-            border: 2px solid #1a1a1a;
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: 700;
-            cursor: pointer;
-            box-shadow: 2px 2px 0 #1a1a1a;
-        }
+         .btn {
+             width: 100%;
+             padding: 8px;
+             background: #4f46e5;
+             border: 2px solid #1a1a1a;
+             border-radius: 6px;
+             font-size: 11px;
+             font-weight: 700;
+             cursor: pointer;
+             box-shadow: 2px 2px 0 #1a1a1a;
+         }
         .btn:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 #1a1a1a; }
         .btn:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 #1a1a1a; }
         .checkbox { width: auto; margin-bottom: 0; margin-right: 4px; }

@@ -1,6 +1,6 @@
-<div x-data="{ open: false }" @open-profile-modal.window="open = true" @close-profile-modal.window="open = false">
+<div x-data>
     <!-- Modal Backdrop -->
-    <div x-show="open" 
+    <div x-show="$store.profileModal.open" 
          x-transition:enter="transition ease-out duration-300"
          x-transition:enter-start="opacity-0"
          x-transition:enter-end="opacity-100"
@@ -10,12 +10,12 @@
          class="fixed inset-0 z-50 overflow-y-auto" 
          style="display: none;">
         <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-            <div class="fixed inset-0 transition-opacity bg-gray-900 bg-opacity-50" aria-hidden="true" @click="open = false"></div>
+            <div class="fixed inset-0 transition-opacity bg-gray-900 bg-opacity-50" aria-hidden="true" @click="$store.profileModal.closeModal()"></div>
             
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
             
             <!-- Modal Panel -->
-            <div x-show="open"
+            <div x-show="$store.profileModal.open"
                  x-transition:enter="transition ease-out duration-300"
                  x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                  x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
@@ -30,7 +30,7 @@
                         <i class="fas fa-user-circle mr-2 text-purple-600"></i>
                         My Profile
                     </h3>
-                    <button @click="open = false" class="text-slate-400 hover:text-slate-600 transition-colors">
+                    <button @click="$store.profileModal.closeModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
                         <i class="fas fa-times text-xl"></i>
                     </button>
                 </div>
@@ -85,7 +85,7 @@
                     </div>
                     
                     <div class="flex justify-end gap-3">
-                        <button type="button" @click="open = false" 
+                        <button type="button" @click="$store.profileModal.closeModal()" 
                             class="px-4 py-2 text-xs font-bold text-slate-700 uppercase bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
                             Cancel
                         </button>

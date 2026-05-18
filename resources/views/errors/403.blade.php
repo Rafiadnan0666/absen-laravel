@@ -8,7 +8,7 @@
         <div class="bg-white shadow-soft-xl rounded-2xl overflow-hidden">
             <div class="p-8 text-center">
                 <div class="flex items-center justify-center mb-6">
-                    <div class="bg-gradient-to-tl from-yellow-500 to-amber-500 text-white rounded-full p-4">
+                     <div class="bg-gradient-to-tl from-blue-600 to-indigo-500 text-white rounded-full p-4">
                         <i class="fas fa-lock text-3xl"></i>
                     </div>
                 </div>

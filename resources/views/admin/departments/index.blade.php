@@ -5,13 +5,19 @@
 @section('content')
 <div class="flex flex-wrap -mx-3">
   <div class="flex-none w-full max-w-full p-3">
-    <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 border-transparent border-solid shadow-soft-xl rounded-2xl bg-clip-border">
+    <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 border-transparent border-solid shadow-soft-xl rounded-2xl bg-clip-border" x-data="{ search: '' }">
       <div class="p-6 pb-0 mb-0 bg-white border-b-0 border-b-solid rounded-t-2xl border-b-transparent">
-        <div class="flex justify-between items-center">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
           <h6 class="text-xl font-bold">Departments</h6>
-          <a href="{{ route('admin.departments.create') }}" class="inline-block px-6 py-3 mb-0 text-xs font-bold text-right uppercase align-middle transition-all border-0 rounded-lg cursor-pointer hover:scale-102 active:opacity-85 leading-pro ease-soft-in tracking-tight-soft bg-150 bg-x-25 bg-gradient-to-tl from-gray-900 to-slate-800 text-white">
-            <i class="fas fa-plus mr-1"></i> Add Department
-          </a>
+          <div class="flex items-center gap-2 w-full sm:w-auto">
+            <div class="relative flex-1 sm:flex-initial">
+              <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+              <input type="text" x-model="search" placeholder="Search departments..." class="w-full sm:w-56 pl-8 pr-3 py-2 text-xs border border-slate-200 rounded-lg focus:border-purple-400 focus:ring-1 focus:ring-purple-400 outline-none">
+            </div>
+            <a href="{{ route('admin.departments.create') }}" class="inline-block px-6 py-3 mb-0 text-xs font-bold text-right uppercase align-middle transition-all border-0 rounded-lg cursor-pointer hover:scale-102 active:opacity-85 leading-pro ease-soft-in tracking-tight-soft bg-150 bg-x-25 bg-gradient-to-tl from-gray-900 to-slate-800 text-white whitespace-nowrap">
+              <i class="fas fa-plus mr-1"></i> Add
+            </a>
+          </div>
         </div>
       </div>
       <div class="flex-auto p-6 px-0 pt-0 pb-2">
@@ -33,7 +39,7 @@
             </thead>
             <tbody>
               @forelse($departments as $department)
-              <tr>
+              <tr x-show="!search || '{{ $department->nama_department }} {{ $department->deskripsi ?? '' }}'.toLowerCase().includes(search.toLowerCase())">
                 <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
                   <p class="mb-0 font-semibold leading-normal text-sm">{{ $department->id }}</p>
                 </td>

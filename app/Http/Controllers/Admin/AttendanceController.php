@@ -6,14 +6,44 @@ use App\Http\Controllers\Controller;
 use App\Models\Attendance;
 use App\Models\User;
 use App\Models\Location;
+use App\Models\Department;
 use Illuminate\Http\Request;
 
 class AttendanceController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $attendances = Attendance::with('user', 'location')->latest('tanggal')->paginate(20);
-        return view('admin.attendances.index', compact('attendances'));
+        $query = Attendance::with('user', 'user.department', 'location');
+
+        if ($request->filled('search')) {
+            $s = $request->search;
+            $query->whereHas('user', fn($q) => $q->where('nama_lengkap', 'like', "%{$s}%"));
+        }
+
+        if ($request->filled('filterStatus')) {
+            $query->where('status_hadir', $request->filterStatus);
+        }
+
+        if ($request->filled('filterDept')) {
+            $query->whereHas('user', fn($q) => $q->where('department_id', $request->filterDept));
+        }
+
+        if ($request->filled('dateFrom')) {
+            $query->whereDate('tanggal', '>=', $request->dateFrom);
+        }
+
+        if ($request->filled('dateTo')) {
+            $query->whereDate('tanggal', '<=', $request->dateTo);
+        }
+
+        $attendances = $query->latest('tanggal')->paginate(20)->withQueryString();
+        $departments = Department::all();
+
+        if ($request->ajax()) {
+            return view('admin.attendances._table', compact('attendances'))->render();
+        }
+
+        return view('admin.attendances.index', compact('attendances', 'departments'));
     }
 
     public function create()

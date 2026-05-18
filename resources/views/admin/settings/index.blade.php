@@ -118,15 +118,15 @@
 
           <!-- Cache Management -->
           <div class="bg-gray-50 rounded-xl p-6">
-            <h6 class="text-lg font-bold text-slate-700 mb-4">
-              <i class="fas fa-broom mr-2 text-yellow-600"></i>Cache Management
+             <h6 class="text-lg font-bold text-slate-700 mb-4">
+               <i class="fas fa-broom mr-2 text-gray-600"></i>Cache Management
             </h6>
             
             <p class="text-sm text-slate-500 mb-4">Clear system cache to refresh configuration and cached data.</p>
             
             <form action="{{ route('admin.settings.clearCache') }}" method="POST">
               @csrf
-              <button type="submit" class="px-4 py-2 text-xs font-bold text-white uppercase bg-gradient-to-tl from-yellow-600 to-orange-400 rounded-lg hover:scale-102 transition-all">
+               <button type="submit" class="px-4 py-2 text-xs font-bold text-white uppercase bg-gradient-to-tl from-blue-600 to-indigo-500 rounded-lg hover:scale-102 transition-all">
                 <i class="fas fa-trash mr-2"></i>Clear All Cache
               </button>
             </form>

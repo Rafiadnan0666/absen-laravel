@@ -33,7 +33,7 @@
                             <td class="px-4 py-3">
                                 <span class="inline-block py-1 px-2 text-xs rounded-lg text-white font-bold bg-gradient-to-tl
                                     @if($payroll->status_pembayaran == 'paid') from-green-600 to-lime-400
-                                    @elseif($payroll->status_pembayaran == 'processing') from-yellow-600 to-orange-400
+                                     @elseif($payroll->status_pembayaran == 'processing') from-blue-600 to-indigo-500
                                     @else from-red-600 to-rose-400 @endif">
                                     {{ strtoupper($payroll->status_pembayaran) }}
                                 </span>

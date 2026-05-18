@@ -30,7 +30,7 @@
                             <td class="px-4 py-3">
                                 <span class="inline-block py-1 px-2 text-xs rounded-lg text-white font-bold bg-gradient-to-tl
                                     @if($log->tipe_log == 'check_in') from-green-600 to-lime-400
-                                    @else from-yellow-600 to-amber-400 @endif">
+                                                                         @else from-blue-600 to-indigo-500 @endif">
                                     {{ strtoupper($log->tipe_log) }}
                                 </span>
                             </td>

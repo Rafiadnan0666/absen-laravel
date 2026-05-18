@@ -11,7 +11,6 @@
     <link href="{{ asset('assets/css/soft-ui-dashboard-tailwind.css') }}" rel="stylesheet" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
@@ -89,7 +88,7 @@
                 </li>
 
                 <li class="mt-0.5 w-full">
-                    <a class="py-2.7 text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors hover:bg-blue-500/10 rounded-lg cursor-pointer" @click="$dispatch('open-profile-modal')">
+                    <a class="py-2.7 text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors hover:bg-blue-500/10 rounded-lg cursor-pointer" @click="$store.profileModal.openModal()">
                         <span class="shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg text-center" style="background: #f1f5f9;">
                             <i class="fas fa-user text-slate-700" style="font-size: 14px;"></i>
                         </span>
@@ -129,13 +128,20 @@
 
                 <div class="flex items-center mt-2 grow sm:mt-0 sm:mr-6 md:mr-0 lg:flex lg:basis-auto">
                     <ul class="flex flex-row justify-end pl-0 mb-0 list-none md-max:w-full">
+                        @if(auth()->user()->hasRole('admin'))
+                        <li class="flex items-center">
+                            <a href="{{ route('admin.dashboard') }}" class="inline-block px-6 py-2 mb-0 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer hover:scale-102 active:shadow-soft-xs bg-gradient-to-tl from-purple-700 to-pink-500 leading-pro text-xs ease-soft-in tracking-tight-soft">
+                                <i class="fas fa-cog mr-1"></i> Admin Panel
+                            </a>
+                        </li>
+                        @endif
                         <li class="flex items-center">
                             <a href="{{ route('employee.attendances.create') }}" class="inline-block px-6 py-2 mb-0 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer hover:scale-102 active:shadow-soft-xs bg-gradient-to-tl from-green-600 to-lime-400 leading-pro text-xs ease-soft-in tracking-tight-soft hover:bg-gray-100">
                                 <i class="fas fa-fingerprint mr-1"></i> Check In/Out
                             </a>
                         </li>
                         <li class="flex items-center pl-4">
-                            <button @click="$dispatch('open-profile-modal')" class="block px-0 py-2 font-semibold transition-all ease-nav-brand text-sm text-slate-500 hover:text-purple-600">
+                            <button @click="$store.profileModal.openModal()" class="block px-0 py-2 font-semibold transition-all ease-nav-brand text-sm text-slate-500 hover:text-purple-600">
                                 <i class="fa fa-user sm:mr-1"></i>
                                 <span class="hidden sm:inline">{{ auth()->user()->nama_lengkap ?? auth()->user()->name }}</span>
                             </button>
@@ -152,6 +158,6 @@
 
     @include('components.profile-modal')
 
-    <script src="{{ asset('assets/js/soft-ui-dashboard-tailwind.js') }}"></script>
+    <script defer src="{{ asset('assets/js/soft-ui-dashboard-tailwind.js') }}"></script>
 </body>
 </html>

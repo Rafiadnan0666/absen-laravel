@@ -12,10 +12,41 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::with(['department', 'jobTitle', 'role'])->paginate(10);
-        return view('admin.users.index', compact('users'));
+        $query = User::with(['department', 'jobTitle', 'role']);
+
+        if ($request->filled('search')) {
+            $s = $request->search;
+            $query->where(function ($q) use ($s) {
+                $q->where('nama_lengkap', 'like', "%{$s}%")
+                  ->orWhere('email', 'like', "%{$s}%")
+                  ->orWhereHas('department', fn($q) => $q->where('nama_department', 'like', "%{$s}%"))
+                  ->orWhereHas('role', fn($q) => $q->where('nama_role', 'like', "%{$s}%"));
+            });
+        }
+
+        if ($request->filled('filterStatus')) {
+            $query->where('status_akun', $request->filterStatus);
+        }
+
+        if ($request->filled('filterDept')) {
+            $query->where('department_id', $request->filterDept);
+        }
+
+        if ($request->filled('filterRole')) {
+            $query->where('role_id', $request->filterRole);
+        }
+
+        $users = $query->paginate(10)->withQueryString();
+        $departments = Department::all();
+        $roles = Role::all();
+
+        if ($request->ajax()) {
+            return view('admin.users._table', compact('users'))->render();
+        }
+
+        return view('admin.users.index', compact('users', 'departments', 'roles'));
     }
 
     public function create()

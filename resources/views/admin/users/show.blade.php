@@ -116,7 +116,7 @@
                 </div>
                 <div class="mb-4">
                   <label class="inline-block mb-2 text-sm font-bold text-slate-700">Late</label>
-                  <p class="text-2xl font-bold text-yellow-600">{{ $user->attendances->where('status_hadir', 'late')->count() }}</p>
+                   <p class="text-2xl font-bold text-gray-600">{{ $user->attendances->where('status_hadir', 'late')->count() }}</p>
                 </div>
                 <div class="mb-4">
                   <label class="inline-block mb-2 text-sm font-bold text-slate-700">Absent</label>
@@ -151,7 +151,7 @@
                         <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
                           <span class="px-2 py-1 text-xs rounded-2xl inline-block whitespace-nowrap text-center text-white
                             @if($leave->status_pengajuan == 'approved') bg-gradient-to-tl from-green-600 to-lime-400
-                            @elseif($leave->status_pengajuan == 'pending') bg-gradient-to-tl from-yellow-600 to-yellow-400
+                             @elseif($leave->status_pengajuan == 'pending') bg-gradient-to-tl from-blue-600 to-indigo-500
                             @else bg-gradient-to-tl from-red-600 to-rose-400 @endif">
                             {{ strtoupper($leave->status_pengajuan) }}
                           </span>
@@ -194,7 +194,7 @@
                         <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
                           <span class="px-2 py-1 text-xs rounded-2xl inline-block whitespace-nowrap text-center text-white
                             @if($payroll->status_pembayaran == 'paid') bg-gradient-to-tl from-green-600 to-lime-400
-                            @else bg-gradient-to-tl from-yellow-600 to-yellow-400 @endif">
+                                                         @else bg-gradient-to-tl from-blue-600 to-indigo-500 @endif">
                             {{ strtoupper($payroll->status_pembayaran) }}
                           </span>
                         </td>

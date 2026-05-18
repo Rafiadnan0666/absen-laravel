@@ -15,24 +15,24 @@
         .neo { background: #fff; border: 3px solid #1a1a1a; border-radius: 16px; box-shadow: 6px 6px 0 #1a1a1a; }
         .btn { display: inline-block; border: 3px solid #1a1a1a; border-radius: 10px; padding: 14px 28px; font-weight: 700; text-decoration: none; box-shadow: 4px 4px 0 #1a1a1a; transition: all 0.1s; }
         .btn:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 #1a1a1a; }
-        .btn-yellow { background: #ffde59; color: #1a1a1a; }
+        .btn-yellow { background: #4f46e5; color: #ffffff; }
         .btn-black { background: #1a1a1a; color: #fff; }
         .btn-blue { background: #7aa2f7; color: #1a1a1a; }
         .btn-pink { background: #ff8ba7; color: #1a1a1a; }
         .btn-green { background: #98ff98; color: #1a1a1a; }
-        .logo { width: 48px; height: 48px; background: #ffde59; border: 3px solid #1a1a1a; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 3px 3px 0 #1a1a1a; }
+        .logo { width: 48px; height: 48px; background: #4f46e5; border: 3px solid #1a1a1a; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 3px 3px 0 #1a1a1a; }
     </style>
 </head>
 <body>
     <!-- Marquee Top -->
-    <div style="background:#1a1a1a;border-bottom:3px solid #1a1a1a;overflow:hidden;padding:14px 0;">
-        <div style="display:flex;animation:scroll 15s linear infinite;white-space:nowrap;">
-            <span style="color:#ffde59;font-size:15px;font-weight:700;margin-right:60px;">✨ ATTENDANCE • GPS TRACKING • LEAVE MANAGEMENT • PAYROLL • REIMBURSEMENTS • EMPLOYEES • HR PANEL • ADMIN • ANALYTICS • SHIFTS • DEPARTMENTS • ROLES • LEAFLET MAPS • LARAVEL 13 •</span>
-            <span style="color:#ffde59;font-size:15px;font-weight:700;margin-right:60px;">✨ ATTENDANCE • GPS TRACKING • LEAVE MANAGEMENT • PAYROLL • REIMBURSEMENTS • EMPLOYEES • HR PANEL • ADMIN • ANALYTICS • SHIFTS • DEPARTMENTS • ROLES • LEAFLET MAPS • LARAVEL 13 •</span>
-            <span style="color:#ffde59;font-size:15px;font-weight:700;margin-right:60px;">✨ ATTENDANCE • GPS TRACKING • LEAVE MANAGEMENT • PAYROLL • REIMBURSEMENTS • EMPLOYEES • HR PANEL • ADMIN • ANALYTICS • SHIFTS • DEPARTMENTS • ROLES • LEAFLET MAPS • LARAVEL 13 •</span>
-            <span style="color:#ffde59;font-size:15px;font-weight:700;margin-right:60px;">✨ ATTENDANCE • GPS TRACKING • LEAVE MANAGEMENT • PAYROLL • REIMBURSEMENTS • EMPLOYEES • HR PANEL • ADMIN • ANALYTICS • SHIFTS • DEPARTMENTS • ROLES • LEAFLET MAPS • LARAVEL 13 •</span>
-        </div>
-    </div>
+     <div style="background:#1a1a1a;border-bottom:3px solid #1a1a1a;overflow:hidden;padding:14px 0;">
+         <div style="display:flex;animation:scroll 15s linear infinite;white-space:nowrap;">
+             <span style="color:#4f46e5;font-size:15px;font-weight:700;margin-right:60px;">✨ ATTENDANCE • GPS TRACKING • LEAVE MANAGEMENT • PAYROLL • REIMBURSEMENTS • EMPLOYEES • HR PANEL • ADMIN • ANALYTICS • SHIFTS • DEPARTMENTS • ROLES • LEAFLET MAPS • LARAVEL 13 •</span>
+             <span style="color:#4f46e5;font-size:15px;font-weight:700;margin-right:60px;">✨ ATTENDANCE • GPS TRACKING • LEAVE MANAGEMENT • PAYROLL • REIMBURSEMENTS • EMPLOYEES • HR PANEL • ADMIN • ANALYTICS • SHIFTS • DEPARTMENTS • ROLES • LEAFLET MAPS • LARAVEL 13 •</span>
+             <span style="color:#4f46e5;font-size:15px;font-weight:700;margin-right:60px;">✨ ATTENDANCE • GPS TRACKING • LEAVE MANAGEMENT • PAYROLL • REIMBURSEMENTS • EMPLOYEES • HR PANEL • ADMIN • ANALYTICS • SHIFTS • DEPARTMENTS • ROLES • LEAFLET MAPS • LARAVEL 13 •</span>
+             <span style="color:#4f46e5;font-size:15px;font-weight:700;margin-right:60px;">✨ ATTENDANCE • GPS TRACKING • LEAVE MANAGEMENT • PAYROLL • REIMBURSEMENTS • EMPLOYEES • HR PANEL • ADMIN • ANALYTICS • SHIFTS • DEPARTMENTS • ROLES • LEAFLET MAPS • LARAVEL 13 •</span>
+         </div>
+     </div>
     <style>@keyframes scroll{0%{transform:translateX(0)}100%{transform:translateX(-25%)}}</style>
 
     <!-- Header -->
@@ -62,7 +62,7 @@
         <div class="container">
             <!-- Hero -->
             <div style="text-align:center;margin-bottom:50px;">
-                <div style="display:inline-block;background:#ffde59;border:2px solid #1a1a1a;border-radius:25px;padding:10px 20px;font-size:13px;font-weight:700;margin-bottom:24px;">
+                <div style="display:inline-block;background:#4f46e5;border:2px solid #1a1a1a;border-radius:25px;padding:10px 20px;font-size:13px;font-weight:700;margin-bottom:24px;">
                     ✨ Laravel 13 • GPS Tracking • Leaflet Maps
                 </div>
                 <h1 style="font-size:56px;font-weight:800;color:#1a1a1a;margin-bottom:20px;line-height:1.05;">
@@ -137,7 +137,7 @@
             </div>
 
             <!-- Tech Stack -->
-            <div class="neo" style="padding:28px;background:#ffde59;margin-bottom:50px;text-align:center;">
+             <div class="neo" style="padding:28px;background:#4f46e5;margin-bottom:50px;text-align:center;">
                 <div style="font-size:16px;font-weight:800;margin-bottom:12px;">🛠️ TECHNOLOGY STACK</div>
                 <div style="font-size:14px;font-weight:600;color:#1a1a1a;">
                     Laravel 13 • PHP 8.3 • Tailwind CSS • Alpine.js • Leaflet Maps • MySQL • Font Awesome

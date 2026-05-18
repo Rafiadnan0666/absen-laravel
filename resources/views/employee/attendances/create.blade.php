@@ -113,7 +113,7 @@
                             
                             <input type="hidden" name="latitude" id="latitudeInputCheckout">
                             <input type="hidden" name="longitude" id="longitudeInputCheckout">
-                            <button type="submit" class="inline-block px-6 py-3 mb-0 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer hover:scale-102 active:shadow-soft-xs bg-gradient-to-tl from-yellow-600 to-amber-400 leading-pro ease-soft-in tracking-tight-soft w-full text-lg">
+                             <button type="submit" class="inline-block px-6 py-3 mb-0 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer hover:scale-102 active:shadow-soft-xs bg-gradient-to-tl from-blue-600 to-indigo-500 leading-pro ease-soft-in tracking-tight-soft w-full text-lg">
                                 <i class="fas fa-sign-out-alt mr-2"></i> Check Out Now
                             </button>
                         </form>
@@ -173,7 +173,7 @@
                             <h6 class="mb-1 font-bold text-slate-700">
                                 <span class="inline-block py-1 px-2 text-xs rounded-lg text-white font-bold bg-gradient-to-tl
                                     @if($todayAttendance->status_hadir == 'present') from-green-600 to-lime-400
-                                    @elseif($todayAttendance->status_hadir == 'late') from-yellow-600 to-orange-400
+                                     @elseif($todayAttendance->status_hadir == 'late') from-blue-600 to-indigo-500
                                     @else from-red-600 to-rose-400 @endif">
                                     {{ strtoupper($todayAttendance->status_hadir) }}
                                 </span>

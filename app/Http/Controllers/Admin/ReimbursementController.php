@@ -9,9 +9,44 @@ use Illuminate\Http\Request;
 
 class ReimbursementController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $reimbursements = Reimbursement::with('user', 'approver')->latest()->paginate(20);
+        $query = Reimbursement::with('user', 'approver');
+
+        if ($request->filled('search')) {
+            $s = $request->search;
+            $query->where(function ($q) use ($s) {
+                $q->whereHas('user', fn($q) => $q->where('nama_lengkap', 'like', "%{$s}%"))
+                  ->orWhere('deskripsi', 'like', "%{$s}%");
+            });
+        }
+
+        if ($request->filled('filterStatus')) {
+            $query->where('status', $request->filterStatus);
+        }
+
+        if ($request->filled('dateFrom')) {
+            $query->whereDate('created_at', '>=', $request->dateFrom);
+        }
+
+        if ($request->filled('dateTo')) {
+            $query->whereDate('created_at', '<=', $request->dateTo);
+        }
+
+        if ($request->filled('amountMin')) {
+            $query->where('jumlah', '>=', $request->amountMin);
+        }
+
+        if ($request->filled('amountMax')) {
+            $query->where('jumlah', '<=', $request->amountMax);
+        }
+
+        $reimbursements = $query->latest()->paginate(20)->withQueryString();
+
+        if ($request->ajax()) {
+            return view('admin.reimbursements._table', compact('reimbursements'))->render();
+        }
+
         return view('admin.reimbursements.index', compact('reimbursements'));
     }
 

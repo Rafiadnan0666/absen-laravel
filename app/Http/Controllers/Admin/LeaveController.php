@@ -9,9 +9,37 @@ use Illuminate\Http\Request;
 
 class LeaveController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $leaves = Leave::with('user', 'approver')->latest('tanggal_mulai')->paginate(20);
+        $query = Leave::with('user', 'approver');
+
+        if ($request->filled('search')) {
+            $s = $request->search;
+            $query->whereHas('user', fn($q) => $q->where('nama_lengkap', 'like', "%{$s}%"));
+        }
+
+        if ($request->filled('filterStatus')) {
+            $query->where('status_pengajuan', $request->filterStatus);
+        }
+
+        if ($request->filled('filterType')) {
+            $query->where('tipe_cuti', $request->filterType);
+        }
+
+        if ($request->filled('dateFrom')) {
+            $query->whereDate('tanggal_mulai', '>=', $request->dateFrom);
+        }
+
+        if ($request->filled('dateTo')) {
+            $query->whereDate('tanggal_selesai', '<=', $request->dateTo);
+        }
+
+        $leaves = $query->latest('tanggal_mulai')->paginate(20)->withQueryString();
+
+        if ($request->ajax()) {
+            return view('admin.leaves._table', compact('leaves'))->render();
+        }
+
         return view('admin.leaves.index', compact('leaves'));
     }
 

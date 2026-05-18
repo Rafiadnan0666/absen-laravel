@@ -9,7 +9,6 @@
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="{{ asset('assets/css/soft-ui-dashboard-tailwind.css') }}" rel="stylesheet" />
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
   </head>
 
@@ -76,7 +75,7 @@
             </li>
 
             <li class="mt-0.5 w-full">
-              <a class="py-2.7 text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors hover:bg-blue-500/10 rounded-lg cursor-pointer" @click="$dispatch('open-profile-modal')">
+              <a class="py-2.7 text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors hover:bg-blue-500/10 rounded-lg cursor-pointer" @click="$store.profileModal.openModal()">
                 <span class="shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg text-center" style="background: #f1f5f9;">
                   <i class="fas fa-user text-slate-700" style="font-size: 14px;"></i>
                 </span>
@@ -128,7 +127,7 @@
                 </a>
               </li>
               <li class="flex items-center pl-4">
-                <button @click="$dispatch('open-profile-modal')" class="block px-0 py-2 font-semibold transition-all ease-nav-brand text-sm text-slate-500 hover:text-purple-600">
+                <button @click="$store.profileModal.openModal()" class="block px-0 py-2 font-semibold transition-all ease-nav-brand text-sm text-slate-500 hover:text-purple-600">
                   <i class="fa fa-user sm:mr-1"></i>
                   <span class="hidden sm:inline">{{ auth()->user()->nama_lengkap ?? auth()->user()->name }}</span>
                 </button>
@@ -143,6 +142,6 @@
 
     @include('components.profile-modal')
 
-    <script src="{{ asset('assets/js/soft-ui-dashboard-tailwind.js') }}"></script>
+    <script defer src="{{ asset('assets/js/soft-ui-dashboard-tailwind.js') }}"></script>
   </body>
 </html>

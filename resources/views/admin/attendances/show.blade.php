@@ -39,7 +39,7 @@
           <label class="inline-block mb-2 text-sm font-bold text-slate-700">Status</label>
           <span class="px-2 py-1 text-xs rounded-2xl inline-block whitespace-nowrap text-center text-white
             @if($attendance->status_hadir == 'present') bg-gradient-to-tl from-green-600 to-lime-400
-            @elseif($attendance->status_hadir == 'late') bg-gradient-to-tl from-yellow-600 to-yellow-400
+             @elseif($attendance->status_hadir == 'late') bg-gradient-to-tl from-red-600 to-orange-400
             @else bg-gradient-to-tl from-red-600 to-rose-400 @endif">
             {{ strtoupper($attendance->status_hadir) }}
           </span>

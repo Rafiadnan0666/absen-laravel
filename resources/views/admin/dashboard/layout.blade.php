@@ -11,8 +11,11 @@
     <link href="{{ asset('assets/css/nucleo-icons.css') }}" rel="stylesheet" />
     <link href="{{ asset('assets/css/nucleo-svg.css') }}" rel="stylesheet" />
     <link href="{{ asset('assets/css/soft-ui-dashboard-tailwind.css') }}" rel="stylesheet" />
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <style>
+      .filter-loading { position: absolute; inset: 0; background: rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center; z-index: 10; border-radius: 0.5rem; }
+      .page-transition { transition: opacity 0.15s ease; }
+    </style>
   </head>
 
   <body class="m-0 font-sans text-base antialiased font-normal leading-default bg-gray-50 text-slate-500">
@@ -30,7 +33,7 @@
         <div class="flex-1 block w-auto overflow-y-auto">
           <ul class="flex flex-col pl-0 mb-0">
             <li class="mt-0.5 w-full">
-              <a class="py-2.7 {{ request()->routeIs('admin.dashboard') ? 'bg-gradient-to-tl from-purple-700 to-pink-500 text-white shadow-soft-2xl' : 'bg-white text-slate-700 shadow-soft-xl' }} text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold transition-colors" href="{{ route('admin.dashboard') }}">
+              <a class="py-2.7 {{ request()->routeIs('admin.dashboard') ? 'bg-gradient-to-tl from-purple-700 to-pink-500 text-white shadow-soft-2xl' : 'bg-white text-slate-700 shadow-soft-xl' }} text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold transition-colors" href="{{ route('admin.dashboard') }}" data-prefetch>
                 <div class="shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5" style="background: linear-gradient(to top left, #7c3aed, #db2777);">
                   <i class="fas fa-tachometer-alt text-white w-4 h-4"></i>
                 </div>
@@ -39,7 +42,7 @@
             </li>
 
             <li class="mt-0.5 w-full">
-              <a class="py-2.7 {{ request()->routeIs('admin.departments.*') ? 'bg-gradient-to-tl from-purple-700 to-pink-500 text-white shadow-soft-2xl' : 'bg-white text-slate-700 shadow-soft-xl' }} text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold transition-colors" href="{{ route('admin.departments.index') }}">
+              <a class="py-2.7 {{ request()->routeIs('admin.departments.*') ? 'bg-gradient-to-tl from-purple-700 to-pink-500 text-white shadow-soft-2xl' : 'bg-white text-slate-700 shadow-soft-xl' }} text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold transition-colors" href="{{ route('admin.departments.index') }}" data-prefetch>
                 <div class="shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5" style="background: linear-gradient(to top left, #7c3aed, #db2777);">
                   <i class="fas fa-building text-white w-4 h-4"></i>
                 </div>
@@ -48,7 +51,7 @@
             </li>
 
             <li class="mt-0.5 w-full">
-              <a class="py-2.7 {{ request()->routeIs('admin.announcements.*') ? 'bg-gradient-to-tl from-purple-700 to-pink-500 text-white shadow-soft-2xl' : 'bg-white text-slate-700 shadow-soft-xl' }} text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold transition-colors" href="{{ route('admin.announcements.index') }}">
+              <a class="py-2.7 {{ request()->routeIs('admin.announcements.*') ? 'bg-gradient-to-tl from-purple-700 to-pink-500 text-white shadow-soft-2xl' : 'bg-white text-slate-700 shadow-soft-xl' }} text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold transition-colors" href="{{ route('admin.announcements.index') }}" data-prefetch>
                 <div class="shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5" style="background: linear-gradient(to top left, #7c3aed, #db2777);">
                   <i class="fas fa-bullhorn text-white w-4 h-4"></i>
                 </div>
@@ -57,7 +60,7 @@
             </li>
 
             <li class="mt-0.5 w-full">
-              <a class="py-2.7 {{ request()->routeIs('admin.attendances.*') ? 'bg-gradient-to-tl from-purple-700 to-pink-500 text-white shadow-soft-2xl' : 'bg-white text-slate-700 shadow-soft-xl' }} text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold transition-colors" href="{{ route('admin.attendances.index') }}">
+              <a class="py-2.7 {{ request()->routeIs('admin.attendances.*') ? 'bg-gradient-to-tl from-purple-700 to-pink-500 text-white shadow-soft-2xl' : 'bg-white text-slate-700 shadow-soft-xl' }} text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold transition-colors" href="{{ route('admin.attendances.index') }}" data-prefetch>
                 <div class="shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5" style="background: linear-gradient(to top left, #7c3aed, #db2777);">
                   <i class="fas fa-calendar-check text-white w-4 h-4"></i>
                 </div>
@@ -66,7 +69,7 @@
             </li>
 
             <li class="mt-0.5 w-full">
-              <a class="py-2.7 {{ request()->routeIs('admin.attendance-logs.*') ? 'bg-gradient-to-tl from-purple-700 to-pink-500 text-white shadow-soft-2xl' : 'bg-white text-slate-700 shadow-soft-xl' }} text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold transition-colors" href="{{ route('admin.attendance-logs.index') }}">
+              <a class="py-2.7 {{ request()->routeIs('admin.attendance-logs.*') ? 'bg-gradient-to-tl from-purple-700 to-pink-500 text-white shadow-soft-2xl' : 'bg-white text-slate-700 shadow-soft-xl' }} text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold transition-colors" href="{{ route('admin.attendance-logs.index') }}" data-prefetch>
                 <div class="shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5" style="background: linear-gradient(to top left, #7c3aed, #db2777);">
                   <i class="fas fa-clock text-white w-4 h-4"></i>
                 </div>
@@ -75,7 +78,7 @@
             </li>
 
             <li class="mt-0.5 w-full">
-              <a class="py-2.7 {{ request()->routeIs('admin.face-logs.*') ? 'bg-gradient-to-tl from-purple-700 to-pink-500 text-white shadow-soft-2xl' : 'bg-white text-slate-700 shadow-soft-xl' }} text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold transition-colors" href="{{ route('admin.face-logs.index') }}">
+              <a class="py-2.7 {{ request()->routeIs('admin.face-logs.*') ? 'bg-gradient-to-tl from-purple-700 to-pink-500 text-white shadow-soft-2xl' : 'bg-white text-slate-700 shadow-soft-xl' }} text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold transition-colors" href="{{ route('admin.face-logs.index') }}" data-prefetch>
                 <div class="shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5" style="background: linear-gradient(to top left, #7c3aed, #db2777);">
                   <i class="fas fa-eye text-white w-4 h-4"></i>
                 </div>
@@ -84,7 +87,7 @@
             </li>
 
             <li class="mt-0.5 w-full">
-              <a class="py-2.7 {{ request()->routeIs('admin.holidays.*') ? 'bg-gradient-to-tl from-purple-700 to-pink-500 text-white shadow-soft-2xl' : 'bg-white text-slate-700 shadow-soft-xl' }} text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold transition-colors" href="{{ route('admin.holidays.index') }}">
+              <a class="py-2.7 {{ request()->routeIs('admin.holidays.*') ? 'bg-gradient-to-tl from-purple-700 to-pink-500 text-white shadow-soft-2xl' : 'bg-white text-slate-700 shadow-soft-xl' }} text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold transition-colors" href="{{ route('admin.holidays.index') }}" data-prefetch>
                 <div class="shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5" style="background: linear-gradient(to top left, #7c3aed, #db2777);">
                   <i class="fas fa-umbrella-beach text-white w-4 h-4"></i>
                 </div>
@@ -93,7 +96,7 @@
             </li>
 
             <li class="mt-0.5 w-full">
-              <a class="py-2.7 {{ request()->routeIs('admin.job-titles.*') ? 'bg-gradient-to-tl from-purple-700 to-pink-500 text-white shadow-soft-2xl' : 'bg-white text-slate-700 shadow-soft-xl' }} text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold transition-colors" href="{{ route('admin.job-titles.index') }}">
+              <a class="py-2.7 {{ request()->routeIs('admin.job-titles.*') ? 'bg-gradient-to-tl from-purple-700 to-pink-500 text-white shadow-soft-2xl' : 'bg-white text-slate-700 shadow-soft-xl' }} text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold transition-colors" href="{{ route('admin.job-titles.index') }}" data-prefetch>
                 <div class="shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5" style="background: linear-gradient(to top left, #7c3aed, #db2777);">
                   <i class="fas fa-briefcase text-white w-4 h-4"></i>
                 </div>
@@ -102,7 +105,7 @@
             </li>
 
             <li class="mt-0.5 w-full">
-              <a class="py-2.7 {{ request()->routeIs('admin.leaves.*') ? 'bg-gradient-to-tl from-purple-700 to-pink-500 text-white shadow-soft-2xl' : 'bg-white text-slate-700 shadow-soft-xl' }} text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold transition-colors" href="{{ route('admin.leaves.index') }}">
+              <a class="py-2.7 {{ request()->routeIs('admin.leaves.*') ? 'bg-gradient-to-tl from-purple-700 to-pink-500 text-white shadow-soft-2xl' : 'bg-white text-slate-700 shadow-soft-xl' }} text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold transition-colors" href="{{ route('admin.leaves.index') }}" data-prefetch>
                 <div class="shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5" style="background: linear-gradient(to top left, #7c3aed, #db2777);">
                   <i class="fas fa-calendar-times text-white w-4 h-4"></i>
                 </div>
@@ -111,7 +114,7 @@
             </li>
 
             <li class="mt-0.5 w-full">
-              <a class="py-2.7 {{ request()->routeIs('admin.locations.*') ? 'bg-gradient-to-tl from-purple-700 to-pink-500 text-white shadow-soft-2xl' : 'bg-white text-slate-700 shadow-soft-xl' }} text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold transition-colors" href="{{ route('admin.locations.index') }}">
+              <a class="py-2.7 {{ request()->routeIs('admin.locations.*') ? 'bg-gradient-to-tl from-purple-700 to-pink-500 text-white shadow-soft-2xl' : 'bg-white text-slate-700 shadow-soft-xl' }} text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold transition-colors" href="{{ route('admin.locations.index') }}" data-prefetch>
                 <div class="shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5" style="background: linear-gradient(to top left, #7c3aed, #db2777);">
                   <i class="fas fa-map-marker-alt text-white w-4 h-4"></i>
                 </div>
@@ -120,7 +123,7 @@
             </li>
 
             <li class="mt-0.5 w-full">
-              <a class="py-2.7 {{ request()->routeIs('admin.overtime-rules.*') ? 'bg-gradient-to-tl from-purple-700 to-pink-500 text-white shadow-soft-2xl' : 'bg-white text-slate-700 shadow-soft-xl' }} text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold transition-colors" href="{{ route('admin.overtime-rules.index') }}">
+              <a class="py-2.7 {{ request()->routeIs('admin.overtime-rules.*') ? 'bg-gradient-to-tl from-purple-700 to-pink-500 text-white shadow-soft-2xl' : 'bg-white text-slate-700 shadow-soft-xl' }} text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold transition-colors" href="{{ route('admin.overtime-rules.index') }}" data-prefetch>
                 <div class="shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5" style="background: linear-gradient(to top left, #7c3aed, #db2777);">
                   <i class="fas fa-clock text-white w-4 h-4"></i>
                 </div>
@@ -129,7 +132,7 @@
             </li>
 
             <li class="mt-0.5 w-full">
-              <a class="py-2.7 {{ request()->routeIs('admin.payrolls.*') ? 'bg-gradient-to-tl from-purple-700 to-pink-500 text-white shadow-soft-2xl' : 'bg-white text-slate-700 shadow-soft-xl' }} text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold transition-colors" href="{{ route('admin.payrolls.index') }}">
+              <a class="py-2.7 {{ request()->routeIs('admin.payrolls.*') ? 'bg-gradient-to-tl from-purple-700 to-pink-500 text-white shadow-soft-2xl' : 'bg-white text-slate-700 shadow-soft-xl' }} text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold transition-colors" href="{{ route('admin.payrolls.index') }}" data-prefetch>
                 <div class="shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5" style="background: linear-gradient(to top left, #7c3aed, #db2777);">
                   <i class="fas fa-money-bill-wave text-white w-4 h-4"></i>
                 </div>
@@ -138,7 +141,7 @@
             </li>
 
             <li class="mt-0.5 w-full">
-              <a class="py-2.7 {{ request()->routeIs('admin.permissions.*') ? 'bg-gradient-to-tl from-purple-700 to-pink-500 text-white shadow-soft-2xl' : 'bg-white text-slate-700 shadow-soft-xl' }} text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold transition-colors" href="{{ route('admin.permissions.index') }}">
+              <a class="py-2.7 {{ request()->routeIs('admin.permissions.*') ? 'bg-gradient-to-tl from-purple-700 to-pink-500 text-white shadow-soft-2xl' : 'bg-white text-slate-700 shadow-soft-xl' }} text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold transition-colors" href="{{ route('admin.permissions.index') }}" data-prefetch>
                 <div class="shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5" style="background: linear-gradient(to top left, #7c3aed, #db2777);">
                   <i class="fas fa-key text-white w-4 h-4"></i>
                 </div>
@@ -147,7 +150,7 @@
             </li>
 
             <li class="mt-0.5 w-full">
-              <a class="py-2.7 {{ request()->routeIs('admin.reimbursements.*') ? 'bg-gradient-to-tl from-purple-700 to-pink-500 text-white shadow-soft-2xl' : 'bg-white text-slate-700 shadow-soft-xl' }} text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold transition-colors" href="{{ route('admin.reimbursements.index') }}">
+              <a class="py-2.7 {{ request()->routeIs('admin.reimbursements.*') ? 'bg-gradient-to-tl from-purple-700 to-pink-500 text-white shadow-soft-2xl' : 'bg-white text-slate-700 shadow-soft-xl' }} text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold transition-colors" href="{{ route('admin.reimbursements.index') }}" data-prefetch>
                 <div class="shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5" style="background: linear-gradient(to top left, #7c3aed, #db2777);">
                   <i class="fas fa-receipt text-white w-4 h-4"></i>
                 </div>
@@ -156,7 +159,7 @@
             </li>
 
             <li class="mt-0.5 w-full">
-              <a class="py-2.7 {{ request()->routeIs('admin.roles.*') ? 'bg-gradient-to-tl from-purple-700 to-pink-500 text-white shadow-soft-2xl' : 'bg-white text-slate-700 shadow-soft-xl' }} text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold transition-colors" href="{{ route('admin.roles.index') }}">
+              <a class="py-2.7 {{ request()->routeIs('admin.roles.*') ? 'bg-gradient-to-tl from-purple-700 to-pink-500 text-white shadow-soft-2xl' : 'bg-white text-slate-700 shadow-soft-xl' }} text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold transition-colors" href="{{ route('admin.roles.index') }}" data-prefetch>
                 <div class="shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5" style="background: linear-gradient(to top left, #7c3aed, #db2777);">
                   <i class="fas fa-user-tag text-white w-4 h-4"></i>
                 </div>
@@ -165,7 +168,7 @@
             </li>
 
             <li class="mt-0.5 w-full">
-              <a class="py-2.7 {{ request()->routeIs('admin.salary-rules.*') ? 'bg-gradient-to-tl from-purple-700 to-pink-500 text-white shadow-soft-2xl' : 'bg-white text-slate-700 shadow-soft-xl' }} text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold transition-colors" href="{{ route('admin.salary-rules.index') }}">
+              <a class="py-2.7 {{ request()->routeIs('admin.salary-rules.*') ? 'bg-gradient-to-tl from-purple-700 to-pink-500 text-white shadow-soft-2xl' : 'bg-white text-slate-700 shadow-soft-xl' }} text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold transition-colors" href="{{ route('admin.salary-rules.index') }}" data-prefetch>
                 <div class="shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5" style="background: linear-gradient(to top left, #7c3aed, #db2777);">
                   <i class="fas fa-dollar-sign text-white w-4 h-4"></i>
                 </div>
@@ -174,7 +177,7 @@
             </li>
 
             <li class="mt-0.5 w-full">
-              <a class="py-2.7 {{ request()->routeIs('admin.shifts.*') ? 'bg-gradient-to-tl from-purple-700 to-pink-500 text-white shadow-soft-2xl' : 'bg-white text-slate-700 shadow-soft-xl' }} text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold transition-colors" href="{{ route('admin.shifts.index') }}">
+              <a class="py-2.7 {{ request()->routeIs('admin.shifts.*') ? 'bg-gradient-to-tl from-purple-700 to-pink-500 text-white shadow-soft-2xl' : 'bg-white text-slate-700 shadow-soft-xl' }} text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold transition-colors" href="{{ route('admin.shifts.index') }}" data-prefetch>
                 <div class="shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5" style="background: linear-gradient(to top left, #7c3aed, #db2777);">
                   <i class="fas fa-exchange-alt text-white w-4 h-4"></i>
                 </div>
@@ -183,7 +186,7 @@
             </li>
 
             <li class="mt-0.5 w-full">
-              <a class="py-2.7 {{ request()->routeIs('admin.user-shifts.*') ? 'bg-gradient-to-tl from-purple-700 to-pink-500 text-white shadow-soft-2xl' : 'bg-white text-slate-700 shadow-soft-xl' }} text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold transition-colors" href="{{ route('admin.user-shifts.index') }}">
+              <a class="py-2.7 {{ request()->routeIs('admin.user-shifts.*') ? 'bg-gradient-to-tl from-purple-700 to-pink-500 text-white shadow-soft-2xl' : 'bg-white text-slate-700 shadow-soft-xl' }} text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold transition-colors" href="{{ route('admin.user-shifts.index') }}" data-prefetch>
                 <div class="shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5" style="background: linear-gradient(to top left, #7c3aed, #db2777);">
                   <i class="fas fa-calendar-alt text-white w-4 h-4"></i>
                 </div>
@@ -192,7 +195,7 @@
             </li>
 
             <li class="mt-0.5 w-full">
-              <a class="py-2.7 {{ request()->routeIs('admin.users.*') ? 'bg-gradient-to-tl from-purple-700 to-pink-500 text-white shadow-soft-2xl' : 'bg-white text-slate-700 shadow-soft-xl' }} text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold transition-colors" href="{{ route('admin.users.index') }}">
+              <a class="py-2.7 {{ request()->routeIs('admin.users.*') ? 'bg-gradient-to-tl from-purple-700 to-pink-500 text-white shadow-soft-2xl' : 'bg-white text-slate-700 shadow-soft-xl' }} text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold transition-colors" href="{{ route('admin.users.index') }}" data-prefetch>
                 <div class="shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5" style="background: linear-gradient(to top left, #7c3aed, #db2777);">
                   <i class="fas fa-users text-white w-4 h-4"></i>
                 </div>
@@ -201,7 +204,7 @@
             </li>
 
             <li class="mt-0.5 w-full">
-              <a class="py-2.7 {{ request()->routeIs('admin.settings.*') ? 'bg-gradient-to-tl from-purple-700 to-pink-500 text-white shadow-soft-2xl' : 'bg-white text-slate-700 shadow-soft-xl' }} text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold transition-colors" href="{{ route('admin.settings.index') }}">
+              <a class="py-2.7 {{ request()->routeIs('admin.settings.*') ? 'bg-gradient-to-tl from-purple-700 to-pink-500 text-white shadow-soft-2xl' : 'bg-white text-slate-700 shadow-soft-xl' }} text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold transition-colors" href="{{ route('admin.settings.index') }}" data-prefetch>
                 <div class="shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5" style="background: linear-gradient(to top left, #7c3aed, #db2777);">
                   <i class="fas fa-cog text-white w-4 h-4"></i>
                 </div>
@@ -214,7 +217,7 @@
             </li>
 
             <li class="mt-0.5 w-full">
-              <a class="py-2.7 text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors hover:bg-blue-500/10 rounded-lg cursor-pointer" @click="$dispatch('open-profile-modal')">
+              <a class="py-2.7 text-sm ease-nav-brand my-0 mx-4 flex items-center whitespace-nowrap px-4 transition-colors hover:bg-blue-500/10 rounded-lg cursor-pointer" @click="$store.profileModal.openModal()">
                 <div class="shadow-soft-2xl mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
                   <i class="fas fa-user text-slate-700 w-4 h-4"></i>
                 </div>
@@ -245,7 +248,6 @@
       <nav class="relative flex flex-wrap items-center justify-between px-0 py-2 mx-6 transition-all shadow-none duration-250 ease-soft-in rounded-2xl lg:flex-nowrap lg:justify-start" navbar-main navbar-scroll="true">
         <div class="flex items-center justify-between w-full px-4 py-1 mx-auto flex-wrap-inherit">
           <nav>
-            <!-- breadcrumb -->
             <ol class="flex flex-wrap pt-1 mr-12 bg-transparent rounded-lg sm:mr-16">
               <li class="text-sm leading-normal">
                 <a class="opacity-50 text-slate-700" href="javascript:;">Pages</a>
@@ -259,13 +261,15 @@
 
           <div class="flex items-center mt-2 grow sm:mt-0 sm:mr-6 md:mr-0 lg:flex lg:basis-auto">
             <ul class="flex flex-row justify-end pl-0 mb-0 list-none md-max:w-full">
+              @if(auth()->user()->hasRole('admin'))
               <li class="flex items-center">
                 <a href="{{ route('employee.dashboard') }}" class="inline-block px-6 py-2 mb-0 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer hover:scale-102 active:shadow-soft-xs bg-gradient-to-tl from-green-600 to-lime-400 leading-pro text-xs ease-soft-in tracking-tight-soft hover:bg-gray-100">
-                  <i class="fas fa-user-hard-hat mr-1"></i> Employee Panel
+                  <i class="fas fa-user mr-1"></i> Employee Panel
                 </a>
               </li>
+              @endif
               <li class="flex items-center pl-4">
-                <button @click="$dispatch('open-profile-modal')" class="block px-0 py-2 font-semibold transition-all ease-nav-brand text-sm text-slate-500 hover:text-purple-600">
+                <button @click="$store.profileModal.openModal()" class="block px-0 py-2 font-semibold transition-all ease-nav-brand text-sm text-slate-500 hover:text-purple-600">
                   <i class="fa fa-user sm:mr-1"></i>
                   <span class="hidden sm:inline">{{ auth()->user()->nama_lengkap ?? auth()->user()->name }}</span>
                 </button>
@@ -275,14 +279,28 @@
         </div>
       </nav>
 
-      <!-- end Navbar -->
-
       @yield('content')
     </main>
 
     @include('components.profile-modal')
 
-    <!-- Plugin JS -->
-    <script src="{{ asset('assets/js/soft-ui-dashboard-tailwind.js') }}"></script>
+    <script defer src="{{ asset('assets/js/soft-ui-dashboard-tailwind.js') }}"></script>
+
+    <script>
+    document.querySelectorAll('[data-prefetch]').forEach(link => {
+      link.addEventListener('mouseenter', () => {
+        const href = link.getAttribute('href');
+        if (href && href !== window.location.pathname) {
+          const existing = document.querySelector(`link[rel="prefetch"][href="${href}"]`);
+          if (!existing) {
+            const pre = document.createElement('link');
+            pre.rel = 'prefetch';
+            pre.href = href;
+            document.head.appendChild(pre);
+          }
+        }
+      }, { once: true });
+    });
+    </script>
   </body>
 </html>

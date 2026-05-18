@@ -43,7 +43,7 @@
           <label class="inline-block mb-2 text-sm font-bold text-slate-700">Status</label>
           <span class="px-2 py-1 text-xs rounded-2xl inline-block whitespace-nowrap text-center text-white
             @if($leave->status_pengajuan == 'approved') bg-gradient-to-tl from-green-600 to-lime-400
-            @elseif($leave->status_pengajuan == 'pending') bg-gradient-to-tl from-yellow-600 to-yellow-400
+             @elseif($leave->status_pengajuan == 'pending') bg-gradient-to-tl from-blue-600 to-indigo-500
             @else bg-gradient-to-tl from-red-600 to-rose-400 @endif">
             {{ strtoupper($leave->status_pengajuan) }}
           </span>

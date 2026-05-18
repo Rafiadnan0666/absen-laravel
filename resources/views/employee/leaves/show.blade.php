@@ -21,7 +21,7 @@
                     <p class="font-bold text-sm text-slate-400">Status</p>
                     <span class="inline-block py-1 px-3 text-sm rounded-lg text-white font-bold bg-gradient-to-tl
                         @if($leave->status_pengajuan == 'approved') from-green-600 to-lime-400
-                        @elseif($leave->status_pengajuan == 'pending') from-yellow-600 to-orange-400
+                         @elseif($leave->status_pengajuan == 'pending') from-blue-600 to-indigo-500
                         @else from-red-600 to-rose-400 @endif">
                         {{ strtoupper($leave->status_pengajuan) }}
                     </span>

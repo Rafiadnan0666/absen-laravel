@@ -9,10 +9,39 @@ use Illuminate\Http\Request;
 
 class PayrollController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $payrolls = Payroll::with('user')->latest('periode_mulai')->paginate(20);
-        return view('admin.payrolls.index', compact('payrolls'));
+        $query = Payroll::with('user');
+
+        if ($request->filled('search')) {
+            $s = $request->search;
+            $query->whereHas('user', fn($q) => $q->where('nama_lengkap', 'like', "%{$s}%"));
+        }
+
+        if ($request->filled('filterStatus')) {
+            $query->where('status_pembayaran', $request->filterStatus);
+        }
+
+        if ($request->filled('filterUserId')) {
+            $query->where('user_id', $request->filterUserId);
+        }
+
+        if ($request->filled('periodeFrom')) {
+            $query->whereDate('periode_mulai', '>=', $request->periodeFrom);
+        }
+
+        if ($request->filled('periodeTo')) {
+            $query->whereDate('periode_selesai', '<=', $request->periodeTo);
+        }
+
+        $payrolls = $query->latest('periode_mulai')->paginate(20)->withQueryString();
+        $users = User::where('status_akun', 'active')->get();
+
+        if ($request->ajax()) {
+            return view('admin.payrolls._table', compact('payrolls'))->render();
+        }
+
+        return view('admin.payrolls.index', compact('payrolls', 'users'));
     }
 
     public function create()

@@ -35,7 +35,7 @@
                             <td>
                                 <span class="neo-btn text-xs px-2 py-1
                                     @if($item->status_hadir == 'present') bg-green-200
-                                    @elseif($item->status_hadir == 'late') bg-yellow-200
+                                     @elseif($item->status_hadir == 'late') bg-gray-200
                                     @else bg-red-200 @endif">
                                     {{ strtoupper($item->status_hadir) }}
                                 </span>

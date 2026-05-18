@@ -36,7 +36,7 @@
                             <td class="text-red-600">- Rp {{ number_format($item->total_potongan, 0, ',', '.') }}</td>
                             <td class="font-bold">Rp {{ number_format($item->total_gaji, 0, ',', '.') }}</td>
                             <td>
-                                <span class="neo-btn text-xs px-2 py-1 {{ $item->status_pembayaran == 'paid' ? 'bg-green-200' : 'bg-yellow-200' }}">
+                                 <span class="neo-btn text-xs px-2 py-1 {{ $item->status_pembayaran == 'paid' ? 'bg-green-200' : 'bg-gray-200' }}">
                                     {{ strtoupper($item->status_pembayaran) }}
                                 </span>
                             </td>
