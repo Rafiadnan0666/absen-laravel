@@ -14,7 +14,7 @@
                         <span class="text-sm text-slate-500">{{ $announcement->created_at->format('d M Y H:i') }}</span>
                     </div>
                     <div class="relative w-full px-5 py-4 mx-auto overflow-hidden bg-slate-50 border border-solid shadow-none rounded-2xl border-slate-100 bg-clip-border mb-4">
-                        <p class="text-slate-700 whitespace-pre-wrap">{!! nl2br(e($announcement->isi)) !!}</p>
+                        <div class="text-slate-700 whitespace-pre-wrap">{!! \App\Helpers\TextHelper::renderLinks(\Illuminate\Support\Str::limit($announcement->isi, 300)) !!}</div>
                     </div>
                     <div class="flex justify-between items-center">
                         <p class="text-sm text-slate-500">By: {{ $announcement->creator->nama_lengkap ?? 'Admin' }}</p>

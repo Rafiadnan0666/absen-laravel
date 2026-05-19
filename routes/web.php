@@ -61,6 +61,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::resource('users', UserController::class);
     Route::resource('attendances', AttendanceController::class);
     Route::resource('leaves', LeaveController::class);
+    Route::get('payrolls/calculate', [PayrollController::class, 'calculate'])->name('payrolls.calculate');
     Route::resource('payrolls', PayrollController::class);
     Route::resource('departments', DepartmentController::class);
     Route::resource('job-titles', JobTitleController::class);

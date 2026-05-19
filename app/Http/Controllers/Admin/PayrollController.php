@@ -3,9 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Attendance;
+use App\Models\OvertimeRule;
 use App\Models\Payroll;
+use App\Models\SalaryRule;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 class PayrollController extends Controller
 {
@@ -68,9 +72,13 @@ class PayrollController extends Controller
             'total_lembur' => 'nullable|numeric|min:0',
             'total_potongan' => 'nullable|numeric|min:0',
             'bonus' => 'nullable|numeric|min:0',
-            'total_gaji' => 'required|numeric|min:0',
             'status_pembayaran' => 'required|in:pending,paid',
         ]);
+
+        $validated['total_gaji'] = $validated['gaji_pokok']
+            + ($validated['total_lembur'] ?? 0)
+            + ($validated['bonus'] ?? 0)
+            - ($validated['total_potongan'] ?? 0);
 
         Payroll::create($validated);
         return redirect()->route('admin.payrolls.index')->with('success', 'Payroll created');
@@ -98,9 +106,13 @@ class PayrollController extends Controller
             'total_lembur' => 'nullable|numeric|min:0',
             'total_potongan' => 'nullable|numeric|min:0',
             'bonus' => 'nullable|numeric|min:0',
-            'total_gaji' => 'required|numeric|min:0',
             'status_pembayaran' => 'required|in:pending,paid',
         ]);
+
+        $validated['total_gaji'] = $validated['gaji_pokok']
+            + ($validated['total_lembur'] ?? 0)
+            + ($validated['bonus'] ?? 0)
+            - ($validated['total_potongan'] ?? 0);
 
         $payroll->update($validated);
         return redirect()->route('admin.payrolls.index')->with('success', 'Payroll updated');
@@ -110,6 +122,68 @@ class PayrollController extends Controller
     {
         $payroll->delete();
         return redirect()->route('admin.payrolls.index')->with('success', 'Payroll deleted');
+    }
+
+    public function calculate(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'periode_mulai' => 'required|date',
+            'periode_selesai' => 'required|date|after_or_equal:periode_mulai',
+        ]);
+
+        $user = User::findOrFail($request->user_id);
+        $salaryRule = SalaryRule::getRuleForUser($user);
+        $start = Carbon::parse($request->periode_mulai);
+        $end = Carbon::parse($request->periode_selesai);
+
+        $attendances = Attendance::where('user_id', $user->id)
+            ->whereBetween('tanggal', [$start, $end])
+            ->get();
+
+        $totalOvertimeMinutes = 0;
+        $totalLateMinutes = 0;
+        $absentDays = 0;
+
+        foreach ($attendances as $a) {
+            if ($a->jam_lembur) {
+                $totalOvertimeMinutes += $a->jam_lembur->hour * 60 + $a->jam_lembur->minute;
+            }
+            $totalLateMinutes += $a->menit_telat ?? 0;
+            if (($a->status_hadir ?? '') === 'alfa') {
+                $absentDays++;
+            }
+        }
+
+        $overtimeHours = $totalOvertimeMinutes / 60;
+
+        $hourlyRate = match ($user->tipe_gaji) {
+            'monthly' => $user->jumlah_gaji / (22 * 8),
+            'daily' => $user->jumlah_gaji / 8,
+            'hourly' => $user->jumlah_gaji,
+            default => 0,
+        };
+
+        $overtimePay = OvertimeRule::calculateOvertimePay($overtimeHours, $hourlyRate);
+
+        $latePenalty = $salaryRule
+            ? $totalLateMinutes * $salaryRule->penalti_telat_per_menit
+            : 0;
+
+        $absentPenalty = $salaryRule
+            ? $absentDays * $salaryRule->penalti_tidak_hadir
+            : 0;
+
+        $totalDeductions = $latePenalty + $absentPenalty;
+
+        return response()->json([
+            'gaji_pokok' => (float) $user->jumlah_gaji,
+            'total_lembur' => round($overtimePay, 2),
+            'total_potongan' => round($totalDeductions, 2),
+            'total_late_minutes' => $totalLateMinutes,
+            'total_overtime_hours' => round($overtimeHours, 2),
+            'absent_days' => $absentDays,
+        ]);
     }
 
     public function export(Request $request)

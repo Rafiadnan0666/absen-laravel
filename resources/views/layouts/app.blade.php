@@ -27,7 +27,8 @@
 
         <!-- Page Content -->
         <main class="max-w-7xl mx-auto p-4 sm:p-6">
-            {{ $slot }}
+            {{ $slot ?? '' }}
+            @yield('content')
         </main>
     </div>
 

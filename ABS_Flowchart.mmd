@@ -1,0 +1,311 @@
+---
+title: ABS (Attendance & Business System) — Architecture Flowchart
+---
+flowchart TB
+    %% ==================== STYLES ====================
+    classDef landing fill:#e1f5fe,stroke:#0288d1,stroke-width:2px
+    classDef auth fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    classDef route fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef admin fill:#fce4ec,stroke:#c62828,stroke-width:2px
+    classDef hr fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+    classDef emp fill:#fff8e1,stroke:#f9a825,stroke-width:2px
+    classDef api fill:#e0f7fa,stroke:#00695c,stroke-width:2px
+    classDef model fill:#f5f5f5,stroke:#616161,stroke-width:1px
+    classDef shared fill:#ede7f6,stroke:#4527a0,stroke-width:1px
+
+    %% ==================== ENTRY POINT ====================
+    subgraph ENTRY["🌐 Entry & Auth"]
+        LANDING["/ — Landing Page (welcome.blade.php)"]:::landing
+        AUTH_LOGIN["/login — Login"]:::auth
+        AUTH_REGISTER["/register — Register"]:::auth
+        AUTH_PASSWORD["/forgot-password /reset-password"]:::auth
+        AUTH_VERIFY["/email/verify — Email Verification"]:::auth
+        LOGOUT["/logout"]:::auth
+
+        LANDING --> AUTH_LOGIN
+        AUTH_REGISTER --> AUTH_LOGIN
+        AUTH_PASSWORD --> AUTH_LOGIN
+        AUTH_LOGIN --> LOGIN_CHECK
+    end
+
+    LOGIN_CHECK{"User active?
+        status_akun = 1"}:::auth
+    LOGIN_CHECK -- No --> FLASH_ERROR["Flash error: akun dinonaktifkan"]:::auth
+    FLASH_ERROR --> AUTH_LOGIN
+    LOGIN_CHECK -- Yes --> ROLE_CHECK{"Role?
+        (role->nama_role)"}:::route
+
+    %% ==================== ROLE ROUTING ====================
+    subgraph ROUTING["🚦 Post-Login Role Router"]
+        ROLE_DASH["/dashboard — dashboard.blade.php"]:::route
+        ROLE_CHECK -- admin --> ADMIN_DASH["/admin/dashboard"]:::admin
+        ROLE_CHECK -- hr --> HR_DASH["/hr/dashboard"]:::hr
+        ROLE_CHECK -- employee --> EMP_DASH["/employee/dashboard"]:::emp
+    end
+
+    %% ==================== ADMIN PANEL ====================
+    subgraph ADMIN["🛡️ Admin Panel — /admin/* (auth + admin middleware)"]
+        AD_DASH["Dashboard
+            • 8 metric stat cards
+            • 5 Chart.js charts
+            • Recent records tables"]:::admin
+        
+        subgraph AD_CRUD["Admin CRUD Resources"]
+            AD_USERS["/admin/users — User Management
+                nama_lengkap, email, phone, address,
+                department, job_title, role,
+                salary_type/amount, face_embedding"]:::admin
+            AD_DEPT["/admin/departments — Departments"]:::admin
+            AD_JOB["/admin/job-titles — Job Titles"]:::admin
+            AD_ROLES["/admin/roles — Roles & Permissions"]:::admin
+            AD_PERMS["/admin/permissions — Permissions"]:::admin
+            AD_SHIFTS["/admin/shifts — Shifts
+                name, start/end time, late tolerance"]:::admin
+            AD_USERSHIFTS["/admin/user-shifts — User-Shift Assignments"]:::admin
+            AD_LOCS["/admin/locations — Office Locations
+                name, lat, lng, radius_meter"]:::admin
+            AD_HOLIDAYS["/admin/holidays — Holidays"]:::admin
+            AD_ANNOUNCE["/admin/announcements — Announcements"]:::admin
+            AD_SALARY["/admin/salary-rules — Salary Rules
+                overtime_rate, late_penalty, absence_penalty"]:::admin
+            AD_OVERTIME["/admin/overtime-rules — Overtime Rules
+                min_hours, multiplier"]:::admin
+        end
+
+        subgraph AD_MONITOR["Admin Monitoring"]
+            AD_ATTEND["/admin/attendances — Attendance Records
+                check_in, check_out, work_hours,
+                overtime, late, early_leave
+                + CSV Export"]:::admin
+            AD_LEAVES["/admin/leaves — Leave Requests
+                approve/reject (individual & bulk)
+                + CSV Export"]:::admin
+            AD_PAYROLL["/admin/payrolls — Payroll Records
+                base_salary, overtime, deductions,
+                bonus, total_pay, payment status
+                + Payroll Details + CSV Export"]:::admin
+            AD_REIMB["/admin/reimbursements — Reimbursements
+                approve/reject (individual & bulk)
+                + CSV Export"]:::admin
+            AD_ATTLOG["/admin/attendance-logs — Raw Logs
+                log_type, timestamp, lat/lng,
+                photo, device_info"]:::admin
+            AD_FACELOG["/admin/face-logs — Face Verification Logs
+                photo, confidence, match_result"]:::admin
+        end
+
+        AD_SETTINGS["/admin/settings — Settings + Clear Cache"]:::admin
+
+        %% Admin Dashboard links to CRUD and Monitoring
+        AD_DASH --- AD_CRUD
+        AD_DASH --- AD_MONITOR
+        AD_DASH --- AD_SETTINGS
+    end
+
+    %% ==================== HR PANEL ====================
+    subgraph HR["👔 HR Panel — /hr/* (auth + hr middleware)"]
+        HR_DASHBOARD["Dashboard
+            Operations overview"]:::hr
+        HR_ATTEND["/hr/attendances — View Attendance"]:::hr
+        HR_LEAVES["/hr/leaves — View & Approve/Reject Leaves
+            + CSV Export"]:::hr
+        HR_PAYROLL["/hr/payrolls — View Payrolls
+            + CSV Export"]:::hr
+        HR_REIMB["/hr/reimbursements — View & Approve/Reject
+            + CSV Export"]:::hr
+    end
+
+    %% ==================== EMPLOYEE PANEL ====================
+    subgraph EMP["👤 Employee Panel — /employee/* (auth)"]
+        EMP_DASHBOARD["Dashboard
+            Today's shift, recent activity"]:::emp
+        
+        subgraph EMP_SELF["Employee Self-Service"]
+            EMP_CHECKIN["/employee/attendances/create
+                Check-In
+                • GPS location (Leaflet.js)
+                • Face verification
+                • Photo capture"]:::emp
+            EMP_CHECKOUT["/employee/attendances/checkout
+                Check-Out
+                • Auto-calculate work hours
+                • Overtime calculation"]:::emp
+            EMP_LEAVES["/employee/leaves
+                Submit & view leave requests"]:::emp
+            EMP_REIMB["/employee/reimbursements
+                Submit & view claims"]:::emp
+            EMP_PAYROLL["/employee/payrolls
+                View payslips"]:::emp
+            EMP_ANNOUNCE["/employee/announcements
+                View announcements"]:::emp
+            EMP_ATTLOG["/employee/attendance-logs
+                View personal logs"]:::emp
+        end
+    end
+
+    %% ==================== API ====================
+    subgraph API["📡 REST API — /api/* (Sanctum Token Auth)"]
+        API_LOGIN["POST /api/login → token"]:::api
+        API_REGISTER["POST /api/register → token"]:::api
+        API_USER["GET /api/user → user + role + dept + job"]:::api
+        API_LOGOUT["POST /api/logout → revoke token"]:::api
+        API_USERS["/api/users — CRUD"]:::api
+        API_ATTEND["/api/attendances — CRUD"]:::api
+        API_LEAVES["/api/leaves — CRUD"]:::api
+        API_PAYROLL["/api/payrolls — GET"]:::api
+        API_REIMB["/api/reimbursements — CRUD"]:::api
+        API_DEPT["/api/departments — GET"]:::api
+    end
+
+    %% ==================== SHARED COMPONENTS ====================
+    subgraph SHARED["🧩 Shared Blade Components & Layouts"]
+        LAYOUT_APP["<x-app-layout>
+            layouts/app.blade.php
+            + navigation.blade.php"]:::shared
+        LAYOUT_GUEST["<x-guest-layout>
+            layouts/guest.blade.php"]:::shared
+        LAYOUT_EMP["layouts/employee.blade.php
+            Full sidebar + navbar
+            + Profile Modal
+            + Onboarding Tour"]:::shared
+        LAYOUT_ADMIN["admin/dashboard/layout.blade.php
+            Full sidebar (22 nav items)
+            + Profile Modal
+            + Onboarding Tour
+            + Link prefetch"]:::shared
+        LAYOUT_HR["hr/dashboard/layout.blade.php
+            Sidebar (5 nav items)"]:::shared
+        
+        COMP_PROFILE["components/profile-modal.blade.php
+            Alpine.js profile editor"]:::shared
+        COMP_TOUR["components/onboarding-tour.blade.php
+            Spotlight + tooltip (Alpine.js)
+            3 role-based step sets"]:::shared
+        COMP_TABLE["components/table-search.blade.php
+            Alpine.js AJAX table filter"]:::shared
+        COMP_MODAL["components/modal.blade.php"]:::shared
+        COMP_DROPDOWN["components/dropdown.blade.php"]:::shared
+    end
+
+    %% ==================== MODELS / DATABASE ====================
+    subgraph DB["🗄️ Models (26 Eloquent Models) & Database (22+ tables)"]
+        M_USER["User
+            • BelongsTo: Role, Department, JobTitle
+            • HasMany: Attendance, Leave, Payroll,
+              Reimbursement, FaceLog, AttendanceLog
+            • HasApiTokens (Sanctum)"]:::model
+        M_ROLE["Role
+            • nama_role: admin | hr | employee
+            • BelongsToMany: Permission"]:::model
+        M_PERM["Permission
+            • BelongsToMany: Role"]:::model
+        M_DEPT["Department
+            • HasMany: User"]:::model
+        M_JOB["JobTitle
+            • HasMany: User"]:::model
+        M_SHIFT["Shift
+            • HasMany: UserShift"]:::model
+        M_USERSHIFT["UserShift"]:::model
+        M_ATTEND["Attendance
+            • check_in, check_out, work_hours
+            • overtime_minutes, late_minutes, early_leave_minutes
+            • status: present | late | absent"]:::model
+        M_ATTLOG2["AttendanceLog
+            • Raw log entries with GPS & photo"]:::model
+        M_FACE["FaceLog
+            • Face verification attempts"]:::model
+        M_LEAVE["Leave
+            • tipe_cuti, start_date, end_date
+            • status: pending | approved | rejected"]:::model
+        M_PAYROLL["Payroll
+            • period_start, period_end
+            • base_salary, overtime_total
+            • deductions, bonus, total_pay
+            • status: paid | pending"]:::model
+        M_PAYDET["PayrollDetail
+            • Line items per payroll"]:::model
+        M_REIMB2["Reimbursement
+            • category, amount
+            • status: pending | approved | rejected"]:::model
+        M_LOC["Location
+            • lat, lng, radius_meter"]:::model
+        M_HOL["Holiday"]:::model
+        M_ANN["Announcement"]:::model
+        M_SAL["SalaryRule
+            • overtime_rate, late_penalty, absence_penalty"]:::model
+        M_OVT["OvertimeRule
+            • min_hours, multiplier"]:::model
+    end
+
+    %% ==================== CROSS-CUTTING ====================
+    subgraph CROSS["🔀 Cross-Cutting Concerns"]
+        MIDDLEWARE["Middleware
+            • CheckAdminRole (admin)
+            • CheckHRRole (hr)
+            • ForceHttps (https)
+            • HandleInertiaRequests (unused)"]:::shared
+        POLICIES["Policies (9)
+            • User, Department, JobTitle
+            • Shift, Location
+            • Leave, Attendance
+            • Reimbursement, Payroll"]:::shared
+        GATES["Gates
+            • isAdmin, isHR, isEmployee"]:::shared
+        VITE["Build: Vite + laravel-vite-plugin
+            • Tailwind CSS 3.x
+            • Alpine.js 3.x
+            • Chart.js 4.x
+            • Soft UI Dashboard theme"]:::shared
+        FORMS["Form Requests (9)
+            • Rate-limited LoginRequest
+            • Store*Request validation"]:::shared
+    end
+
+    %% ==================== CONNECTIONS ====================
+    AUTH_LOGIN --> LOGIN_CHECK --> ROLE_CHECK
+    ROLE_CHECK -- admin --> AD_DASH
+    ROLE_CHECK -- hr --> HR_DASHBOARD
+    ROLE_CHECK -- employee --> EMP_DASHBOARD
+
+    AD_CRUD ---->|read/write| M_USER
+    AD_CRUD ---->|read/write| M_DEPT
+    AD_CRUD ---->|read/write| M_JOB
+    AD_CRUD ---->|read/write| M_ROLE
+    AD_CRUD ---->|read/write| M_PERM
+    AD_CRUD ---->|read/write| M_SHIFT
+    AD_CRUD ---->|read/write| M_USERSHIFT
+    AD_CRUD ---->|read/write| M_LOC
+    AD_CRUD ---->|read/write| M_HOL
+    AD_CRUD ---->|read/write| M_ANN
+    AD_CRUD ---->|read/write| M_SAL
+    AD_CRUD ---->|read/write| M_OVT
+
+    AD_MONITOR -->|read/write| M_ATTEND
+    AD_MONITOR -->|read/write| M_LEAVE
+    AD_MONITOR -->|read/write| M_PAYROLL
+    AD_MONITOR -->|read/write| M_REIMB2
+    AD_MONITOR -->|read/write| M_ATTLOG2
+    AD_MONITOR -->|read/write| M_FACE
+    AD_MONITOR --> M_PAYDET
+
+    EMP_SELF -->|create/read own| M_ATTEND
+    EMP_SELF -->|create/read own| M_LEAVE
+    EMP_SELF -->|create/read own| M_REIMB2
+    EMP_SELF -->|read own| M_PAYROLL
+    EMP_SELF -->|read| M_ANN
+    EMP_SELF -->|read own| M_ATTLOG2
+
+    HR_ATTEND --->|read| M_ATTEND
+    HR_LEAVES --->|read/write| M_LEAVE
+    HR_PAYROLL --->|read| M_PAYROLL
+    HR_REIMB --->|read/write| M_REIMB2
+
+    API_LOGIN --> M_USER
+    API_REGISTER --> M_USER
+    API_USER --> M_USER
+    API_USERS --> M_USER
+    API_ATTEND --> M_ATTEND
+    API_LEAVES --> M_LEAVE
+    API_PAYROLL --> M_PAYROLL
+    API_REIMB --> M_REIMB2
+    API_DEPT --> M_DEPT

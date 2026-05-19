@@ -21,7 +21,7 @@
         </div>
         <div class="mb-4">
           <label class="inline-block mb-2 text-sm font-bold text-slate-700">Content</label>
-          <p class="text-sm text-slate-500 whitespace-pre-wrap">{{ $announcement->isi }}</p>
+          <div class="text-sm text-slate-500 whitespace-pre-wrap">{!! \App\Helpers\TextHelper::renderLinks($announcement->isi) !!}</div>
         </div>
         <div class="mb-4">
           <label class="inline-block mb-2 text-sm font-bold text-slate-700">Created By</label>

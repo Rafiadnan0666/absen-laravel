@@ -18,7 +18,7 @@
                 by {{ $announcement->creator->nama_lengkap ?? 'Admin' }}
             </p>
             <div class="relative w-full px-5 py-4 mx-auto overflow-hidden bg-slate-50 border border-solid shadow-none rounded-2xl border-slate-100 bg-clip-border">
-                <p class="text-slate-700 whitespace-pre-wrap">{{ $announcement->isi }}</p>
+                <div class="text-slate-700 whitespace-pre-wrap">{!! \App\Helpers\TextHelper::renderLinks($announcement->isi) !!}</div>
             </div>
         </div>
     </div>

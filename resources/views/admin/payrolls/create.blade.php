@@ -80,13 +80,12 @@
             @enderror
           </div>
           <div class="mb-4">
-            <label for="total_gaji" class="inline-block mb-2 text-sm font-bold text-slate-700">Total Salary</label>
-            <input type="number" step="0.01" id="total_gaji" name="total_gaji" value="{{ old('total_gaji') }}"
-              class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none"
-              placeholder="Enter total salary" required>
-            @error('total_gaji')
-              <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-            @enderror
+            <label for="total_gaji_display" class="inline-block mb-2 text-sm font-bold text-slate-700">Total Salary</label>
+            <input type="text" id="total_gaji_display"
+              class="focus:shadow-soft-primary-outline text-sm leading-5.6 ease-soft block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-gray-100 bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500"
+              readonly placeholder="Auto-calculated">
+            <input type="hidden" id="total_gaji" name="total_gaji" value="0">
+            <p class="text-xs text-slate-400 mt-1">Auto-calculated: Base Salary + Overtime + Bonus - Deductions</p>
           </div>
           <div class="mb-4">
             <label for="status_pembayaran" class="inline-block mb-2 text-sm font-bold text-slate-700">Payment Status</label>
@@ -100,17 +99,94 @@
               <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
             @enderror
           </div>
-          <div class="flex justify-end">
-            <a href="{{ route('admin.payrolls.index') }}" class="inline-block px-6 py-3 mb-0 text-xs font-bold text-right uppercase align-middle transition-all border-0 rounded-lg cursor-pointer hover:scale-102 active:opacity-85 leading-pro ease-soft-in tracking-tight-soft bg-150 bg-x-25 bg-gradient-to-tl from-slate-600 to-slate-300 text-white mr-2">
-              Cancel
-            </a>
-            <button type="submit" class="inline-block px-6 py-3 mb-0 text-xs font-bold text-right uppercase align-middle transition-all border-0 rounded-lg cursor-pointer hover:scale-102 active:opacity-85 leading-pro ease-soft-in tracking-tight-soft bg-150 bg-x-25 bg-gradient-to-tl from-gray-900 to-slate-800 text-white">
-              Create
+          <div class="flex justify-between items-center">
+            <button type="button" id="btn-auto-calc"
+              class="inline-block px-6 py-3 mb-0 text-xs font-bold text-right uppercase align-middle transition-all border-0 rounded-lg cursor-pointer hover:scale-102 active:opacity-85 leading-pro ease-soft-in tracking-tight-soft bg-150 bg-x-25 bg-gradient-to-tl from-green-600 to-lime-400 text-white">
+              <i class="fas fa-calculator mr-1"></i> Auto Calculate from Attendance
             </button>
+            <div>
+              <a href="{{ route('admin.payrolls.index') }}" class="inline-block px-6 py-3 mb-0 text-xs font-bold text-right uppercase align-middle transition-all border-0 rounded-lg cursor-pointer hover:scale-102 active:opacity-85 leading-pro ease-soft-in tracking-tight-soft bg-150 bg-x-25 bg-gradient-to-tl from-slate-600 to-slate-300 text-white mr-2">
+                Cancel
+              </a>
+              <button type="submit" class="inline-block px-6 py-3 mb-0 text-xs font-bold text-right uppercase align-middle transition-all border-0 rounded-lg cursor-pointer hover:scale-102 active:opacity-85 leading-pro ease-soft-in tracking-tight-soft bg-150 bg-x-25 bg-gradient-to-tl from-gray-900 to-slate-800 text-white">
+                Create
+              </button>
+            </div>
           </div>
         </form>
       </div>
     </div>
   </div>
 </div>
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const userId = document.getElementById('user_id');
+    const gajiPokok = document.getElementById('gaji_pokok');
+    const totalLembur = document.getElementById('total_lembur');
+    const totalPotongan = document.getElementById('total_potongan');
+    const bonus = document.getElementById('bonus');
+    const totalGajiHidden = document.getElementById('total_gaji');
+    const totalGajiDisplay = document.getElementById('total_gaji_display');
+    const periodeMulai = document.getElementById('periode_mulai');
+    const periodeSelesai = document.getElementById('periode_selesai');
+    const btnAutoCalc = document.getElementById('btn-auto-calc');
+
+    function calcTotal() {
+        const pokok = parseFloat(gajiPokok.value) || 0;
+        const lembur = parseFloat(totalLembur.value) || 0;
+        const potongan = parseFloat(totalPotongan.value) || 0;
+        const bns = parseFloat(bonus.value) || 0;
+        const total = pokok + lembur + bns - potongan;
+        totalGajiHidden.value = total.toFixed(2);
+        totalGajiDisplay.value = total.toFixed(2);
+    }
+
+    [gajiPokok, totalLembur, totalPotongan, bonus].forEach(el => {
+        el.addEventListener('input', calcTotal);
+    });
+
+    userId.addEventListener('change', function () {
+        if (this.value) {
+            fetch(`{{ route('admin.payrolls.calculate') }}?user_id=${this.value}&periode_mulai=${periodeMulai.value}&periode_selesai=${periodeSelesai.value}`)
+                .then(r => r.json())
+                .then(data => {
+                    gajiPokok.value = data.gaji_pokok;
+                    calcTotal();
+                })
+                .catch(() => {});
+        }
+    });
+
+    btnAutoCalc.addEventListener('click', function () {
+        if (!userId.value || !periodeMulai.value || !periodeSelesai.value) {
+            alert('Please select employee and period first.');
+            return;
+        }
+        this.disabled = true;
+        this.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Calculating...';
+        fetch(`{{ route('admin.payrolls.calculate') }}?user_id=${userId.value}&periode_mulai=${periodeMulai.value}&periode_selesai=${periodeSelesai.value}`)
+            .then(r => r.json())
+            .then(data => {
+                gajiPokok.value = data.gaji_pokok;
+                totalLembur.value = data.total_lembur;
+                totalPotongan.value = data.total_potongan;
+                calcTotal();
+                this.disabled = false;
+                this.innerHTML = '<i class="fas fa-calculator mr-1"></i> Auto Calculate from Attendance';
+            })
+            .catch(() => {
+                alert('Error calculating. Please try again.');
+                this.disabled = false;
+                this.innerHTML = '<i class="fas fa-calculator mr-1"></i> Auto Calculate from Attendance';
+            });
+    });
+
+    if (periodeMulai.value && periodeSelesai.value && userId.value) {
+        userId.dispatchEvent(new Event('change'));
+    }
+});
+</script>
+@endpush
 @endsection
