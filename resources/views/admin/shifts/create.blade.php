@@ -4,9 +4,9 @@
 
 @section('content')
 <div class="space-y-6">
-  <div class="neo-card p-6">
+  <div class="neo-card">
     <div class="mb-6 border-b-3 border-black pb-4">
-      <h6 class="text-xl font-bold">Create Shift</h6>
+      <h6 class="neo-section-title">CREATE SHIFT</h6>
     </div>
 
     <form action="{{ route('admin.shifts.store') }}" method="POST">

@@ -4,10 +4,10 @@
 
 @section('content')
 <div class="space-y-6">
-  <div class="neo-card p-6">
+  <div class="neo-card">
     <div class="mb-6 border-b-3 border-black pb-4">
       <div class="flex justify-between items-center">
-        <h6 class="text-xl font-bold">Shift Details</h6>
+        <h6 class="neo-section-title">SHIFT DETAILS</h6>
         <div class="flex gap-2">
           <a href="{{ route('admin.shifts.edit', $shift) }}" class="neo-btn-primary">
             Edit
@@ -20,32 +20,32 @@
     </div>
 
     <div class="space-y-4">
-      <div class="neo-label">
-        <span class="font-bold">ID</span>
+      <div>
+        <label class="neo-label">ID</label>
         <p class="font-bold">{{ $shift->id }}</p>
       </div>
-      <div class="neo-label">
-        <span class="font-bold">Shift Name</span>
+      <div>
+        <label class="neo-label">Shift Name</label>
         <p class="font-bold">{{ $shift->nama_shift }}</p>
       </div>
-      <div class="neo-label">
-        <span class="font-bold">Check In Time</span>
+      <div>
+        <label class="neo-label">Check In Time</label>
         <p>{{ $shift->jam_masuk }}</p>
       </div>
-      <div class="neo-label">
-        <span class="font-bold">Check Out Time</span>
+      <div>
+        <label class="neo-label">Check Out Time</label>
         <p>{{ $shift->jam_pulang }}</p>
       </div>
-      <div class="neo-label">
-        <span class="font-bold">Late Tolerance (minutes)</span>
+      <div>
+        <label class="neo-label">Late Tolerance (minutes)</label>
         <p>{{ $shift->toleransi_telat_menit }}</p>
       </div>
-      <div class="neo-label">
-        <span class="font-bold">Created At</span>
+      <div>
+        <label class="neo-label">Created At</label>
         <p>{{ $shift->created_at->format('d M Y H:i') }}</p>
       </div>
-      <div class="neo-label">
-        <span class="font-bold">Assigned Users ({{ $shift->userShifts->count() }})</span>
+      <div>
+        <label class="neo-label">Assigned Users ({{ $shift->userShifts->count() }})</label>
         <div class="overflow-x-auto mt-2">
           <table class="neo-table w-full mt-2">
             <thead>

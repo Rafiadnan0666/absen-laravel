@@ -6,7 +6,7 @@
 <div class="space-y-6">
   <div class="neo-card">
     <div class="mb-4 border-b-3 border-black pb-4">
-      <h6 class="text-xl font-bold">EDIT REIMBURSEMENT</h6>
+      <h6 class="neo-section-title">EDIT REIMBURSEMENT</h6>
     </div>
 
     <form action="{{ route('admin.reimbursements.update', $reimbursement) }}" method="POST">
@@ -22,6 +22,22 @@
           @endforeach
         </select>
         @error('user_id')
+          <p class="text-neo-red text-sm mt-1 font-bold">{{ $message }}</p>
+        @enderror
+      </div>
+
+      <div class="mb-4">
+        <label for="kategori" class="neo-label">CATEGORY</label>
+        <select id="kategori" name="kategori" required class="neo-select">
+          <option value="">SELECT CATEGORY</option>
+          <option value="transport" {{ old('kategori', $reimbursement->kategori) == 'transport' ? 'selected' : '' }}>TRANSPORTATION</option>
+          <option value="medical" {{ old('kategori', $reimbursement->kategori) == 'medical' ? 'selected' : '' }}>MEDICAL</option>
+          <option value="meal" {{ old('kategori', $reimbursement->kategori) == 'meal' ? 'selected' : '' }}>MEAL</option>
+          <option value="supplies" {{ old('kategori', $reimbursement->kategori) == 'supplies' ? 'selected' : '' }}>OFFICE SUPPLIES</option>
+          <option value="training" {{ old('kategori', $reimbursement->kategori) == 'training' ? 'selected' : '' }}>TRAINING</option>
+          <option value="other" {{ old('kategori', $reimbursement->kategori) == 'other' ? 'selected' : '' }}>OTHER</option>
+        </select>
+        @error('kategori')
           <p class="text-neo-red text-sm mt-1 font-bold">{{ $message }}</p>
         @enderror
       </div>

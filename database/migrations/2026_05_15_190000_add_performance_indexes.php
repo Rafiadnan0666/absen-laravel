@@ -17,14 +17,12 @@ return new class extends Migration
         });
 
         Schema::table('attendances', function (Blueprint $table) {
-            $table->index('user_id');
-            $table->index('tanggal');
             $table->index(['user_id', 'tanggal']);
         });
 
         Schema::table('leaves', function (Blueprint $table) {
             $table->index('user_id');
-            $table->index('status');
+            $table->index('status_pengajuan');
             $table->index('tanggal_mulai');
         });
 
@@ -36,25 +34,22 @@ return new class extends Migration
 
         Schema::table('payrolls', function (Blueprint $table) {
             $table->index('user_id');
-            $table->index('bulan');
-            $table->index('tahun');
-            $table->index(['user_id', 'bulan', 'tahun']);
+            $table->index('periode_mulai');
+            $table->index(['user_id', 'periode_mulai']);
         });
 
         Schema::table('attendance_logs', function (Blueprint $table) {
             $table->index('user_id');
-            $table->index('waktu');
-            $table->index('jenis');
+            $table->index('waktu_log');
+            $table->index('tipe_log');
         });
 
         Schema::table('user_shifts', function (Blueprint $table) {
-            $table->index('user_id');
-            $table->index('shift_id');
-            $table->index('tanggal');
+            $table->index(['user_id', 'shift_id', 'tanggal_shift']);
         });
 
         Schema::table('announcements', function (Blueprint $table) {
-            $table->index('status');
+            $table->index('dibuat_oleh');
             $table->index('tanggal_mulai');
         });
 
@@ -65,11 +60,6 @@ return new class extends Migration
         Schema::table('locations', function (Blueprint $table) {
             $table->index('status');
         });
-
-        Schema::table('face_logs', function (Blueprint $table) {
-            $table->index('user_id');
-            $table->index('waktu');
-        });
     }
 
     public function down(): void
@@ -79,11 +69,11 @@ return new class extends Migration
         });
 
         Schema::table('attendances', function (Blueprint $table) {
-            $table->dropIndex(['user_id', 'tanggal', 'user_id_tanggal']);
+            $table->dropIndex(['user_id_tanggal']);
         });
 
         Schema::table('leaves', function (Blueprint $table) {
-            $table->dropIndex(['user_id', 'status', 'tanggal_mulai']);
+            $table->dropIndex(['user_id', 'status_pengajuan', 'tanggal_mulai']);
         });
 
         Schema::table('reimbursements', function (Blueprint $table) {
@@ -91,19 +81,19 @@ return new class extends Migration
         });
 
         Schema::table('payrolls', function (Blueprint $table) {
-            $table->dropIndex(['user_id', 'bulan', 'tahun', 'user_id_bulan_tahun']);
+            $table->dropIndex(['user_id', 'periode_mulai', 'user_id_periode_mulai']);
         });
 
         Schema::table('attendance_logs', function (Blueprint $table) {
-            $table->dropIndex(['user_id', 'waktu', 'jenis']);
+            $table->dropIndex(['user_id', 'waktu_log', 'tipe_log']);
         });
 
         Schema::table('user_shifts', function (Blueprint $table) {
-            $table->dropIndex(['user_id', 'shift_id', 'tanggal']);
+            $table->dropIndex(['user_id_shift_id_tanggal_shift']);
         });
 
         Schema::table('announcements', function (Blueprint $table) {
-            $table->dropIndex(['status', 'tanggal_mulai']);
+            $table->dropIndex(['dibuat_oleh', 'tanggal_mulai']);
         });
 
         Schema::table('holidays', function (Blueprint $table) {
@@ -112,10 +102,6 @@ return new class extends Migration
 
         Schema::table('locations', function (Blueprint $table) {
             $table->dropIndex(['status']);
-        });
-
-        Schema::table('face_logs', function (Blueprint $table) {
-            $table->dropIndex(['user_id', 'waktu']);
         });
     }
 };

@@ -4,16 +4,16 @@
 
 @section('content')
 <div class="space-y-6">
-  <div class="neo-card p-6">
+  <div class="neo-card">
     <div class="flex justify-between items-center mb-6 border-b-3 border-black pb-4">
-      <h6 class="text-xl font-bold">Shifts</h6>
+      <h6 class="neo-section-title">SHIFTS</h6>
       <a href="{{ route('admin.shifts.create') }}" class="neo-btn-primary">
         <i class="fas fa-plus mr-1"></i> Add Shift
       </a>
     </div>
 
     @if(session('success'))
-      <div class="neo-badge neo-badge-green mb-4">
+      <div class="neo-alert-success mb-4">
         {{ session('success') }}
       </div>
     @endif
@@ -37,12 +37,12 @@
             <td class="p-3">{{ $shift->jam_masuk }}</td>
             <td class="p-3">{{ $shift->jam_pulang }}</td>
             <td class="p-3 text-center">
-              <a href="{{ route('admin.shifts.show', $shift) }}" class="neo-btn-secondary text-sm inline-block mb-1">View</a>
-              <a href="{{ route('admin.shifts.edit', $shift) }}" class="neo-btn-secondary text-sm inline-block mb-1">Edit</a>
+              <a href="{{ route('admin.shifts.show', $shift) }}" class="neo-btn-secondary neo-btn-sm">View</a>
+              <a href="{{ route('admin.shifts.edit', $shift) }}" class="neo-btn-secondary neo-btn-sm">Edit</a>
               <form action="{{ route('admin.shifts.destroy', $shift) }}" method="POST" class="inline" onsubmit="return confirm('Delete this shift?')">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="neo-btn-danger text-sm inline-block mb-1">Delete</button>
+                <button type="submit" class="neo-btn-danger neo-btn-sm">Delete</button>
               </form>
             </td>
           </tr>
@@ -56,7 +56,7 @@
     </div>
 
     <div class="mt-4">
-      {{ $shifts->links() }}
+      {{ $shifts->links('vendor.pagination.neo') }}
     </div>
   </div>
 </div>

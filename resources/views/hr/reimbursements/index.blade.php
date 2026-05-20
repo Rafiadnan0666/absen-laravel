@@ -7,8 +7,8 @@
     <h1 class="neo-section-title">REIMBURSEMENT REQUESTS</h1>
 
     <div class="neo-card">
-        <div class="p-4 border-b-4 border-black">
-            <h6 class="mb-0 font-bold text-xl">All Reimbursement Requests</h6>
+        <div class="flex justify-between items-center p-4 border-b-4 border-black">
+            <h2 class="font-black text-xl">All Reimbursement Requests</h2>
         </div>
         <div class="p-4">
             <div class="neo-table-container">
@@ -50,7 +50,7 @@
                                         <button class="neo-btn-danger neo-btn-sm">REJECT</button>
                                     </form>
                                 @else
-                                    <span class="text-sm font-bold">Processed</span>
+                                    <span class="neo-label">PROCESSED</span>
                                 @endif
                             </td>
                         </tr>
@@ -62,8 +62,8 @@
                     </tbody>
                 </table>
             </div>
-            <div class="mt-4 border-t-4 border-black p-4">
-                {{ $reimbursements->links() }}
+            <div class="mt-4">
+                {{ $reimbursements->links('vendor.pagination.neo') }}
             </div>
         </div>
     </div>

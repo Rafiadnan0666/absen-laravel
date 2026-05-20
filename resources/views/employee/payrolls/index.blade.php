@@ -3,7 +3,9 @@
 @section('page-title', 'My Payroll')
 
 @section('content')
-    <h1 class="text-4xl font-black mb-8">My Payroll</h1>
+    <div class="flex justify-between items-center mb-6 border-b-3 border-black pb-4">
+        <h1 class="text-2xl font-black">MY PAYROLL</h1>
+    </div>
 
     <div class="neo-card">
         <div class="neo-table-container">
@@ -49,7 +51,7 @@
             </table>
         </div>
         <div class="mt-4">
-            {{ $payrolls->links() }}
+            {{ $payrolls->links('vendor.pagination.neo') }}
         </div>
     </div>
 @endsection

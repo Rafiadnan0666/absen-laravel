@@ -59,6 +59,6 @@
             </tbody>
         </table>
     </div>
-    <div class="mt-4">{{ $users->links() }}</div>
+    <div class="mt-4">{{ $users->links('vendor.pagination.neo') }}</div>
 </div>
 @endsection

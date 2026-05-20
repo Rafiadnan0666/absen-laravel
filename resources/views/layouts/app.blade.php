@@ -13,15 +13,17 @@
         @include('layouts.navigation')
 
         @isset($header)
-            <header class="neo-card mx-4 mt-4 mb-4">
-                <div class="max-w-7xl mx-auto py-4 px-4">
+            <div class="neo-container mt-4 mb-4">
+                <div class="neo-card">
                     <h1 class="text-2xl font-black">{{ $header }}</h1>
                 </div>
-            </header>
+            </div>
         @endisset
 
-        <main class="max-w-7xl mx-auto p-4">
-            {{ $slot }}
+        <main class="neo-container py-4">
+            <div class="space-y-6">
+                {{ $slot }}
+            </div>
         </main>
     </div>
 </body>

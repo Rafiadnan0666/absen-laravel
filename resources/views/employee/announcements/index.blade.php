@@ -26,6 +26,6 @@
     </div>
 
     <div class="mt-6">
-        {{ $announcements->links() }}
+        {{ $announcements->links('vendor.pagination.neo') }}
     </div>
 @endsection

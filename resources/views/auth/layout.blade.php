@@ -8,13 +8,8 @@
     <title>@yield('title', 'ABS')</title>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
     <style>
-        .auth-box {
-            width: 100%;
-            max-width: 400px;
-            margin: 40px auto;
-        }
+        .auth-box { width: 100%; max-width: 400px; margin: 0 auto; }
         .auth-box.register { max-width: 500px; }
     </style>
 </head>

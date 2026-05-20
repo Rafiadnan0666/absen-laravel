@@ -6,6 +6,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Employee Panel') - {{ config('app.name', 'ABS') }}</title>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="font-mono min-h-screen bg-neo-bg">
@@ -62,11 +64,14 @@
             </div>
         </nav>
 
-        <div class="neo-card">
+        <div class="space-y-6">
             @yield('content')
         </div>
     </main>
 
     @include('components.profile-modal')
+    @include('components.onboarding-tour')
+    @include('components.scroll-to-top')
+    @stack('scripts')
 </body>
 </html>

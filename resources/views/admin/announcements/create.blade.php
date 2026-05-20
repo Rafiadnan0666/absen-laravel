@@ -6,7 +6,7 @@
 <div class="space-y-6">
   <div class="neo-card">
     <div class="border-b-3 border-black pb-4 mb-4">
-      <h6 class="text-xl font-bold">Create Announcement</h6>
+      <h6 class="neo-section-title">CREATE ANNOUNCEMENT</h6>
     </div>
     <form action="{{ route('admin.announcements.store') }}" method="POST">
       @csrf

@@ -7,7 +7,7 @@
   <div class="neo-card">
     <div class="border-b-3 border-black pb-4 mb-4">
       <div class="flex justify-between items-center">
-        <h6 class="text-xl font-bold">Holiday Details</h6>
+        <h6 class="neo-section-title">HOLIDAY DETAILS</h6>
         <a href="{{ route('admin.holidays.index') }}" class="neo-btn-secondary">
           <i class="fas fa-arrow-left mr-1"></i> Back
         </a>

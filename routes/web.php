@@ -26,6 +26,7 @@ use App\Http\Controllers\HR\LeaveController as HRLeaveController;
 use App\Http\Controllers\HR\PayrollController as HRPayrollController;
 use App\Http\Controllers\HR\ReimbursementController as HRReimbursementController;
 use App\Http\Controllers\Admin\PayrollDetailController;
+use App\Http\Controllers\OnboardingController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -46,6 +47,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::post('/onboarding/complete', [OnboardingController::class, 'complete'])->name('onboarding.complete');
+    Route::post('/onboarding/skip', [OnboardingController::class, 'skip'])->name('onboarding.skip');
 });
 
 
@@ -87,6 +90,7 @@ Route::middleware(['auth'])->prefix('employee')->name('employee.')->group(functi
     Route::resource('attendances', App\Http\Controllers\Employee\AttendanceController::class)->only(['index', 'create', 'store']);
     Route::post('attendances/checkout', [App\Http\Controllers\Employee\AttendanceController::class, 'checkout'])->name('attendances.checkout');
     Route::get('attendances/logs', [App\Http\Controllers\Employee\AttendanceController::class, 'logs'])->name('attendances.logs');
+    Route::get('attendances/location/{location}', [App\Http\Controllers\Employee\AttendanceController::class, 'getLocationData'])->name('attendances.location');
     Route::resource('leaves', App\Http\Controllers\Employee\LeaveController::class);
     Route::resource('reimbursements', App\Http\Controllers\Employee\ReimbursementController::class);
     Route::resource('payrolls', App\Http\Controllers\Employee\PayrollController::class)->only(['index', 'show']);

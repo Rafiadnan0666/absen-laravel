@@ -7,7 +7,7 @@
   <div class="neo-card">
     <div class="border-b-3 border-black pb-4 mb-4">
       <div class="flex justify-between items-center">
-        <h6 class="text-xl font-bold">Announcements</h6>
+        <h6 class="neo-section-title">ANNOUNCEMENTS</h6>
         <a href="{{ route('admin.announcements.create') }}" class="neo-btn-primary">
           <i class="fas fa-plus mr-1"></i> Add Announcement
         </a>
@@ -54,7 +54,7 @@
         </tbody>
       </table>
       <div class="p-4">
-        {{ $announcements->links() }}
+        {{ $announcements->links('vendor.pagination.neo') }}
       </div>
     </div>
   </div>

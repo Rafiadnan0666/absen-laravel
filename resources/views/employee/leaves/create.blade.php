@@ -3,7 +3,10 @@
 @section('page-title', 'New Leave Request')
 
 @section('content')
-    <h1 class="text-4xl font-black mb-8">New Leave Request</h1>
+    <div class="flex justify-between items-center mb-6 border-b-3 border-black pb-4">
+        <h1 class="text-2xl font-black">NEW LEAVE REQUEST</h1>
+        <a href="{{ route('employee.leaves.index') }}" class="neo-btn-secondary neo-btn-sm">BACK</a>
+    </div>
 
     <div class="neo-card">
         <form action="{{ route('employee.leaves.store') }}" method="POST">

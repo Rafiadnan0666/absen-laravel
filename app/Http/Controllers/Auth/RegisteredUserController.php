@@ -65,6 +65,8 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
+        session()->put('show_tour', true);
+
         // Role-based redirect
         if ($user->role->nama_role === 'admin') {
             return redirect(route('admin.dashboard', absolute: false));

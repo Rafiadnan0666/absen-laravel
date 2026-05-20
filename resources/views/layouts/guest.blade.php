@@ -9,13 +9,15 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="font-mono min-h-screen bg-neo-bg flex flex-col">
-    <nav class="neo-card mx-4 mt-4 mb-0 flex justify-between items-center">
-        <a href="/" class="font-black text-xl">
-            <span class="text-neo-purple">⚡</span> {{ config('app.name', 'ABS') }}
-        </a>
-        @guest
-            <a href="{{ route('login') }}" class="neo-btn-primary neo-btn-sm">LOG IN</a>
-        @endguest
+    <nav class="neo-container mt-4 mb-0">
+        <div class="neo-card flex justify-between items-center">
+            <a href="/" class="font-black text-xl">
+                <span class="text-neo-purple">⚡</span> {{ config('app.name', 'ABS') }}
+            </a>
+            @guest
+                <a href="{{ route('login') }}" class="neo-btn-primary neo-btn-sm">LOG IN</a>
+            @endguest
+        </div>
     </nav>
 
     <main class="flex-1 flex items-center justify-center p-8">

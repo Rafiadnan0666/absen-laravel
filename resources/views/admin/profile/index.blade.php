@@ -6,7 +6,7 @@
 <div class="space-y-6">
   <div class="neo-card">
     <div class="mb-4 border-b-3 border-black pb-4">
-      <h6 class="text-xl font-bold">Admin Profile</h6>
+      <h6 class="neo-section-title">ADMIN PROFILE</h6>
     </div>
     <div>
       @if(session('status'))
@@ -45,7 +45,7 @@
         </form>
       </div>
 
-<hr class="h-px my-6 border-t-3 border-black">
+<hr class="my-6 border-t-3 border-black">
 
       <div class="mb-6">
         <h5 class="text-lg font-bold mb-4">Update Password</h5>
@@ -87,7 +87,7 @@
         </form>
       </div>
 
-<hr class="h-px my-6 border-t-3 border-black">
+<hr class="my-6 border-t-3 border-black">
 
       <div>
         <h5 class="text-lg font-bold mb-4 text-neo-red">Delete Account</h5>

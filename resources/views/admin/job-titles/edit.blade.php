@@ -7,7 +7,7 @@
   <div>
     <div class="neo-card">
       <div class="mb-4 border-b-3 border-black pb-4">
-        <h6 class="text-xl font-bold">Edit Job Title</h6>
+        <h6 class="neo-section-title">EDIT JOB TITLE</h6>
       </div>
       <div>
         <form action="{{ route('admin.job-titles.update', $jobTitle) }}" method="POST">

@@ -7,7 +7,7 @@
   <div>
     <div class="neo-card">
       <div class="mb-6 border-b-3 border-black pb-4">
-        <h6 class="text-xl font-bold">Create Permission</h6>
+        <h6 class="neo-section-title">CREATE PERMISSION</h6>
       </div>
       <form action="{{ route('admin.permissions.store') }}" method="POST">
         @csrf

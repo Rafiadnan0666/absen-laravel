@@ -6,7 +6,7 @@
 <div class="space-y-6">
   <div class="neo-card">
     <div class="border-b-3 border-black pb-4 mb-4">
-      <h6 class="text-xl font-bold">Edit Holiday</h6>
+      <h6 class="neo-section-title">EDIT HOLIDAY</h6>
     </div>
     <form action="{{ route('admin.holidays.update', $holiday) }}" method="POST">
       @csrf

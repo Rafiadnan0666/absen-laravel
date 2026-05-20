@@ -5,15 +5,15 @@
 @section('content')
 <div class="space-y-6">
   <div class="neo-card">
-    <div class="flex justify-between items-center mb-6">
-      <h2 class="text-2xl font-bold">Salary Rules</h2>
+    <div class="flex justify-between items-center mb-6 border-b-3 border-black pb-4">
+      <h2 class="neo-section-title">SALARY RULES</h2>
       <a href="{{ route('admin.salary-rules.create') }}" class="neo-btn-primary">
         <i class="fas fa-plus mr-1"></i> Add Salary Rule
       </a>
     </div>
 
     @if(session('success'))
-      <div class="neo-badge neo-badge-green mb-4">
+      <div class="neo-alert-success mb-4">
         {{ session('success') }}
       </div>
     @endif
@@ -22,20 +22,18 @@
       <table class="neo-table w-full">
         <thead>
           <tr>
-            <th class="neo-label">ID</th>
-            <th class="neo-label">Type</th>
-            <th class="neo-label">Overtime Rate</th>
-            <th class="neo-label">Late Penalty/Min</th>
-            <th class="neo-label">Absent Penalty</th>
-            <th class="neo-label">Actions</th>
+            <th>ID</th>
+            <th>Type</th>
+            <th>Overtime Rate</th>
+            <th>Late Penalty/Min</th>
+            <th>Absent Penalty</th>
+            <th class="text-center">Actions</th>
           </tr>
         </thead>
         <tbody>
           @forelse($salaryRules as $rule)
           <tr>
-            <td>
-              <span class="neo-label">{{ $rule->id }}</span>
-            </td>
+            <td>{{ $rule->id }}</td>
             <td>
               <span class="neo-badge">{{ ucfirst($rule->tipe_gaji) }}</span>
             </td>
@@ -62,7 +60,7 @@
     </div>
 
     <div class="mt-4">
-      {{ $salaryRules->links() }}
+      {{ $salaryRules->links('vendor.pagination.neo') }}
     </div>
   </div>
 </div>

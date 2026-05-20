@@ -4,20 +4,29 @@
 
 @section('content')
 <div class="space-y-6">
-  <div class="neo-card">
-    <div class="flex justify-between items-center mb-6 border-b-3 border-black pb-4">
-      <h6 class="text-xl font-bold">ATTENDANCE RECORDS</h6>
-      <a href="{{ route('admin.attendances.create') }}" class="neo-btn-primary">
-        <i class="fas fa-plus mr-1"></i> Add Attendance
-      </a>
-    </div>
+  <div class="flex justify-between items-center mb-2 border-b-3 border-black pb-4 fade-in-up">
+    <h6 class="text-xl font-bold">ATTENDANCE RECORDS</h6>
+    <a href="{{ route('admin.attendances.create') }}" class="neo-btn-primary neo-btn-sm pulse-glow">
+      <i class="fas fa-plus mr-1"></i> Add Attendance
+    </a>
+  </div>
 
-    @if(session('success'))
-      <div class="neo-alert-success mb-4">
-        {{ session('success') }}
-      </div>
-    @endif
+  @if(session('success'))
+    <div class="neo-alert-success mb-6 shake">{{ session('success') }}</div>
+  @endif
 
+  <x-advanced-filters :action="route('admin.attendances.index')" :filters="[
+    'date_from' => ['type' => 'date', 'label' => 'From'],
+    'date_to' => ['type' => 'date', 'label' => 'To'],
+    'status' => ['type' => 'select', 'label' => 'Status', 'options' => [
+      'present' => 'Present',
+      'late' => 'Late',
+      'absent' => 'Absent',
+    ]],
+    'user_id' => ['type' => 'select', 'label' => 'Employee', 'options' => $users->pluck('nama_lengkap', 'id')->toArray()],
+  ]" />
+
+  <div class="neo-card fade-in-up fade-in-up-d2">
     <div class="neo-table-container overflow-x-auto">
       <table class="neo-table w-full">
         <thead>
@@ -32,21 +41,21 @@
         </thead>
         <tbody>
           @forelse($attendances as $attendance)
-          <tr class="border-b-2 border-black hover:bg-neo-light">
+          <tr class="border-b-2 border-black hover:bg-neo-light hover-lift" style="transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s;">
             <td class="px-4 py-3 font-bold">{{ $attendance->user->nama_lengkap ?? 'N/A' }}</td>
             <td class="px-4 py-3">{{ \Carbon\Carbon::parse($attendance->tanggal)->format('d M Y') }}</td>
-            <td class="px-4 py-3">{{ $attendance->check_in ?? '-' }}</td>
-            <td class="px-4 py-3">{{ $attendance->check_out ?? '-' }}</td>
+            <td class="px-4 py-3"><span class="text-neo-green font-bold">{{ $attendance->check_in ? $attendance->check_in->format('H:i') : '-' }}</span></td>
+            <td class="px-4 py-3"><span class="text-neo-cyan font-bold">{{ $attendance->check_out ? $attendance->check_out->format('H:i') : '-' }}</span></td>
             <td class="px-4 py-3">
               @if($attendance->status_hadir == 'present')
-                <span class="neo-badge neo-badge-green">PRESENT</span>
+                <span class="neo-badge neo-badge-green status-pulse">PRESENT</span>
               @elseif($attendance->status_hadir == 'late')
                 <span class="neo-badge neo-badge-yellow">LATE</span>
               @else
                 <span class="neo-badge neo-badge-red">ABSENT</span>
               @endif
             </td>
-            <td class="px-4 py-3">{{ $attendance->jam_kerja ? $attendance->jam_kerja->format('H:i') : '-' }}</td>
+            <td class="px-4 py-3 font-bold">{{ $attendance->jam_kerja ? $attendance->jam_kerja->format('H:i') : '-' }}</td>
           </tr>
           @empty
           <tr>
@@ -58,7 +67,7 @@
     </div>
 
     <div class="mt-4">
-      {{ $attendances->links() }}
+      {{ $attendances->links('vendor.pagination.neo') }}
     </div>
   </div>
 </div>

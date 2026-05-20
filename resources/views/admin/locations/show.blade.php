@@ -7,7 +7,7 @@
   <div class="neo-card">
     <div class="mb-4 border-b-3 border-black pb-4">
       <div class="flex justify-between items-center">
-        <h6 class="text-xl font-bold">LOCATION DETAILS</h6>
+        <h6 class="neo-section-title">LOCATION DETAILS</h6>
         <a href="{{ route('admin.locations.index') }}" class="neo-btn-secondary">
           <i class="fas fa-arrow-left mr-1"></i> BACK
         </a>
@@ -20,11 +20,11 @@
       </div>
       <div class="mb-4">
         <label class="neo-label">LATITUDE</label>
-        <p class="neo-input bg-[#f0f0f0]">{{ $location->latitude }}</p>
+        <p class="font-bold text-lg">{{ $location->latitude }}</p>
       </div>
       <div class="mb-4">
         <label class="neo-label">LONGITUDE</label>
-        <p class="neo-input bg-[#f0f0f0]">{{ $location->longitude }}</p>
+        <p class="font-bold text-lg">{{ $location->longitude }}</p>
       </div>
       <div class="mb-4">
         <label class="neo-label">RADIUS (METERS)</label>

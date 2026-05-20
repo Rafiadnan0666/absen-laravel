@@ -61,7 +61,7 @@
     </div>
 
     <div class="mt-4">
-        {{ $roles->links() }}
+        {{ $roles->links('vendor.pagination.neo') }}
     </div>
 </div>
 @endsection

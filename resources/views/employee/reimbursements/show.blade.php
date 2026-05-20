@@ -3,9 +3,9 @@
 @section('page-title', 'Reimbursement Details')
 
 @section('content')
-    <div class="flex justify-between items-center mb-8">
-        <h1 class="text-2xl font-black">Reimbursement Details</h1>
-        <a href="{{ route('employee.reimbursements.index') }}" class="neo-btn-secondary">Back</a>
+    <div class="flex justify-between items-center mb-6 border-b-3 border-black pb-4">
+        <h1 class="text-2xl font-black">REIMBURSEMENT DETAILS</h1>
+        <a href="{{ route('employee.reimbursements.index') }}" class="neo-btn-secondary neo-btn-sm">BACK</a>
     </div>
 
     <div class="neo-card">

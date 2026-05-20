@@ -9,9 +9,26 @@ use Illuminate\Http\Request;
 
 class AttendanceController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $attendances = Attendance::with('user', 'location')->latest('tanggal')->paginate(20);
-        return view('hr.attendances.index', compact('attendances'));
+        $query = Attendance::with('user', 'location');
+
+        if ($request->filled('date_from')) {
+            $query->whereDate('tanggal', '>=', $request->date_from);
+        }
+        if ($request->filled('date_to')) {
+            $query->whereDate('tanggal', '<=', $request->date_to);
+        }
+        if ($request->filled('status')) {
+            $query->where('status_hadir', $request->status);
+        }
+        if ($request->filled('user_id')) {
+            $query->where('user_id', $request->user_id);
+        }
+
+        $users = User::where('status_akun', 'active')->orderBy('nama_lengkap')->get();
+
+        $attendances = $query->latest('tanggal')->paginate(20)->withQueryString();
+        return view('hr.attendances.index', compact('attendances', 'users'));
     }
 }

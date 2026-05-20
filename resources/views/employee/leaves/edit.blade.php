@@ -3,15 +3,13 @@
 @section('page-title', 'Edit Leave')
 
 @section('content')
-    <div class="flex justify-between items-center mb-8">
-        <h1 class="text-2xl font-black">Edit Leave</h1>
-        <a href="{{ route('employee.leaves.index') }}" class="neo-btn-secondary">Back</a>
+    <div class="flex justify-between items-center mb-6 border-b-3 border-black pb-4">
+        <h1 class="text-2xl font-black">EDIT LEAVE</h1>
+        <a href="{{ route('employee.leaves.index') }}" class="neo-btn-secondary neo-btn-sm">BACK</a>
     </div>
 
     @if($leave->status_pengajuan != 'pending')
-        <div class="neo-card mb-6">
-            <p class="font-bold neo-alert-danger">This leave request cannot be edited because it has been processed.</p>
-        </div>
+        <div class="neo-alert-danger mb-6">This leave request cannot be edited because it has been processed.</div>
     @else
     <div class="neo-card">
         <form action="{{ route('employee.leaves.update', $leave) }}" method="POST">

@@ -3,9 +3,9 @@
 @section('page-title', 'My Attendance Logs')
 
 @section('content')
-    <div class="flex justify-between items-center mb-8">
-        <h1 class="text-2xl font-black">My Attendance Logs</h1>
-        <a href="{{ route('employee.attendances.create') }}" class="neo-btn-primary">Check In/Out</a>
+    <div class="flex justify-between items-center mb-6 border-b-3 border-black pb-4">
+        <h1 class="text-2xl font-black">MY ATTENDANCE LOGS</h1>
+        <a href="{{ route('employee.attendances.create') }}" class="neo-btn-primary neo-btn-sm">CHECK IN/OUT</a>
     </div>
 
     <div class="neo-card">
@@ -38,7 +38,7 @@
             </table>
         </div>
         <div class="mt-4">
-            {{ $logs->links() }}
+            {{ $logs->links('vendor.pagination.neo') }}
         </div>
     </div>
 @endsection

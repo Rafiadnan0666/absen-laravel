@@ -5,8 +5,8 @@
 @section('content')
 <div class="space-y-6">
   <div class="neo-card">
-    <div class="mb-6">
-      <h6 class="text-xl font-bold">Create Overtime Rule</h6>
+    <div class="mb-6 border-b-3 border-black pb-4">
+      <h6 class="neo-section-title">CREATE OVERTIME RULE</h6>
     </div>
 
     <form action="{{ route('admin.overtime-rules.store') }}" method="POST">

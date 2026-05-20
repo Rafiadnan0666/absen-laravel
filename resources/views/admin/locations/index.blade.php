@@ -7,7 +7,7 @@
   <div class="neo-card">
     <div class="border-b-3 border-black pb-4 mb-4">
       <div class="flex justify-between items-center">
-        <h6 class="text-xl font-bold">LOCATIONS</h6>
+        <h6 class="neo-section-title">LOCATIONS</h6>
         <a href="{{ route('admin.locations.create') }}" class="neo-btn-primary">
           <i class="fas fa-plus mr-1"></i> ADD LOCATION
         </a>
@@ -15,7 +15,7 @@
     </div>
 
     @if(session('success'))
-      <div class="neo-badge neo-badge-green mb-4">
+      <div class="neo-alert-success mb-4">
         {{ session('success') }}
       </div>
     @endif
@@ -66,7 +66,7 @@
     </div>
 
     <div class="mt-4">
-      {{ $locations->links() }}
+      {{ $locations->links('vendor.pagination.neo') }}
     </div>
   </div>
 </div>

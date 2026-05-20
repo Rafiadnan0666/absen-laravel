@@ -66,7 +66,7 @@
         </tbody>
       </table>
       <div class="mt-4">
-        {{ $payrolls->links() }}
+        {{ $payrolls->links('vendor.pagination.neo') }}
       </div>
     </div>
   </div>

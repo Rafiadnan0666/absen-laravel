@@ -5,8 +5,8 @@
 @section('content')
 <div class="space-y-6">
   <div class="neo-card">
-    <div class="flex justify-between items-center mb-6">
-      <h6 class="text-xl font-bold">Overtime Rules</h6>
+    <div class="flex justify-between items-center mb-6 border-b-3 border-black pb-4">
+      <h6 class="neo-section-title">OVERTIME RULES</h6>
       <a href="{{ route('admin.overtime-rules.create') }}" class="neo-btn-primary">
         <i class="fas fa-plus mr-1"></i> Add Overtime Rule
       </a>
@@ -18,7 +18,7 @@
       </div>
     @endif
 
-    <div class="overflow-x-auto">
+    <div class="neo-table-container overflow-x-auto">
       <table class="neo-table w-full">
         <thead>
           <tr>
@@ -53,9 +53,9 @@
           @endforelse
         </tbody>
       </table>
-      <div class="mt-4">
-        {{ $overtimeRules->links() }}
-      </div>
+    </div>
+    <div class="mt-4">
+      {{ $overtimeRules->links('vendor.pagination.neo') }}
     </div>
   </div>
 </div>

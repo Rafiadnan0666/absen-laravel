@@ -5,9 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@yield('title', 'Admin Dashboard') - {{ config('app.name', 'ABS') }}</title>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="font-mono min-h-screen">
+<body class="font-mono min-h-screen bg-neo-bg">
     <aside class="neo-sidebar fixed h-full z-50 transition-transform -translate-x-full xl:translate-x-0 xl:left-0 overflow-y-auto">
         <div class="p-4 border-b-3 border-black">
             <a href="{{ route('admin.dashboard') }}" class="font-black text-xl block">
@@ -71,7 +73,7 @@
     </aside>
 
     <main class="xl:ml-64 min-h-screen p-4">
-        <nav class="neo-card mb-4 flex justify-between items-center rounded-none">
+        <nav class="neo-card mb-4 flex justify-between items-center">
             <div class="flex items-center gap-4">
                 <span class="font-black text-lg">@yield('page-title', 'Dashboard')</span>
             </div>
@@ -88,11 +90,14 @@
             </div>
         </nav>
 
-        <div class="neo-card rounded-none">
+        <div class="space-y-6">
             @yield('content')
         </div>
     </main>
 
     @include('components.profile-modal')
+    @include('components.onboarding-tour')
+    @include('components.scroll-to-top')
+    @stack('scripts')
 </body>
 </html>

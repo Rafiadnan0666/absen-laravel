@@ -6,7 +6,7 @@
 <div class="space-y-6">
   <div class="neo-card">
     <div class="mb-4 border-b-3 border-black pb-4">
-      <h6 class="text-xl font-bold">Face Logs</h6>
+      <h6 class="neo-section-title">FACE LOGS</h6>
     </div>
     @if(session('success'))
       <div class="neo-alert-success mb-4">
@@ -32,7 +32,7 @@
             <td class="font-bold">{{ $log->user->name ?? 'N/A' }}</td>
             <td>
               @if($log->foto_path)
-                <img src="{{ asset('storage/' . $log->foto_path) }}" alt="Face" class="h-10 w-10 object-cover">
+                <img src="{{ asset('storage/' . $log->foto_path) }}" alt="Face" class="neo-avatar">
               @else
                 <p class="text-sm">No photo</p>
               @endif
@@ -46,11 +46,11 @@
               @endif
             </td>
             <td class="text-center">
-              <a href="{{ route('admin.face-logs.show', $log) }}" class="neo-btn-secondary text-sm">View</a>
+              <a href="{{ route('admin.face-logs.show', $log) }}" class="neo-btn-secondary neo-btn-sm">View</a>
               <form action="{{ route('admin.face-logs.destroy', $log) }}" method="POST" class="inline" onsubmit="return confirm('Delete this log?')">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="neo-btn-danger text-sm">Delete</button>
+                <button type="submit" class="neo-btn-danger neo-btn-sm">Delete</button>
               </form>
             </td>
           </tr>
@@ -62,7 +62,7 @@
         </tbody>
       </table>
       <div class="p-4">
-        {{ $faceLogs->links() }}
+        {{ $faceLogs->links('vendor.pagination.neo') }}
       </div>
     </div>
   </div>

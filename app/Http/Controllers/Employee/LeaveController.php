@@ -9,11 +9,24 @@ use Carbon\Carbon;
 
 class LeaveController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $leaves = Leave::where('user_id', auth()->id())
-            ->latest()
-            ->paginate(10);
+        $query = Leave::where('user_id', auth()->id());
+
+        if ($request->filled('date_from')) {
+            $query->whereDate('tanggal_mulai', '>=', $request->date_from);
+        }
+        if ($request->filled('date_to')) {
+            $query->whereDate('tanggal_selesai', '<=', $request->date_to);
+        }
+        if ($request->filled('status')) {
+            $query->where('status_pengajuan', $request->status);
+        }
+        if ($request->filled('tipe_cuti')) {
+            $query->where('tipe_cuti', $request->tipe_cuti);
+        }
+
+        $leaves = $query->latest()->paginate(10)->withQueryString();
 
         return view('employee.leaves.index', compact('leaves'));
     }

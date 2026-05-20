@@ -18,7 +18,7 @@
     @endif
 
     <div class="mb-4 border-b-3 border-black pb-4">
-      <h6 class="text-xl font-bold">System Settings</h6>
+      <h6 class="neo-section-title">SYSTEM SETTINGS</h6>
     </div>
     
     <div>

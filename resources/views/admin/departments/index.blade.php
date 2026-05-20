@@ -6,14 +6,14 @@
 <div class="space-y-6">
   <div class="neo-card">
     <div class="flex justify-between items-center mb-6">
-      <h2 class="text-2xl font-bold">Departments</h2>
+      <h2 class="neo-section-title">DEPARTMENTS</h2>
       <a href="{{ route('admin.departments.create') }}" class="neo-btn-primary">
         <i class="fas fa-plus mr-1"></i> Add Department
       </a>
     </div>
 
     @if(session('success'))
-      <div class="neo-badge neo-badge-green mb-4">
+      <div class="neo-alert-success mb-4">
         {{ session('success') }}
       </div>
     @endif
@@ -22,17 +22,17 @@
       <table class="neo-table w-full">
         <thead>
           <tr>
-            <th class="neo-label">ID</th>
-            <th class="neo-label">Name</th>
-            <th class="neo-label">Description</th>
-            <th class="neo-label">Actions</th>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th class="text-center">Actions</th>
           </tr>
         </thead>
         <tbody>
           @forelse($departments as $department)
           <tr>
             <td>
-              <span class="neo-label">{{ $department->id }}</span>
+              <span>{{ $department->id }}</span>
             </td>
             <td>
               <span class="font-bold">{{ $department->nama_department }}</span>
@@ -60,7 +60,7 @@
     </div>
 
     <div class="mt-4">
-      {{ $departments->links() }}
+      {{ $departments->links('vendor.pagination.neo') }}
     </div>
   </div>
 </div>

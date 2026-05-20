@@ -6,7 +6,7 @@
 <div class="space-y-6">
   <div class="neo-card">
     <div class="mb-6 border-b-3 border-black pb-4">
-      <h6 class="text-xl font-bold">Edit Salary Rule</h6>
+      <h6 class="neo-section-title">EDIT SALARY RULE</h6>
     </div>
     <form action="{{ route('admin.salary-rules.update', $salaryRule) }}" method="POST">
       @csrf

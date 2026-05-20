@@ -8,7 +8,7 @@
     <div class="neo-card">
       <div class="mb-6 border-b-3 border-black pb-4">
         <div class="flex justify-between items-center">
-          <h6 class="text-xl font-bold">Permission Details</h6>
+          <h6 class="neo-section-title">PERMISSION DETAILS</h6>
           <div class="flex gap-2">
             <a href="{{ route('admin.permissions.edit', $permission) }}" class="neo-btn-secondary">Edit</a>
             <a href="{{ route('admin.permissions.index') }}" class="neo-btn-secondary">Back</a>

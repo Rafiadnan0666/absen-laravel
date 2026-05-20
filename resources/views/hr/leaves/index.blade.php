@@ -7,10 +7,10 @@
     <h1 class="neo-section-title">LEAVE REQUESTS</h1>
 
     <div class="neo-card mb-6">
-        <div class="flex justify-between items-center mb-4 p-4 border-b-4 border-black">
-            <h6 class="neo-label text-lg">All Leave Requests</h6>
-            <a href="{{ route('leaves.create') }}" class="neo-btn-primary">
-                New Request
+        <div class="flex justify-between items-center p-4 border-b-4 border-black">
+            <h2 class="font-black text-lg">All Leave Requests</h2>
+            <a href="{{ route('employee.leaves.create') }}" class="neo-btn-primary neo-btn-sm pulse-glow">
+                + NEW REQUEST
             </a>
         </div>
 
@@ -49,14 +49,14 @@
                                 @if($item->status_pengajuan == 'pending')
                                     <form action="{{ route('hr.leaves.approve', $item) }}" method="POST" class="inline">
                                         @csrf
-                                        <button type="submit" class="neo-btn-primary neo-btn-sm">Approve</button>
+                                        <button type="submit" class="neo-btn-primary neo-btn-sm">APPROVE</button>
                                     </form>
                                     <form action="{{ route('hr.leaves.reject', $item) }}" method="POST" class="inline">
                                         @csrf
-                                        <button type="submit" class="neo-btn-danger neo-btn-sm">Reject</button>
+                                        <button type="submit" class="neo-btn-danger neo-btn-sm">REJECT</button>
                                     </form>
                                 @else
-                                    <span class="neo-label">Processed</span>
+                                    <span class="neo-label">PROCESSED</span>
                                 @endif
                             </td>
                         </tr>
@@ -70,7 +70,7 @@
             </div>
 
             <div class="mt-4">
-                {{ $leaves->links() }}
+                {{ $leaves->links('vendor.pagination.neo') }}
             </div>
         </div>
     </div>

@@ -16,13 +16,13 @@ class ReimbursementController extends Controller
 
     public function approve(Reimbursement $reimbursement)
     {
-        $reimbursement->update(['status_pengajuan' => 'approved']);
+        $reimbursement->update(['status' => 'approved', 'approved_by' => auth()->id()]);
         return back()->with('success', 'Reimbursement approved');
     }
 
     public function reject(Reimbursement $reimbursement)
     {
-        $reimbursement->update(['status_pengajuan' => 'rejected']);
+        $reimbursement->update(['status' => 'rejected', 'approved_by' => auth()->id()]);
         return back()->with('success', 'Reimbursement rejected');
     }
 }

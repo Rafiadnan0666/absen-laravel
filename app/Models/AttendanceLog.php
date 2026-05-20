@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-#[Fillable(['user_id', 'tipe_log', 'waktu_log', 'latitude', 'longitude', 'foto_path', 'device'])]
+#[Fillable(['user_id', 'tipe_log', 'waktu_log', 'latitude', 'longitude', 'jarak_meter', 'foto_path', 'device'])]
 class AttendanceLog extends Model
 {
     use HasFactory;

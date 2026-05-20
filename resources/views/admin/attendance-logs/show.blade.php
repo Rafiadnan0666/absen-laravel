@@ -7,7 +7,7 @@
   <div class="neo-card">
     <div class="mb-4 border-b-3 border-black pb-4">
       <div class="flex justify-between items-center">
-        <h6 class="text-xl font-bold">Attendance Log Details</h6>
+        <h6 class="neo-section-title">ATTENDANCE LOG DETAILS</h6>
         <a href="{{ route('admin.attendance-logs.index') }}" class="neo-btn-secondary">
           <i class="fas fa-arrow-left mr-1"></i> Back
         </a>

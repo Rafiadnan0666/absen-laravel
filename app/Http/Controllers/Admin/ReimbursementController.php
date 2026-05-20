@@ -25,6 +25,7 @@ class ReimbursementController extends Controller
     {
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
+            'kategori' => 'required|string|max:100',
             'jumlah' => 'required|numeric|min:0',
             'deskripsi' => 'required|string',
             'status' => 'required|in:pending,approved,rejected',
@@ -53,6 +54,7 @@ class ReimbursementController extends Controller
     {
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
+            'kategori' => 'required|string|max:100',
             'jumlah' => 'required|numeric|min:0',
             'deskripsi' => 'required|string',
             'status' => 'required|in:pending,approved,rejected',

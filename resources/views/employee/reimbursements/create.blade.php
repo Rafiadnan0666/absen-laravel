@@ -3,11 +3,27 @@
 @section('page-title', 'New Reimbursement')
 
 @section('content')
-    <h1 class="text-4xl font-black mb-8">New Reimbursement</h1>
+    <div class="flex justify-between items-center mb-6 border-b-3 border-black pb-4">
+        <h1 class="text-2xl font-black">NEW REIMBURSEMENT</h1>
+        <a href="{{ route('employee.reimbursements.index') }}" class="neo-btn-secondary neo-btn-sm">BACK</a>
+    </div>
 
     <div class="neo-card">
         <form action="{{ route('employee.reimbursements.store') }}" method="POST">
             @csrf
+            <div class="mb-4">
+                <label class="neo-label">Category</label>
+                <select name="kategori" class="neo-input" required>
+                    <option value="">Select Category</option>
+                    <option value="transport">Transportation</option>
+                    <option value="medical">Medical</option>
+                    <option value="meal">Meal</option>
+                    <option value="supplies">Office Supplies</option>
+                    <option value="training">Training</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+
             <div class="mb-4">
                 <label class="neo-label">Amount (Rp)</label>
                 <input type="number" name="jumlah" class="neo-input" required min="1000" placeholder="Example: 100000">

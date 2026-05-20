@@ -3,9 +3,9 @@
 @section('page-title', 'Payslip')
 
 @section('content')
-    <div class="flex justify-between items-center mb-8">
-        <h1 class="text-2xl font-black">Payslip</h1>
-        <a href="{{ route('employee.payrolls.index') }}" class="neo-btn-secondary">Back</a>
+    <div class="flex justify-between items-center mb-6 border-b-3 border-black pb-4">
+        <h1 class="text-2xl font-black">PAYSLIP</h1>
+        <a href="{{ route('employee.payrolls.index') }}" class="neo-btn-secondary neo-btn-sm">BACK</a>
     </div>
 
     <div class="neo-card">

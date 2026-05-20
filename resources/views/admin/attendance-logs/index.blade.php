@@ -6,7 +6,7 @@
 <div class="space-y-6">
   <div class="neo-card">
     <div class="mb-4 border-b-3 border-black pb-4">
-      <h6 class="text-xl font-bold">Attendance Logs</h6>
+      <h6 class="neo-section-title">ATTENDANCE LOGS</h6>
     </div>
     @if(session('success'))
       <div class="neo-alert-success mb-4">
@@ -44,11 +44,11 @@
             </td>
             <td class="text-sm">{{ $log->device ?? 'N/A' }}</td>
             <td class="text-center">
-              <a href="{{ route('admin.attendance-logs.show', $log) }}" class="neo-btn-secondary text-sm">View</a>
+              <a href="{{ route('admin.attendance-logs.show', $log) }}" class="neo-btn-secondary neo-btn-sm">View</a>
               <form action="{{ route('admin.attendance-logs.destroy', $log) }}" method="POST" class="inline" onsubmit="return confirm('Delete this log?')">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="neo-btn-danger text-sm">Delete</button>
+                <button type="submit" class="neo-btn-danger neo-btn-sm">Delete</button>
               </form>
             </td>
           </tr>
@@ -60,7 +60,7 @@
         </tbody>
       </table>
       <div class="p-4">
-        {{ $attendanceLogs->links() }}
+        {{ $attendanceLogs->links('vendor.pagination.neo') }}
       </div>
     </div>
   </div>

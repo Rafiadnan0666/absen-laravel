@@ -6,7 +6,7 @@
 <div class="space-y-6">
   <div class="neo-card">
     <div class="mb-4 border-b-3 border-black pb-4">
-      <h6 class="text-xl font-bold">CREATE LOCATION</h6>
+      <h6 class="neo-section-title">CREATE LOCATION</h6>
     </div>
     <div>
       <form action="{{ route('admin.locations.store') }}" method="POST">

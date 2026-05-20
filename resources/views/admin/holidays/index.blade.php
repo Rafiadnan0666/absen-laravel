@@ -7,7 +7,7 @@
   <div class="neo-card">
     <div class="border-b-3 border-black pb-4 mb-4">
       <div class="flex justify-between items-center">
-        <h6 class="text-xl font-bold">Holidays</h6>
+        <h6 class="neo-section-title">HOLIDAYS</h6>
         <a href="{{ route('admin.holidays.create') }}" class="neo-btn-primary">
           <i class="fas fa-plus mr-1"></i> Add Holiday
         </a>
@@ -35,12 +35,12 @@
             <td>{{ $holiday->nama_hari_libur }}</td>
             <td>{{ $holiday->tanggal->format('d M Y') }}</td>
             <td class="text-center">
-              <a href="{{ route('admin.holidays.show', $holiday) }}" class="neo-btn-secondary text-sm">View</a>
-              <a href="{{ route('admin.holidays.edit', $holiday) }}" class="neo-btn-secondary text-sm">Edit</a>
+              <a href="{{ route('admin.holidays.show', $holiday) }}" class="neo-btn-secondary neo-btn-sm">View</a>
+              <a href="{{ route('admin.holidays.edit', $holiday) }}" class="neo-btn-secondary neo-btn-sm">Edit</a>
               <form action="{{ route('admin.holidays.destroy', $holiday) }}" method="POST" class="inline" onsubmit="return confirm('Delete this holiday?')">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="neo-btn-danger text-sm">Delete</button>
+                <button type="submit" class="neo-btn-danger neo-btn-sm">Delete</button>
               </form>
             </td>
           </tr>
@@ -52,7 +52,7 @@
         </tbody>
       </table>
       <div class="p-4">
-        {{ $holidays->links() }}
+        {{ $holidays->links('vendor.pagination.neo') }}
       </div>
     </div>
   </div>

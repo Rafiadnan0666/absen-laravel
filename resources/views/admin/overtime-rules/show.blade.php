@@ -5,8 +5,8 @@
 @section('content')
 <div class="space-y-6">
   <div class="neo-card">
-    <div class="flex justify-between items-center mb-6">
-      <h6 class="text-xl font-bold">Overtime Rule Details</h6>
+    <div class="flex justify-between items-center mb-6 border-b-3 border-black pb-4">
+      <h6 class="neo-section-title">OVERTIME RULE DETAILS</h6>
       <a href="{{ route('admin.overtime-rules.index') }}" class="neo-btn-secondary">
         <i class="fas fa-arrow-left mr-1"></i> Back
       </a>
