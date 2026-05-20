@@ -30,7 +30,7 @@
           @forelse($attendanceLogs as $log)
           <tr>
             <td class="font-bold">{{ $log->id }}</td>
-            <td class="font-bold">{{ $log->user->name ?? 'N/A' }}</td>
+            <td class="font-bold">{{ $log->user->nama_lengkap ?? 'N/A' }}</td>
             <td>
               {{ ucfirst(str_replace('_', ' ', $log->tipe_log)) }}
             </td>

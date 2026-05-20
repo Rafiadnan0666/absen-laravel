@@ -51,13 +51,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/onboarding/skip', [OnboardingController::class, 'skip'])->name('onboarding.skip');
 });
 
-
-Route::get('/admin/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
-Route::get('/admin/settings', [App\Http\Controllers\Admin\SettingsController::class, 'index'])->name('admin.settings.index');
-Route::post('/admin/settings/general', [App\Http\Controllers\Admin\SettingsController::class, 'general'])->name('admin.settings.general');
-Route::post('/admin/settings/clear-cache', [App\Http\Controllers\Admin\SettingsController::class, 'clearCache'])->name('admin.settings.clearCache');
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/settings', [App\Http\Controllers\Admin\SettingsController::class, 'index'])->name('settings.index');
+    Route::post('/settings/general', [App\Http\Controllers\Admin\SettingsController::class, 'general'])->name('settings.general');
+    Route::post('/settings/clear-cache', [App\Http\Controllers\Admin\SettingsController::class, 'clearCache'])->name('settings.clearCache');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::resource('users', UserController::class);
     Route::resource('attendances', AttendanceController::class);

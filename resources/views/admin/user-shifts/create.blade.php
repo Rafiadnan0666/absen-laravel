@@ -27,7 +27,7 @@
         <select id="shift_id" name="shift_id" required class="neo-select">
           <option value="">Select Shift</option>
           @foreach($shifts as $shift)
-            <option value="{{ $shift->id }}" {{ old('shift_id') == $shift->id ? 'selected' : '' }}>{{ $shift->nama_shift }} ({{ $shift->jam_mulai }} - {{ $shift->jam_selesai }})</option>
+            <option value="{{ $shift->id }}" {{ old('shift_id') == $shift->id ? 'selected' : '' }}>{{ $shift->nama_shift }} ({{ $shift->jam_masuk }} - {{ $shift->jam_pulang }})</option>
           @endforeach
         </select>
         @error('shift_id')

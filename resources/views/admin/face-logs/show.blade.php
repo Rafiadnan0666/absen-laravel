@@ -20,7 +20,7 @@
       </div>
       <div class="mb-4">
         <label class="neo-label">User</label>
-        <p class="text-sm">{{ $faceLog->user->name ?? 'N/A' }} ({{ $faceLog->user->email ?? 'N/A' }})</p>
+        <p class="text-sm">{{ $faceLog->user->nama_lengkap ?? 'N/A' }} ({{ $faceLog->user->email ?? 'N/A' }})</p>
       </div>
       <div class="mb-4">
         <label class="neo-label">Photo</label>

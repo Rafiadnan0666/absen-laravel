@@ -20,7 +20,7 @@
       </div>
       <div class="mb-4">
         <label class="neo-label">User</label>
-        <p class="text-sm">{{ $attendanceLog->user->name ?? 'N/A' }} ({{ $attendanceLog->user->email ?? 'N/A' }})</p>
+        <p class="text-sm">{{ $attendanceLog->user->nama_lengkap ?? 'N/A' }} ({{ $attendanceLog->user->email ?? 'N/A' }})</p>
       </div>
       <div class="mb-4">
         <label class="neo-label">Type</label>
@@ -37,10 +37,14 @@
         <p class="text-sm">
           @if($attendanceLog->latitude && $attendanceLog->longitude)
             Latitude: {{ $attendanceLog->latitude }}, Longitude: {{ $attendanceLog->longitude }}
+            <span class="text-xs ml-2">({{ $attendanceLog->jarak_meter ?? '?' }}m from office)</span>
           @else
             N/A
           @endif
         </p>
+        @if($attendanceLog->latitude && $attendanceLog->longitude)
+        <div id="logMap" style="height:250px;border:3px solid #000;margin-top:8px;"></div>
+        @endif
       </div>
       <div class="mb-4">
         <label class="neo-label">Photo</label>
@@ -66,4 +70,19 @@
     </div>
   </div>
 </div>
+@push('scripts')
+@if($attendanceLog->latitude && $attendanceLog->longitude)
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const lat = {{ $attendanceLog->latitude }};
+    const lng = {{ $attendanceLog->longitude }};
+    const map = L.map('logMap').setView([lat, lng], 15);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
+    L.marker([lat, lng]).addTo(map).bindPopup('<b>Check {{ ucfirst(str_replace('_', ' ', $attendanceLog->tipe_log)) }}</b><br>{{ $attendanceLog->waktu_log->format('d M Y H:i') }}').openPopup();
+  });
+</script>
+@endif
+@endpush
 @endsection

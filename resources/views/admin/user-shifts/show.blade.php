@@ -21,7 +21,7 @@
     </div>
     <div class="mb-4">
       <label class="neo-label">SHIFT</label>
-      <p class="text-sm">{{ $userShift->shift->nama_shift ?? 'N/A' }} ({{ $userShift->shift->jam_mulai ?? '' }} - {{ $userShift->shift->jam_selesai ?? '' }})</p>
+      <p class="text-sm">{{ $userShift->shift->nama_shift ?? 'N/A' }} ({{ $userShift->shift->jam_masuk ?? '' }} - {{ $userShift->shift->jam_pulang ?? '' }})</p>
     </div>
     <div class="mb-4">
       <label class="neo-label">DATE</label>

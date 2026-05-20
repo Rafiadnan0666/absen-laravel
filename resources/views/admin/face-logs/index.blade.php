@@ -29,7 +29,7 @@
           @forelse($faceLogs as $log)
           <tr>
             <td class="font-bold">{{ $log->id }}</td>
-            <td class="font-bold">{{ $log->user->name ?? 'N/A' }}</td>
+            <td class="font-bold">{{ $log->user->nama_lengkap ?? 'N/A' }}</td>
             <td>
               @if($log->foto_path)
                 <img src="{{ asset('storage/' . $log->foto_path) }}" alt="Face" class="neo-avatar">

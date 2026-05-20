@@ -7,6 +7,7 @@
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @stack('styles')
 </head>
 <body class="font-mono min-h-screen bg-neo-bg">
     <aside class="neo-sidebar fixed h-full z-50 transition-transform -translate-x-full xl:translate-x-0 xl:left-0 overflow-y-auto">

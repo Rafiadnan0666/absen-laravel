@@ -8,6 +8,7 @@
     <title>@yield('title', 'ABS')</title>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @stack('styles')
     <style>
         .auth-box { width: 100%; max-width: 400px; margin: 0 auto; }
         .auth-box.register { max-width: 500px; }

@@ -35,7 +35,7 @@
             <td>{{ $announcement->id }}</td>
             <td>{{ $announcement->judul }}</td>
             <td>{{ Str::limit($announcement->isi, 50) }}</td>
-            <td>{{ $announcement->creator->name ?? 'N/A' }}</td>
+            <td>{{ $announcement->creator->nama_lengkap ?? 'N/A' }}</td>
             <td class="text-center">
               <a href="{{ route('admin.announcements.show', $announcement) }}" class="neo-btn-secondary">View</a>
               <a href="{{ route('admin.announcements.edit', $announcement) }}" class="neo-btn-secondary">Edit</a>

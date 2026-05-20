@@ -10,7 +10,7 @@
         <a href="{{ route('admin.users.index') }}" class="neo-btn-secondary">
           <i class="fas fa-arrow-left mr-1"></i> Back
         </a>
-        <h6 class="text-xl font-bold">Edit: {{ strtoupper($user->nama_lengkapp) }}</h6>
+        <h6 class="text-xl font-bold">Edit: {{ strtoupper($user->nama_lengkap) }}</h6>
       </div>
     </div>
     <div>

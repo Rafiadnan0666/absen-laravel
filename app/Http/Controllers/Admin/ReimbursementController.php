@@ -11,7 +11,7 @@ class ReimbursementController extends Controller
 {
     public function index()
     {
-        $reimbursements = Reimbursement::with('user', 'approver')->latest()->paginate(20);
+        $reimbursements = Reimbursement::with('user', 'approvedBy')->latest()->paginate(20);
         return view('admin.reimbursements.index', compact('reimbursements'));
     }
 

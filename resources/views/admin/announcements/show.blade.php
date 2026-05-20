@@ -23,7 +23,7 @@
     </div>
     <div class="mb-4">
       <label class="neo-label">Created By</label>
-      <p class="text-sm">{{ $announcement->creator->name ?? 'N/A' }}</p>
+      <p class="text-sm">{{ $announcement->creator->nama_lengkap ?? 'N/A' }}</p>
     </div>
     <div class="mb-4">
       <label class="neo-label">Created At</label>

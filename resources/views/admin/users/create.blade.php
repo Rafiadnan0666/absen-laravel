@@ -46,7 +46,7 @@
             <select id="department_id" name="department_id" class="neo-select">
                 <option value="">Select Department</option>
                 @foreach($departments as $dept)
-                    <option value="{{ $dept->id }}">{{ $dept->nama_department }}</option>
+                    <option value="{{ $dept->id }}" {{ old('department_id') == $dept->id ? 'selected' : '' }}>{{ $dept->nama_department }}</option>
                 @endforeach
             </select>
         </div>
@@ -56,7 +56,7 @@
             <select id="job_title_id" name="job_title_id" class="neo-select">
                 <option value="">Select Job Title</option>
                 @foreach($jobTitles as $job)
-                    <option value="{{ $job->id }}">{{ $job->nama_jabatan }}</option>
+                    <option value="{{ $job->id }}" {{ old('job_title_id') == $job->id ? 'selected' : '' }}>{{ $job->nama_jabatan }}</option>
                 @endforeach
             </select>
         </div>
@@ -66,7 +66,7 @@
             <select id="role_id" name="role_id" class="neo-select">
                 <option value="">Select Role</option>
                 @foreach($roles as $role)
-                    <option value="{{ $role->id }}">{{ $role->nama_role }}</option>
+                    <option value="{{ $role->id }}" {{ old('role_id') == $role->id ? 'selected' : '' }}>{{ $role->nama_role }}</option>
                 @endforeach
             </select>
         </div>
@@ -84,16 +84,17 @@
         <div class="neo-form-group">
             <label for="tipe_gaji" class="neo-label">SALARY TYPE</label>
             <select id="tipe_gaji" name="tipe_gaji" class="neo-select">
-                <option value="bulanan">Monthly</option>
-                <option value="harian">Daily</option>
+                <option value="monthly" {{ old('tipe_gaji') == 'monthly' ? 'selected' : '' }}>Monthly</option>
+                <option value="daily" {{ old('tipe_gaji') == 'daily' ? 'selected' : '' }}>Daily</option>
+                <option value="hourly" {{ old('tipe_gaji') == 'hourly' ? 'selected' : '' }}>Hourly</option>
             </select>
         </div>
 
         <div class="neo-form-group">
             <label for="status_akun" class="neo-label">STATUS</label>
             <select id="status_akun" name="status_akun" class="neo-select">
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
+                <option value="active" {{ old('status_akun') == 'active' ? 'selected' : '' }}>Active</option>
+                <option value="inactive" {{ old('status_akun') == 'inactive' ? 'selected' : '' }}>Inactive</option>
             </select>
         </div>
 

@@ -7,6 +7,7 @@
     <title>{{ config('app.name', 'ABS') }} - @yield('title', 'Dashboard')</title>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @stack('styles')
 </head>
 <body class="font-mono min-h-screen bg-neo-bg">
     <div class="min-h-screen">

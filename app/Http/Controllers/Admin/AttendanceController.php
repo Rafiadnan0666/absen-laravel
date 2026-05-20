@@ -102,9 +102,4 @@ class AttendanceController extends Controller
         $attendance->delete();
         return redirect()->route('admin.attendances.index')->with('success', 'Attendance deleted');
     }
-
-    public function calendar()
-    {
-        return view('admin.attendances.calendar');
-    }
 }

@@ -3,6 +3,7 @@
 @section('page-title', 'Check In/Out')
 
 @push('styles')
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
     .toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999; }
     .toast { padding: 14px 20px; border: 3px solid #000; font-weight: 700; font-size: 14px; margin-bottom: 10px; box-shadow: 4px 4px 0 #000; transform: translateX(400px); transition: transform 0.3s ease; }
@@ -232,7 +233,6 @@
 
 @push('scripts')
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script>
     function showToast(msg, type) {
         const container = document.getElementById('toastContainer');
