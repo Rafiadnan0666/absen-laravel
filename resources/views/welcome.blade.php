@@ -66,7 +66,8 @@
                 </div>
             </div>
 
-            <div style="margin-bottom:50px;transform:rotate(-2deg);">
+
+            <div class="apah" style="margin-bottom:50px;transform:rotate(20deg);">
                 <div style="background:#00bbf9;border:3px solid #000;overflow:hidden;padding:16px 0;box-shadow:6px 6px 0 #000;">
                     <div style="display:flex;animation:scroll 12s linear infinite;white-space:nowrap;">
                         <span style="color:#000;font-size:16px;font-weight:800;margin-right:60px;">🚀 SMART ATTENDANCE • 📍 GPS LOCATION • 📅 LEAVE MANAGEMENT • 💰 PAYROLL • 💳 REIMBURSEMENTS • 👥 EMPLOYEES • 📊 HR PANEL • ⚙️ ADMIN •</span>
@@ -125,7 +126,7 @@
                 </div>
             </div>
 
-            <div style="background:#000;border:3px solid #000;padding:40px;text-align:center;margin-bottom:50px;box-shadow:8px 8px 0 #000;">
+            <div style="background:#000;border:3px solid #000;padding:40px;text-align:center;margin-bottom:50px;box-shadow:8px 8px 0 #000;transform:rotate(0deg);">
                 <h3 style="font-size:28px;font-weight:800;color:#fff;margin-bottom:12px;">READY TO GET STARTED?</h3>
                 <p style="color:#ccc;margin-bottom:24px;font-size:15px;font-weight:700;">Join 500+ companies managing their workforce with ABS</p>
                 @guest
