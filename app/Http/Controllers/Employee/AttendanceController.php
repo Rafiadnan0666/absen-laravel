@@ -13,6 +13,18 @@ use Carbon\Carbon;
 
 class AttendanceController extends Controller
 {
+    private function calculateDistance($lat1, $lon1, $lat2, $lon2)
+    {
+        $earthRadius = 6371000;
+        $dLat = deg2rad($lat2 - $lat1);
+        $dLon = deg2rad($lon2 - $lon1);
+        $a = sin($dLat / 2) * sin($dLat / 2)
+            + cos(deg2rad($lat1)) * cos(deg2rad($lat2))
+            * sin($dLon / 2) * sin($dLon / 2);
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+        return $earthRadius * $c;
+    }
+
     public function index()
     {
         $attendances = Attendance::where('user_id', auth()->id())
@@ -34,17 +46,43 @@ class AttendanceController extends Controller
             ->first();
 
         $locations = Location::all();
+        $locationsJson = $locations->map(fn($loc) => [
+            'id' => $loc->id,
+            'nama_lokasi' => $loc->nama_lokasi,
+            'latitude' => (float) $loc->latitude,
+            'longitude' => (float) $loc->longitude,
+            'radius_meter' => $loc->radius_meter ?? 100,
+        ]);
 
-        return view('employee.attendances.create', compact('todayAttendance', 'userShift', 'locations'));
+        $checkinLocation = null;
+        if ($todayAttendance && $todayAttendance->location_id) {
+            $checkinLocation = $todayAttendance->location;
+        }
+
+        return view('employee.attendances.create', compact(
+            'todayAttendance', 'userShift', 'locations', 'locationsJson', 'checkinLocation'
+        ));
     }
 
     public function store(Request $request)
     {
         $request->validate([
             'location_id' => 'required|exists:locations,id',
-            'latitude' => 'nullable|numeric',
-            'longitude' => 'nullable|numeric',
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
         ]);
+
+        $location = Location::findOrFail($request->location_id);
+        $radius = $location->radius_meter ?? 100;
+        $distance = $this->calculateDistance(
+            $request->latitude, $request->longitude,
+            $location->latitude, $location->longitude
+        );
+
+        if ($distance > $radius) {
+            return redirect()->route('employee.attendances.create')
+                ->with('error', 'You are too far from the selected location (' . round($distance) . 'm, max allowed: ' . $radius . 'm). Please move closer to check in.');
+        }
 
         $now = Carbon::now();
         $userShift = UserShift::where('user_id', auth()->id())
@@ -88,6 +126,11 @@ class AttendanceController extends Controller
 
     public function checkout(Request $request)
     {
+        $request->validate([
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
+        ]);
+
         $attendance = Attendance::where('user_id', auth()->id())
             ->whereDate('tanggal', today())
             ->whereNull('check_out')
@@ -96,6 +139,21 @@ class AttendanceController extends Controller
         if (!$attendance) {
             return redirect()->route('employee.attendances.create')
                 ->with('error', 'No check-in record found for today.');
+        }
+
+        if ($attendance->location_id) {
+            $location = Location::find($attendance->location_id);
+            if ($location) {
+                $radius = $location->radius_meter ?? 100;
+                $distance = $this->calculateDistance(
+                    $request->latitude, $request->longitude,
+                    $location->latitude, $location->longitude
+                );
+                if ($distance > $radius) {
+                    return redirect()->route('employee.attendances.create')
+                        ->with('error', 'You are too far from the check-in location (' . round($distance) . 'm, max allowed: ' . $radius . 'm). Please move closer to check out.');
+                }
+            }
         }
 
         $now = Carbon::now();

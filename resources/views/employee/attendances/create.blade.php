@@ -66,7 +66,7 @@
                             <input type="hidden" name="latitude" id="latitudeInput">
                             <input type="hidden" name="longitude" id="longitudeInput">
                             
-                            <button type="submit" class="inline-block px-6 py-3 mb-0 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer hover:scale-102 active:shadow-soft-xs bg-gradient-to-tl from-green-600 to-lime-400 leading-pro ease-soft-in tracking-tight-soft w-full text-lg">
+                            <button type="submit" disabled class="inline-block px-6 py-3 mb-0 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer hover:scale-102 active:shadow-soft-xs bg-gradient-to-tl from-green-600 to-lime-400 leading-pro ease-soft-in tracking-tight-soft w-full text-lg opacity-50 cursor-not-allowed">
                                 <i class="fas fa-sign-in-alt mr-2"></i> Check In Now
                             </button>
                         </form>
@@ -113,7 +113,7 @@
                             
                             <input type="hidden" name="latitude" id="latitudeInputCheckout">
                             <input type="hidden" name="longitude" id="longitudeInputCheckout">
-                             <button type="submit" class="inline-block px-6 py-3 mb-0 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer hover:scale-102 active:shadow-soft-xs bg-gradient-to-tl from-blue-600 to-indigo-500 leading-pro ease-soft-in tracking-tight-soft w-full text-lg">
+                             <button type="submit" disabled class="inline-block px-6 py-3 mb-0 font-bold text-center text-white uppercase align-middle transition-all bg-transparent border-0 rounded-lg shadow-none cursor-pointer hover:scale-102 active:shadow-soft-xs bg-gradient-to-tl from-blue-600 to-indigo-500 leading-pro ease-soft-in tracking-tight-soft w-full text-lg opacity-50 cursor-not-allowed">
                                 <i class="fas fa-sign-out-alt mr-2"></i> Check Out Now
                             </button>
                         </form>
@@ -214,122 +214,375 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Check-in map
-    var map, marker;
-    var mapInitialized = false;
-    
-    function initMapCheckIn(lat, lng) {
-        if (mapInitialized) return;
-        
-        document.getElementById('mapContainer').style.display = 'block';
-        map = L.map('map').setView([lat, lng], 15);
-        
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; OpenStreetMap contributors'
-        }).addTo(map);
-        
-        marker = L.marker([lat, lng], {draggable: true}).addTo(map);
-        
-        map.on('click', function(e) {
-            marker.setLatLng(e.latlng);
-            document.getElementById('latitudeInput').value = e.latlng.lat;
-            document.getElementById('longitudeInput').value = e.latlng.lng;
-        });
-        
-        marker.on('dragend', function(e) {
-            document.getElementById('latitudeInput').value = e.target.getLatLng().lat;
-            document.getElementById('longitudeInput').value = e.target.getLatLng().lng;
-        });
-        
-        document.getElementById('latitudeInput').value = lat;
-        document.getElementById('longitudeInput').value = lng;
-        mapInitialized = true;
-        
-        setTimeout(function() {
-            map.invalidateSize();
-        }, 100);
+    var locations = @json($locationsJson);
+    var checkinLocation = @json($checkinLocation ? [
+        'id' => $checkinLocation->id,
+        'nama_lokasi' => $checkinLocation->nama_lokasi,
+        'latitude' => (float) $checkinLocation->latitude,
+        'longitude' => (float) $checkinLocation->longitude,
+        'radius_meter' => $checkinLocation->radius_meter ?? 100,
+    ] : null);
+
+    function fmtDistance(meters) {
+        return meters >= 1000 ? (meters / 1000).toFixed(2) + ' km' : Math.round(meters) + ' m';
     }
-    
-    // Get location button for check-in
+
+    function calculateDistance(lat1, lng1, lat2, lng2) {
+        var R = 6371000;
+        var dLat = (lat2 - lat1) * Math.PI / 180;
+        var dLng = (lng2 - lng1) * Math.PI / 180;
+        var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLng / 2) * Math.sin(dLng / 2);
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
+    }
+
+    function fetchRoute(lat1, lng1, lat2, lng2, callback) {
+        var url = 'https://router.project-osrm.org/route/v1/driving/'
+            + lng1 + ',' + lat1 + ';' + lng2 + ',' + lat2
+            + '?overview=full&geometries=geojson&steps=false&alternatives=false';
+        fetch(url)
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data.code === 'Ok' && data.routes && data.routes.length > 0) {
+                    callback(null, data.routes[0]);
+                } else {
+                    callback(new Error('No route found'), null);
+                }
+            })
+            .catch(function(err) { callback(err, null); });
+    }
+
+    function drawStatusBox(el, withinRadius, straightDist, roadDist, radiusMeters, locName, isCheckout) {
+        var radiusText = fmtDistance(radiusMeters);
+        var html = '<div class="mt-2 p-3 rounded-lg ' + (withinRadius ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200') + '">';
+        html += '<p class="font-bold">';
+        if (withinRadius) {
+            html += '<i class="fas fa-check-circle mr-1"></i> You are at ' + locName;
+        } else {
+            html += '<i class="fas fa-times-circle mr-1"></i> You are too far from ' + locName;
+        }
+        html += '</p>';
+        html += '<p class="text-sm mt-1"><i class="fas fa-arrows-alt-h mr-1"></i> Straight-line: <strong>' + fmtDistance(straightDist) + '</strong></p>';
+        if (roadDist !== null) {
+            html += '<p class="text-sm"><i class="fas fa-road mr-1"></i> By road: <strong>' + fmtDistance(roadDist) + '</strong></p>';
+        } else {
+            html += '<p class="text-sm text-slate-400"><i class="fas fa-spinner fa-spin mr-1"></i> Loading road route...</p>';
+        }
+        html += '<p class="text-sm mt-1">Max allowed radius: ' + radiusText + '</p>';
+        html += '</div>';
+        el.innerHTML = html;
+    }
+
+    function setSubmitState(btn, enabled) {
+        btn.disabled = !enabled;
+        if (enabled) {
+            btn.classList.remove('opacity-50', 'cursor-not-allowed');
+        } else {
+            btn.classList.add('opacity-50', 'cursor-not-allowed');
+        }
+    }
+
+    function latLngBounds(lat1, lng1, lat2, lng2) {
+        return L.latLngBounds(
+            [Math.min(lat1, lat2), Math.min(lng1, lng2)],
+            [Math.max(lat1, lat2), Math.max(lng1, lng2)]
+        );
+    }
+
+    // ----- Check-in -----
+    var map, checkInUserMarker, checkInLocMarker, checkInCircle, checkInStraightLine, checkInRoadLine;
+    var mapInitialized = false;
+    var userLat = null, userLng = null;
+    var selectedLocation = null;
+
+    function clearCheckInLayers() {
+        if (checkInUserMarker) { map.removeLayer(checkInUserMarker); checkInUserMarker = null; }
+        if (checkInLocMarker) { map.removeLayer(checkInLocMarker); checkInLocMarker = null; }
+        if (checkInCircle) { map.removeLayer(checkInCircle); checkInCircle = null; }
+        if (checkInStraightLine) { map.removeLayer(checkInStraightLine); checkInStraightLine = null; }
+        if (checkInRoadLine) { map.removeLayer(checkInRoadLine); checkInRoadLine = null; }
+    }
+
+    function updateCheckInMap() {
+        if (!userLat || !selectedLocation) return;
+
+        document.getElementById('mapContainer').style.display = 'block';
+
+        if (!mapInitialized) {
+            map = L.map('map', { zoomControl: true, scrollWheelZoom: true }).setView([userLat, userLng], 15);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+            mapInitialized = true;
+            setTimeout(function() { map.invalidateSize(); }, 100);
+        }
+
+        clearCheckInLayers();
+
+        var locLat = selectedLocation.latitude;
+        var locLng = selectedLocation.longitude;
+        var straightDist = calculateDistance(userLat, userLng, locLat, locLng);
+        var radius = selectedLocation.radius_meter;
+        var withinRadius = straightDist <= radius;
+        var color = withinRadius ? '#22c55e' : '#ef4444';
+
+        checkInUserMarker = L.marker([userLat, userLng], { draggable: true }).addTo(map);
+        checkInUserMarker.bindTooltip('<b>You</b><br>' + userLat.toFixed(5) + ', ' + userLng.toFixed(5), { direction: 'top' });
+        checkInUserMarker.on('dragend', function(e) {
+            var pos = e.target.getLatLng();
+            userLat = pos.lat;
+            userLng = pos.lng;
+            document.getElementById('latitudeInput').value = userLat;
+            document.getElementById('longitudeInput').value = userLng;
+            updateCheckInMap();
+        });
+
+        checkInLocMarker = L.marker([locLat, locLng]).addTo(map);
+        checkInLocMarker.bindTooltip('<b>' + selectedLocation.nama_lokasi + '</b><br>Radius: ' + fmtDistance(radius), { direction: 'top' });
+
+        checkInCircle = L.circle([locLat, locLng], {
+            radius: radius,
+            color: color,
+            fillColor: color,
+            fillOpacity: 0.12,
+            weight: 2,
+        }).addTo(map);
+
+        checkInStraightLine = L.polyline([[userLat, userLng], [locLat, locLng]], {
+            color: '#6b7280',
+            dashArray: '6, 6',
+            weight: 2,
+            opacity: 0.5,
+        }).addTo(map);
+
+        map.fitBounds(latLngBounds(userLat, userLng, locLat, locLng), { padding: [60, 60] });
+
+        document.getElementById('latitudeInput').value = userLat;
+        document.getElementById('longitudeInput').value = userLng;
+
+        var statusEl = document.getElementById('locationStatus');
+        drawStatusBox(statusEl, withinRadius, straightDist, null, radius, selectedLocation.nama_lokasi, false);
+
+        var submitBtn = document.querySelector('#checkInForm button[type="submit"]');
+        setSubmitState(submitBtn, withinRadius);
+
+        fetchRoute(userLat, userLng, locLat, locLng, function(err, route) {
+            if (err || !route) return;
+
+            var coords = route.geometry.coordinates.map(function(c) { return [c[1], c[0]]; });
+            checkInRoadLine = L.polyline(coords, {
+                color: '#3b82f6',
+                weight: 4,
+                opacity: 0.8,
+            }).addTo(map);
+
+            var roadDistance = route.distance;
+            drawStatusBox(statusEl, withinRadius, straightDist, roadDistance, radius, selectedLocation.nama_lokasi, false);
+        });
+    }
+
+    var locationSelect = document.querySelector('[name="location_id"]');
+    locationSelect.addEventListener('change', function() {
+        var id = parseInt(this.value);
+        selectedLocation = id ? locations.find(function(l) { return l.id === id; }) : null;
+        if (selectedLocation && userLat) {
+            updateCheckInMap();
+        } else if (!selectedLocation && mapInitialized) {
+            clearCheckInLayers();
+            document.getElementById('locationStatus').innerHTML = '';
+        }
+    });
+
     document.getElementById('getLocationBtn').addEventListener('click', function() {
         var btn = this;
+        btn.disabled = true;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Getting location...';
-        
+
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function(position) {
-                var lat = position.coords.latitude;
-                var lng = position.coords.longitude;
-                
-                document.getElementById('locationStatus').innerHTML = '<i class="fas fa-check-circle text-green-500"></i> Location found!';
-                initMapCheckIn(lat, lng);
-                
+                userLat = position.coords.latitude;
+                userLng = position.coords.longitude;
+                document.getElementById('latitudeInput').value = userLat;
+                document.getElementById('longitudeInput').value = userLng;
+
+                if (selectedLocation) {
+                    updateCheckInMap();
+                } else {
+                    document.getElementById('mapContainer').style.display = 'block';
+                    if (!mapInitialized) {
+                        map = L.map('map', { zoomControl: true, scrollWheelZoom: true }).setView([userLat, userLng], 15);
+                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                        }).addTo(map);
+                        mapInitialized = true;
+                        setTimeout(function() { map.invalidateSize(); }, 100);
+                    }
+                    checkInUserMarker = L.marker([userLat, userLng], { draggable: true }).addTo(map);
+                    checkInUserMarker.bindTooltip('<b>You</b><br>' + userLat.toFixed(5) + ', ' + userLng.toFixed(5), { direction: 'top' });
+                    checkInUserMarker.on('dragend', function(e) {
+                        var pos = e.target.getLatLng();
+                        userLat = pos.lat;
+                        userLng = pos.lng;
+                        document.getElementById('latitudeInput').value = userLat;
+                        document.getElementById('longitudeInput').value = userLng;
+                        if (selectedLocation) updateCheckInMap();
+                    });
+                    map.setView([userLat, userLng], 15);
+                    document.getElementById('locationStatus').innerHTML = '<i class="fas fa-check-circle text-green-500"></i> Location found! Now select a location above.';
+                }
+                btn.disabled = false;
                 btn.innerHTML = '<i class="fas fa-check mr-2"></i> Location Found';
             }, function(error) {
-                document.getElementById('locationStatus').innerHTML = '<i class="fas fa-exclamation-circle text-red-500"></i> Could not get location: ' + error.message;
+                document.getElementById('locationStatus').innerHTML = '<i class="fas fa-exclamation-circle text-red-500"></i> ' + error.message;
+                btn.disabled = false;
                 btn.innerHTML = '<i class="fas fa-map-marker-alt mr-2"></i> Get My Location';
-            });
+            }, { enableHighAccuracy: true, timeout: 10000 });
         } else {
             document.getElementById('locationStatus').innerHTML = '<i class="fas fa-exclamation-circle text-red-500"></i> Geolocation not supported';
+            btn.disabled = false;
             btn.innerHTML = '<i class="fas fa-map-marker-alt mr-2"></i> Get My Location';
         }
     });
-    
-    // Check-out map
-    var mapCheckout, markerCheckout;
+
+    // ----- Check-out -----
+    var mapCheckout, checkOutUserMarker, checkOutLocMarker, checkOutCircle, checkOutStraightLine, checkOutRoadLine;
     var mapCheckoutInitialized = false;
-    
-    function initMapCheckOut(lat, lng) {
-        if (mapCheckoutInitialized) return;
-        
-        document.getElementById('mapContainerCheckout').style.display = 'block';
-        mapCheckout = L.map('mapCheckout').setView([lat, lng], 15);
-        
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; OpenStreetMap contributors'
-        }).addTo(mapCheckout);
-        
-        markerCheckout = L.marker([lat, lng], {draggable: true}).addTo(mapCheckout);
-        
-        mapCheckout.on('click', function(e) {
-            markerCheckout.setLatLng(e.latlng);
-            document.getElementById('latitudeInputCheckout').value = e.latlng.lat;
-            document.getElementById('longitudeInputCheckout').value = e.latlng.lng;
-        });
-        
-        markerCheckout.on('dragend', function(e) {
-            document.getElementById('latitudeInputCheckout').value = e.target.getLatLng().lat;
-            document.getElementById('longitudeInputCheckout').value = e.target.getLatLng().lng;
-        });
-        
-        document.getElementById('latitudeInputCheckout').value = lat;
-        document.getElementById('longitudeInputCheckout').value = lng;
-        mapCheckoutInitialized = true;
-        
-        setTimeout(function() {
-            mapCheckout.invalidateSize();
-        }, 100);
+    var checkOutUserLat = null, checkOutUserLng = null;
+
+    function clearCheckOutLayers() {
+        if (checkOutUserMarker) { mapCheckout.removeLayer(checkOutUserMarker); checkOutUserMarker = null; }
+        if (checkOutLocMarker) { mapCheckout.removeLayer(checkOutLocMarker); checkOutLocMarker = null; }
+        if (checkOutCircle) { mapCheckout.removeLayer(checkOutCircle); checkOutCircle = null; }
+        if (checkOutStraightLine) { mapCheckout.removeLayer(checkOutStraightLine); checkOutStraightLine = null; }
+        if (checkOutRoadLine) { mapCheckout.removeLayer(checkOutRoadLine); checkOutRoadLine = null; }
     }
-    
-    // Get location button for check-out
+
+    function updateCheckOutMap() {
+        if (!checkOutUserLat || !checkinLocation) return;
+
+        document.getElementById('mapContainerCheckout').style.display = 'block';
+
+        if (!mapCheckoutInitialized) {
+            mapCheckout = L.map('mapCheckout', { zoomControl: true, scrollWheelZoom: true }).setView([checkOutUserLat, checkOutUserLng], 15);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(mapCheckout);
+            mapCheckoutInitialized = true;
+            setTimeout(function() { mapCheckout.invalidateSize(); }, 100);
+        }
+
+        clearCheckOutLayers();
+
+        var locLat = checkinLocation.latitude;
+        var locLng = checkinLocation.longitude;
+        var straightDist = calculateDistance(checkOutUserLat, checkOutUserLng, locLat, locLng);
+        var radius = checkinLocation.radius_meter;
+        var withinRadius = straightDist <= radius;
+        var color = withinRadius ? '#22c55e' : '#ef4444';
+
+        checkOutUserMarker = L.marker([checkOutUserLat, checkOutUserLng], { draggable: true }).addTo(mapCheckout);
+        checkOutUserMarker.bindTooltip('<b>You</b><br>' + checkOutUserLat.toFixed(5) + ', ' + checkOutUserLng.toFixed(5), { direction: 'top' });
+        checkOutUserMarker.on('dragend', function(e) {
+            var pos = e.target.getLatLng();
+            checkOutUserLat = pos.lat;
+            checkOutUserLng = pos.lng;
+            document.getElementById('latitudeInputCheckout').value = checkOutUserLat;
+            document.getElementById('longitudeInputCheckout').value = checkOutUserLng;
+            updateCheckOutMap();
+        });
+
+        checkOutLocMarker = L.marker([locLat, locLng]).addTo(mapCheckout);
+        checkOutLocMarker.bindTooltip('<b>' + checkinLocation.nama_lokasi + '</b><br>Radius: ' + fmtDistance(radius), { direction: 'top' });
+
+        checkOutCircle = L.circle([locLat, locLng], {
+            radius: radius,
+            color: color,
+            fillColor: color,
+            fillOpacity: 0.12,
+            weight: 2,
+        }).addTo(mapCheckout);
+
+        checkOutStraightLine = L.polyline([[checkOutUserLat, checkOutUserLng], [locLat, locLng]], {
+            color: '#6b7280',
+            dashArray: '6, 6',
+            weight: 2,
+            opacity: 0.5,
+        }).addTo(mapCheckout);
+
+        mapCheckout.fitBounds(latLngBounds(checkOutUserLat, checkOutUserLng, locLat, locLng), { padding: [60, 60] });
+
+        document.getElementById('latitudeInputCheckout').value = checkOutUserLat;
+        document.getElementById('longitudeInputCheckout').value = checkOutUserLng;
+
+        var statusEl = document.getElementById('locationStatusCheckout');
+        drawStatusBox(statusEl, withinRadius, straightDist, null, radius, checkinLocation.nama_lokasi, true);
+
+        var submitBtn = document.querySelector('#checkOutForm button[type="submit"]');
+        setSubmitState(submitBtn, withinRadius);
+
+        fetchRoute(checkOutUserLat, checkOutUserLng, locLat, locLng, function(err, route) {
+            if (err || !route) return;
+
+            var coords = route.geometry.coordinates.map(function(c) { return [c[1], c[0]]; });
+            checkOutRoadLine = L.polyline(coords, {
+                color: '#3b82f6',
+                weight: 4,
+                opacity: 0.8,
+            }).addTo(mapCheckout);
+
+            drawStatusBox(statusEl, withinRadius, straightDist, route.distance, radius, checkinLocation.nama_lokasi, true);
+        });
+    }
+
     document.getElementById('getLocationBtnCheckout').addEventListener('click', function() {
         var btn = this;
+        btn.disabled = true;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Getting location...';
-        
+
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function(position) {
-                var lat = position.coords.latitude;
-                var lng = position.coords.longitude;
-                
-                document.getElementById('locationStatusCheckout').innerHTML = '<i class="fas fa-check-circle text-green-500"></i> Location found!';
-                initMapCheckOut(lat, lng);
-                
+                checkOutUserLat = position.coords.latitude;
+                checkOutUserLng = position.coords.longitude;
+                document.getElementById('latitudeInputCheckout').value = checkOutUserLat;
+                document.getElementById('longitudeInputCheckout').value = checkOutUserLng;
+
+                if (checkinLocation) {
+                    updateCheckOutMap();
+                } else {
+                    document.getElementById('mapContainerCheckout').style.display = 'block';
+                    if (!mapCheckoutInitialized) {
+                        mapCheckout = L.map('mapCheckout', { zoomControl: true, scrollWheelZoom: true }).setView([checkOutUserLat, checkOutUserLng], 15);
+                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                        }).addTo(mapCheckout);
+                        mapCheckoutInitialized = true;
+                        setTimeout(function() { mapCheckout.invalidateSize(); }, 100);
+                    }
+                    checkOutUserMarker = L.marker([checkOutUserLat, checkOutUserLng], { draggable: true }).addTo(mapCheckout);
+                    checkOutUserMarker.bindTooltip('<b>You</b><br>' + checkOutUserLat.toFixed(5) + ', ' + checkOutUserLng.toFixed(5), { direction: 'top' });
+                    checkOutUserMarker.on('dragend', function(e) {
+                        var pos = e.target.getLatLng();
+                        checkOutUserLat = pos.lat;
+                        checkOutUserLng = pos.lng;
+                        document.getElementById('latitudeInputCheckout').value = checkOutUserLat;
+                        document.getElementById('longitudeInputCheckout').value = checkOutUserLng;
+                        if (checkinLocation) updateCheckOutMap();
+                    });
+                    mapCheckout.setView([checkOutUserLat, checkOutUserLng], 15);
+                    document.getElementById('locationStatusCheckout').innerHTML = '<i class="fas fa-check-circle text-green-500"></i> Location found!';
+                }
+                btn.disabled = false;
                 btn.innerHTML = '<i class="fas fa-check mr-2"></i> Location Found';
             }, function(error) {
-                document.getElementById('locationStatusCheckout').innerHTML = '<i class="fas fa-exclamation-circle text-red-500"></i> Could not get location: ' + error.message;
+                document.getElementById('locationStatusCheckout').innerHTML = '<i class="fas fa-exclamation-circle text-red-500"></i> ' + error.message;
+                btn.disabled = false;
                 btn.innerHTML = '<i class="fas fa-map-marker-alt mr-2"></i> Get My Location';
-            });
+            }, { enableHighAccuracy: true, timeout: 10000 });
         } else {
             document.getElementById('locationStatusCheckout').innerHTML = '<i class="fas fa-exclamation-circle text-red-500"></i> Geolocation not supported';
+            btn.disabled = false;
             btn.innerHTML = '<i class="fas fa-map-marker-alt mr-2"></i> Get My Location';
         }
     });
