@@ -46,7 +46,7 @@ jobs:
           php artisan migrate:fresh --force
 
       - name: Run tests
-        run: php artisan test --memory=256
+        run: php artisan test
         env:
           DB_CONNECTION: mysql
           DB_DATABASE: abs
