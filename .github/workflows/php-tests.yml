@@ -43,8 +43,9 @@ jobs:
 
       - name: Set up MySQL database
         run: |
-          # Drop the database and recreate it
-          run: mysql -h 127.0.0.1 -u root -psecret -e "DROP DATABASE IF EXISTS abs; CREATE DATABASE abs;"
+           # Drop the database and recreate it
+           mysql -h 127.0.0.1 -u root -psecret -e "DROP DATABASE IF EXISTS abs; CREATE DATABASE abs;"
+
           
         - name: Apply all migration files
           run: | 
