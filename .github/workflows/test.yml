@@ -73,7 +73,7 @@ jobs:
         run: php artisan db:seed --force
 
       - name: Run PHPUnit tests
-        run: php artisan test --colors=always
+        run: php -d memory_limit=512M artisan test --colors=always
         continue-on-error: true
         id: tests
 
