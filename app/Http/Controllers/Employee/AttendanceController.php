@@ -269,51 +269,38 @@ class AttendanceController extends Controller
         
         // Cache the results for 10 minutes
         $cacheKey = 'monthly_stats_' . $userId . '_' . $now->format('Y_m');
-        $stats = Cache::remember($cacheKey, 600, function () use ($userId, $now) {
-            $totalDays = Attendance::where('user_id', $userId)
+        
+        return Cache::remember($cacheKey, 600, function () use ($userId, $now) {
+            $month = $now->format('Y-m');
+            
+            // Fetch all necessary data in a single query where possible
+            $attendances = Attendance::where('user_id', $userId)
                 ->whereMonth('tanggal', $now->month)
                 ->whereYear('tanggal', $now->year)
-                ->count();
+                ->with('user')
+                ->get();
 
-            $presentDays = Attendance::where('user_id', $userId)
-                ->whereMonth('tanggal', $now->month)
-                ->whereYear('tanggal', $now->year)
-                ->whereIn('status_hadir', ['present', 'late'])
-                ->count();
-
-            $lateDays = Attendance::where('user_id', $userId)
-                ->whereMonth('tanggal', $now->month)
-                ->whereYear('tanggal', $now->year)
-                ->where('status_hadir', 'late')
-                ->count();
-
+            $totalDays = $attendances->count();
+            $presentDays = $attendances->whereIn('status_hadir', ['present', 'late'])->count();
+            $lateDays = $attendances->where('status_hadir', 'late')->count();
             $absentDays = $totalDays - $presentDays;
 
-            $totalWorkMinutes = Attendance::where('user_id', $userId)
-                ->whereMonth('tanggal', $now->month)
-                ->whereYear('tanggal', $now->year)
-                ->whereNotNull('jam_kerja')
-                ->sum(function ($a) {
-                    if (!$a->jam_kerja) return 0;
-                    return $a->jam_kerja->hour * 60 + $a->jam_kerja->minute;
-                });
+            $totalWorkMinutes = $attendances->whereNotNull('jam_kerja')->sum(function ($a) {
+                if (!$a->jam_kerja) return 0;
+                return $a->jam_kerja->hour * 60 + $a->jam_kerja->minute;
+            });
 
-            $totalOvertimeMinutes = Attendance::where('user_id', $userId)
-                ->whereMonth('tanggal', $now->month)
-                ->whereYear('tanggal', $now->year)
-                ->whereNotNull('jam_lembur')
-                ->sum(function ($a) {
-                    if (!$a->jam_lembur) return 0;
-                    return $a->jam_lembur->hour * 60 + $a->jam_lembur->minute;
-                });
+            $totalOvertimeMinutes = $attendances->whereNotNull('jam_lembur')->sum(function ($a) {
+                if (!$a->jam_lembur) return 0;
+                return $a->jam_lembur->hour * 60 + $a->jam_lembur->minute;
+            });
 
             $weeklyData = [];
             for ($i = 6; $i >= 0; $i--) {
                 $day = $now->copy()->subDays($i);
-                $dayAttendance = Attendance::where('user_id', $userId)
-                    ->whereDate('tanggal', $day)
-                    ->first();
-                $jamKerja = $dayAttendance?->jam_kerja;
+                $dayAttendance = $attendances->firstWhere('tanggal', $day->format('Y-m-d'));
+                $jamKerja = $dayAttendance ? $dayAttendance->jam_kerja : null;
+                
                 $weeklyData[] = [
                     'date' => $day->format('D'),
                     'status' => $dayAttendance ? $dayAttendance->status_hadir : 'none',
@@ -328,12 +315,10 @@ class AttendanceController extends Controller
                 'late_days' => $lateDays,
                 'absent_days' => $absentDays,
                 'attendance_rate' => $totalDays > 0 ? round(($presentDays / $totalDays) * 100) : 0,
-                'total_work_hours' => floor($totalWorkMinutes / 60) . 'h ' . ($totalWorkMinutes % 60) . 'm',
-                'total_overtime' => floor($totalOvertimeMinutes / 60) . 'h ' . ($totalOvertimeMinutes % 60) . 'm',
+                'total_work_hours' => $totalWorkMinutes > 0 ? floor($totalWorkMinutes / 60) . 'h ' . ($totalWorkMinutes % 60) . 'm' : '0h 0m',
+                'total_overtime' => $totalOvertimeMinutes > 0 ? floor($totalOvertimeMinutes / 60) . 'h ' . ($totalOvertimeMinutes % 60) . 'm' : '0h 0m',
                 'weekly' => $weeklyData,
             ];
         });
-
-        return $stats;
     }
 }
