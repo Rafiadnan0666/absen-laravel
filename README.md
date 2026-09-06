@@ -1,8 +1,8 @@
 # ABS - Attendance & Employee Management System
 
 <p align="center">
-  <img src="adminscreen.png" alt="Admin Dashboard" width="600"/>
-  <img src="hrscreen.png" alt="HR Panel" width="600"/>
+  <img src="screen/adminscreen.png" alt="Admin Dashboard" width="600"/>
+  <img src="screen/hrscreen.png" alt="HR Panel" width="600"/>
 </p>
 
 <p align="center">
@@ -136,11 +136,11 @@ Visit `http://localhost:8000`
 
 | Attendance | Departments |
 |-----------|-------------|
-| ![Attendance](attendance.png) | ![Departments](departments.png) |
+| ![Attendance](screen/attendance.png) | ![Departments](screen/departments.png) |
 
 | Employee Screen | Records |
 |----------------|---------|
-| ![Employee](employeescreen.png) | ![Records](records.png) |
+| ![Employee](screen/employeescreen.png) | ![Records](screen/records.png) |
 
 ## Default Roles
 
