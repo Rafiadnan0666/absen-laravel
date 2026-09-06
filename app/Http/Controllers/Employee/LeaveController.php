@@ -77,17 +77,7 @@ class LeaveController extends Controller
         $leave->alasan = $request->alasan;
         $leave->save();
 
-        return redirect()->route('employee.leaves.index');}
-            'user_id' => auth()->id(),
-            'tipe_cuti' => $request->tipe_cuti,
-            'tanggal_mulai' => $request->tanggal_mulai,
-            'tanggal_selesai' => $request->tanggal_selesai,
-            'alasan' => $request->alasan,
-            'status_pengajuan' => 'pending',
-        ]);
-
-        return redirect()->route('employee.leaves.index')
-            ->with('success', 'Leave request submitted successfully!');
+        return redirect()->route('employee.leaves.index');
     }
 
     public function show(Leave $leave)
