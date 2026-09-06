@@ -10,6 +10,10 @@
         <div class="neo-alert-success mb-6 shake">{{ session('success') }}</div>
     @endif
 
+
+
+
+    
     <x-advanced-filters :action="route('hr.attendances.index')" :filters="[
         'date_from' => ['type' => 'date', 'label' => 'From'],
         'date_to' => ['type' => 'date', 'label' => 'To'],
@@ -25,7 +29,7 @@
         <div class="flex justify-between items-center p-4 border-b-3 border-black">
             <h2 class="font-black text-xl">All Attendance Records</h2>
         </div>
-        <div class="p-4">
+        <div class="p-4"
             <div class="neo-table-container">
                 <table class="neo-table">
                     <thead>

@@ -26,7 +26,7 @@ class AttendanceController extends Controller
             $query->where('user_id', $request->user_id);
         }
 
-        $users = User::where('status_akun', 'active')->orderBy('nama_lengkap')->get();
+        $users = User::where('status_akun', 'active')->orderBy('nama_lengkap')->take(100)->get();
 
         $attendances = $query->latest('tanggal')->paginate(20)->withQueryString();
         return view('hr.attendances.index', compact('attendances', 'users'));

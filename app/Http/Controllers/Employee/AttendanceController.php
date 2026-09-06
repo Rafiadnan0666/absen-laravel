@@ -266,69 +266,74 @@ class AttendanceController extends Controller
     {
         $userId = auth()->id();
         $now = Carbon::now();
-        $startOfMonth = $now->copy()->startOfMonth();
+        
+        // Cache the results for 10 minutes
+        $cacheKey = 'monthly_stats_' . $userId . '_' . $now->format('Y_m');
+        $stats = Cache::remember($cacheKey, 600, function () use ($userId, $now) {
+            $totalDays = Attendance::where('user_id', $userId)
+                ->whereMonth('tanggal', $now->month)
+                ->whereYear('tanggal', $now->year)
+                ->count();
 
-        $totalDays = Attendance::where('user_id', $userId)
-            ->whereMonth('tanggal', $now->month)
-            ->whereYear('tanggal', $now->year)
-            ->count();
+            $presentDays = Attendance::where('user_id', $userId)
+                ->whereMonth('tanggal', $now->month)
+                ->whereYear('tanggal', $now->year)
+                ->whereIn('status_hadir', ['present', 'late'])
+                ->count();
 
-        $presentDays = Attendance::where('user_id', $userId)
-            ->whereMonth('tanggal', $now->month)
-            ->whereYear('tanggal', $now->year)
-            ->whereIn('status_hadir', ['present', 'late'])
-            ->count();
+            $lateDays = Attendance::where('user_id', $userId)
+                ->whereMonth('tanggal', $now->month)
+                ->whereYear('tanggal', $now->year)
+                ->where('status_hadir', 'late')
+                ->count();
 
-        $lateDays = Attendance::where('user_id', $userId)
-            ->whereMonth('tanggal', $now->month)
-            ->whereYear('tanggal', $now->year)
-            ->where('status_hadir', 'late')
-            ->count();
+            $absentDays = $totalDays - $presentDays;
 
-        $totalWorkMinutes = Attendance::where('user_id', $userId)
-            ->whereMonth('tanggal', $now->month)
-            ->whereYear('tanggal', $now->year)
-            ->whereNotNull('jam_kerja')
-            ->get()
-            ->sum(function ($a) {
-                if (!$a->jam_kerja) return 0;
-                return $a->jam_kerja->hour * 60 + $a->jam_kerja->minute;
-            });
+            $totalWorkMinutes = Attendance::where('user_id', $userId)
+                ->whereMonth('tanggal', $now->month)
+                ->whereYear('tanggal', $now->year)
+                ->whereNotNull('jam_kerja')
+                ->sum(function ($a) {
+                    if (!$a->jam_kerja) return 0;
+                    return $a->jam_kerja->hour * 60 + $a->jam_kerja->minute;
+                });
 
-        $totalOvertimeMinutes = Attendance::where('user_id', $userId)
-            ->whereMonth('tanggal', $now->month)
-            ->whereYear('tanggal', $now->year)
-            ->whereNotNull('jam_lembur')
-            ->get()
-            ->sum(function ($a) {
-                if (!$a->jam_lembur) return 0;
-                return $a->jam_lembur->hour * 60 + $a->jam_lembur->minute;
-            });
+            $totalOvertimeMinutes = Attendance::where('user_id', $userId)
+                ->whereMonth('tanggal', $now->month)
+                ->whereYear('tanggal', $now->year)
+                ->whereNotNull('jam_lembur')
+                ->sum(function ($a) {
+                    if (!$a->jam_lembur) return 0;
+                    return $a->jam_lembur->hour * 60 + $a->jam_lembur->minute;
+                });
 
-        $weeklyData = [];
-        for ($i = 6; $i >= 0; $i--) {
-            $day = $now->copy()->subDays($i);
-            $dayAttendance = Attendance::where('user_id', $userId)
-                ->whereDate('tanggal', $day)
-                ->first();
-            $jamKerja = $dayAttendance?->jam_kerja;
-            $weeklyData[] = [
-                'date' => $day->format('D'),
-                'status' => $dayAttendance ? $dayAttendance->status_hadir : 'none',
-                'hours' => $jamKerja ? $jamKerja->format('H:i') : '-',
-                'hours_numeric' => $jamKerja ? round($jamKerja->hour + $jamKerja->minute / 60, 1) : 0,
+            $weeklyData = [];
+            for ($i = 6; $i >= 0; $i--) {
+                $day = $now->copy()->subDays($i);
+                $dayAttendance = Attendance::where('user_id', $userId)
+                    ->whereDate('tanggal', $day)
+                    ->first();
+                $jamKerja = $dayAttendance?->jam_kerja;
+                $weeklyData[] = [
+                    'date' => $day->format('D'),
+                    'status' => $dayAttendance ? $dayAttendance->status_hadir : 'none',
+                    'hours' => $jamKerja ? $jamKerja->format('H:i') : '-',
+                    'hours_numeric' => $jamKerja ? round($jamKerja->hour + $jamKerja->minute / 60, 1) : 0,
+                ];
+            }
+
+            return [
+                'total_days' => $totalDays,
+                'present_days' => $presentDays,
+                'late_days' => $lateDays,
+                'absent_days' => $absentDays,
+                'attendance_rate' => $totalDays > 0 ? round(($presentDays / $totalDays) * 100) : 0,
+                'total_work_hours' => floor($totalWorkMinutes / 60) . 'h ' . ($totalWorkMinutes % 60) . 'm',
+                'total_overtime' => floor($totalOvertimeMinutes / 60) . 'h ' . ($totalOvertimeMinutes % 60) . 'm',
+                'weekly' => $weeklyData,
             ];
-        }
+        });
 
-        return [
-            'total_days' => $totalDays,
-            'present_days' => $presentDays,
-            'late_days' => $lateDays,
-            'absent_days' => $totalDays - $presentDays,
-            'attendance_rate' => $totalDays > 0 ? round(($presentDays / $totalDays) * 100) : 0,
-            'total_work_hours' => floor($totalWorkMinutes / 60) . 'h ' . ($totalWorkMinutes % 60) . 'm',
-            'total_overtime' => floor($totalOvertimeMinutes / 60) . 'h ' . ($totalOvertimeMinutes % 60) . 'm',
-            'weekly' => $weeklyData,
-        ];
+        return $stats;
     }
 }
