@@ -46,7 +46,7 @@ jobs:
           php artisan migrate:fresh --force
 
       - name: Run tests
-        run: php artisan test
+        run: php -d memory_limit=512M artisan test
         env:
           DB_CONNECTION: mysql
           DB_DATABASE: abs
