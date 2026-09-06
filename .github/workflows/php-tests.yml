@@ -41,22 +41,20 @@ jobs:
       - name: Generate application key
         run: php artisan key:generate
 
-      - name: Set up MySQL database
-        run: |
-           # Drop the database and recreate it
-           mysql -h 127.0.0.1 -u root -psecret -e "DROP DATABASE IF EXISTS abs; CREATE DATABASE abs;"
-
-          
-        - name: Apply all migration files
-          run: | 
+        - name: Set up MySQL database
+          run: |
+            # Drop the database and recreate it
+            mysql -h 127.0.0.1 -u root -psecret -e "DROP DATABASE IF EXISTS abs; CREATE DATABASE abs;"
+            
+            # Apply all migration files
             for file in database/migrations/*.php; do \
               if [[ $file != *.php~ ]]; then \
                 mysql -h 127.0.0.1 -u root -psecret abs < "$file"
               fi \
             done
-          
-        - name: Run migrations
-          run: php artisan migrate --force
+            
+            # Run migrations
+            php artisan migrate --force
 
       - name: Run tests
         run: php artisan test --memory=256
