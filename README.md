@@ -1,15 +1,63 @@
 # ABS - Attendance & Employee Management System
 
 <p align="center">
+  <img src="adminscreen.png" alt="Admin Dashboard" width="600"/>
+  <img src="hrscreen.png" alt="HR Panel" width="600"/>
+</p>
+
+<p align="center">
   <img src="https://img.shields.io/badge/Laravel-13.x-red?style=for-the-badge&logo=laravel" alt="Laravel Version">
   <img src="https://img.shields.io/badge/PHP-8.3-blue?style=for-the-badge&logo=php" alt="PHP Version">
   <img src="https://img.shields.io/badge/Tailwind-CSS-3.x?style=for-the-badge&logo=tailwind-css" alt="Tailwind Version">
+  <img src="https://img.shields.io/badge/MySQL-8.0-4479A1?style=for-the-badge&logo=mysql" alt="MySQL">
   <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License">
 </p>
 
 ## Overview
 
-**ABS (Attendance & Employee Management System)** is a comprehensive, production-ready web application for managing employee attendance, leaves, payroll, and reimbursements. Built with Laravel 13, Tailwind CSS, Alpine.js, and Leaflet for location tracking.
+**ABS (Attendance & Employee Management System)** is a comprehensive web application for managing employee attendance, leaves, payroll, and reimbursements. Built with Laravel 13, Tailwind CSS, Alpine.js, and Leaflet for GPS location tracking.
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Backend | Laravel 13.x (PHP 8.3) |
+| Frontend | Tailwind CSS 3.x, Alpine.js 3.x |
+| Database | MySQL 8.0+ |
+| Maps | Leaflet.js (OpenStreetMap) |
+| Auth | Laravel Breeze + Fortify |
+| Icons | Font Awesome 7.0.1 |
+
+## Architecture
+
+```
+abs/
+├── app/
+│   ├── Http/Controllers/
+│   │   ├── Admin/       # Admin panel controllers
+│   │   ├── HR/          # HR panel controllers
+│   │   ├── Employee/    # Employee panel controllers
+│   │   └── Auth/        # Authentication controllers
+│   ├── Models/          # Eloquent models
+│   └── Providers/       # Service providers
+├── resources/views/
+│   ├── admin/           # Admin panel views (Blade)
+│   ├── hr/              # HR panel views
+│   ├── employee/        # Employee panel views
+│   └── layouts/         # Shared layouts
+├── routes/
+│   ├── web.php          # Main routes
+│   └── auth.php         # Authentication routes
+├── database/
+│   ├── migrations/      # 28 migration files
+│   └── seeders/         # Database seeders
+├── tests/               # PHPUnit tests
+└── public/
+    ├── assets/          # CSS, JS, images
+    └── build/           # Compiled assets
+```
+
+**Architecture pattern:** MVC with Blade templates, resource controllers, and service-based authorization (role-based access via middleware).
 
 ## Features
 
@@ -38,16 +86,7 @@
 - **System Settings** - Configure application settings
 - **Dashboard Analytics** - Key metrics and reports
 
-## Technology Stack
-
-- **Backend:** Laravel 13.x (PHP 8.3)
-- **Frontend:** Tailwind CSS 3.x, Alpine.js 3.x
-- **Maps:** Leaflet.js (OpenStreetMap)
-- **Database:** MySQL 8.0+
-- **Authentication:** Laravel Breeze + Fortify
-- **Icons:** Font Awesome 7.0.1
-
-## Installation
+## Setup Instructions
 
 ### Prerequisites
 - PHP 8.3+
@@ -55,76 +94,53 @@
 - Node.js 18+
 - MySQL 8.0+
 
-### Steps
+### Installation
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/Rafiadnan0666/absen-laravel.git
-   cd absen-laravel
-   ```
+```bash
+git clone https://github.com/Rafiadnan0666/absen-laravel.git
+cd absen-laravel
 
-2. **Install PHP dependencies**
-   ```bash
-   composer install
-   ```
+# Install dependencies
+composer install
+npm install
 
-3. **Install NPM dependencies**
-   ```bash
-   npm install
-   ```
+# Configure environment
+cp .env.example .env
+php artisan key:generate
 
-4. **Configure environment**
-   ```bash
-   cp .env.example .env
-   ```
-   
-   Edit `.env` with your database credentials:
-   ```
-   DB_CONNECTION=mysql
-   DB_HOST=127.0.0.1
-   DB_PORT=3306
-   DB_DATABASE=your_database_name
-   DB_USERNAME=your_username
-   DB_PASSWORD=your_password
-   ```
+# Database - edit .env with your MySQL credentials
+# DB_CONNECTION=mysql
+# DB_HOST=127.0.0.1
+# DB_PORT=3306
+# DB_DATABASE=abs_laravel
+# DB_USERNAME=root
+# DB_PASSWORD=
 
-5. **Generate application key**
-   ```bash
-   php artisan key:generate
-   ```
+# Run migrations
+php artisan migrate
 
-6. **Run migrations**
-   ```bash
-   php artisan migrate
-   ```
+# Build frontend
+npm run build
 
-7. **(Optional) Seed database with sample data**
-   ```bash
-   php artisan db:seed
-   ```
+# Start server
+php artisan serve
+```
 
-8. **Build frontend assets**
-   ```bash
-   npm run build
-   ```
+Visit `http://localhost:8000`
 
-9. **Start the development server**
-   ```bash
-   php artisan serve
-   ```
+## Screenshots
 
-10. **Access the application**
-    - Visit: `http://localhost:8000`
-    - Login to access the dashboard
+| Admin Dashboard | HR Panel |
+|----------------|----------|
+| ![Admin Screen](adminscreen.png) | ![HR Screen](hrscreen.png) |
 
-## Location Tracking
+| Attendance | Departments |
+|-----------|-------------|
+| ![Attendance](attendance.png) | ![Departments](departments.png) |
 
-The system includes GPS-based attendance tracking using Leaflet maps and OpenStreetMap:
-
-- Employees can get their current location using the "Get My Location" button
-- Location is displayed on an interactive map
-- Coordinates are stored with attendance records
-- Supports both check-in and check-out location tracking
+| Employee Screen | Records |
+|----------------|---------|
+| ![Employee](employeescreen.png) | ![Records](records.png) |
 
 ## Default Roles
 
@@ -134,95 +150,33 @@ The system includes GPS-based attendance tracking using Leaflet maps and OpenStr
 | HR | HR management and approvals |
 | Employee | Standard user access |
 
-## Project Structure
+## Known Limitations
 
-```
-abs/
-├── app/
-│   ├── Http/Controllers/
-│   │   ├── Admin/       # Admin panel controllers
-│   │   ├── HR/          # HR panel controllers
-│   │   ├── Employee/    # Employee panel controllers
-│   │   └── Auth/        # Authentication controllers
-│   ├── Models/          # Eloquent models
-│   └── Providers/       # Service providers
-├── resources/views/
-│   ├── admin/           # Admin panel views
-│   ├── hr/              # HR panel views
-│   ├── employee/        # Employee panel views
-│   └── layouts/         # Shared layouts
-├── routes/
-│   ├── web.php          # Main routes
-│   └── auth.php         # Authentication routes
-├── database/
-│   ├── migrations/      # Database migrations
-│   └── seeders/         # Database seeders
-└── public/
-    ├── assets/          # CSS, JS, images
-    └── build/           # Compiled assets
-```
+- **No JWT/OAuth** - Session-based auth only; no API token authentication
+- **No pagination** - List endpoints return all records (no pagination)
+- **No rate limiting** - No request throttling on public routes
+- **GPS tolerance** - Location check-in uses fixed radius; no configurable tolerance
+- **Single-file config** - Some business logic is in controllers rather than services
+- **No email queue** - Mail sent synchronously; no background processing
+- **Neo-brutalism design** - Heavy CSS shadows may not render consistently on all devices
+- **No 2FA** - No two-factor authentication implemented
+- **Payroll confirmation** - Payroll status changes are manual; no automated confirmation workflow
 
-## Security Features
+## CI/CD
 
-- Role-based access control (RBAC)
-- Password hashing with bcrypt
-- CSRF protection
-- XSS protection
-- SQL injection prevention
-- Account status management (active/inactive)
-- Session-based authentication
+GitHub Actions runs daily at 06:00 UTC and on every push to `main`:
+- Install dependencies (`composer install`, `npm install`)
+- Setup MySQL database
+- Run migrations
+- Run PHPUnit tests
+- Report PASS / FAIL
 
-## Production Deployment
-
-1. **Configure environment**
-   ```bash
-   # In .env file
-   APP_ENV=production
-   APP_DEBUG=false
-   ```
-
-2. **Optimize Laravel**
-   ```bash
-   php artisan config:cache
-   php artisan route:cache
-   php artisan view:cache
-   php artisan optimize
-   ```
-
-3. **Configure web server**
-   
-   For Apache, ensure `.htaccess` is configured properly. For Nginx, configure your server block to point to the `public` directory.
-
-4. **Set proper permissions**
-   ```bash
-   chmod -R 775 storage bootstrap/cache
-   ```
-
-## Troubleshooting
-
-### Location Tracking Not Working
-- Ensure the browser has location permissions enabled
-- Use HTTPS (or localhost) for geolocation to work
-- Check browser console for errors
-
-### Icons Not Displaying
-- Verify Font Awesome CDN is loading correctly
-- Clear browser cache
-- Check network tab for 404 errors
-
-### Build Issues
-- Ensure Node.js 18+ is installed
-- Delete `node_modules` and reinstall: `rm -rf node_modules && npm install`
+See `.github/workflows/test.yml` for the pipeline configuration.
 
 ## License
 
-This project is licensed under the MIT License.
+MIT License.
 
 ## Support
 
 For issues and feature requests, please create an issue on GitHub.
-
----
-
-<p align="center">Built with Laravel</p>
-<p align="center">Version 1.0.0 | Last Updated: May 2026</p>

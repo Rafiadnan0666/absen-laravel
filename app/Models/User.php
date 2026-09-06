@@ -9,7 +9,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 #[Fillable([
-    'nama_lengkap', 'email', 'password', 'no_hp', 'alamat',
+    'name', 'nama_lengkap', 'email', 'password', 'no_hp', 'alamat',
     'job_title_id', 'department_id', 'role_id',
     'tipe_gaji', 'jumlah_gaji', 'tanggal_masuk',
     'status_akun', 'face_embedding'
@@ -27,6 +27,28 @@ class User extends Authenticatable
             'tanggal_masuk' => 'date',
             'jumlah_gaji' => 'decimal:2',
         ];
+    }
+
+    public function getNameAttribute(): ?string
+    {
+        return $this->attributes['name'] ?? $this->attributes['nama_lengkap'] ?? null;
+    }
+
+    public function setNameAttribute($value): void
+    {
+        $this->attributes['name'] = $value;
+        $this->attributes['nama_lengkap'] = $value;
+    }
+
+    public function getNamaLengkapAttribute(): ?string
+    {
+        return $this->attributes['nama_lengkap'] ?? $this->attributes['name'] ?? null;
+    }
+
+    public function setNamaLengkapAttribute($value): void
+    {
+        $this->attributes['nama_lengkap'] = $value;
+        $this->attributes['name'] = $value;
     }
 
     public function jobTitle()

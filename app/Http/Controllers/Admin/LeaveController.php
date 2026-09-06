@@ -11,7 +11,7 @@ class LeaveController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Leave::with('user', 'approver');
+        $query = Leave::with('user', 'approvedBy');
 
         if ($request->filled('date_from')) {
             $query->whereDate('tanggal_mulai', '>=', $request->date_from);

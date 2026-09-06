@@ -67,7 +67,7 @@
             </div>
 
 
-            <div class="apah" style="margin-bottom:50px;transform:rotate(20deg);">
+            <div class="apah" style="margin-bottom:50px;transform:rotate(0deg);">
                 <div style="background:#00bbf9;border:3px solid #000;overflow:hidden;padding:16px 0;box-shadow:6px 6px 0 #000;">
                     <div style="display:flex;animation:scroll 12s linear infinite;white-space:nowrap;">
                         <span style="color:#000;font-size:16px;font-weight:800;margin-right:60px;">🚀 SMART ATTENDANCE • 📍 GPS LOCATION • 📅 LEAVE MANAGEMENT • 💰 PAYROLL • 💳 REIMBURSEMENTS • 👥 EMPLOYEES • 📊 HR PANEL • ⚙️ ADMIN •</span>
@@ -135,12 +135,6 @@
                 @else
                 <a href="{{ url('/dashboard') }}" class="neo-btn-primary">GO TO DASHBOARD</a>
                 @endguest
-            </div>
-
-            <div style="display:flex;justify-content:center;gap:50px;">
-                <div style="text-align:center;"><span style="font-size:32px;font-weight:800;">500+</span><br><span style="font-size:13px;color:#666;font-weight:700;">Active Users</span></div>
-                <div style="text-align:center;"><span style="font-size:32px;font-weight:800;">50+</span><br><span style="font-size:13px;color:#666;font-weight:700;">Companies</span></div>
-                <div style="text-align:center;"><span style="font-size:32px;font-weight:800;">99.9%</span><br><span style="font-size:13px;color:#666;font-weight:700;">Uptime</span></div>
             </div>
         </div>
     </main>

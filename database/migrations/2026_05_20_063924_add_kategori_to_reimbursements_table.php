@@ -8,15 +8,19 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('reimbursements', function (Blueprint $table) {
-            $table->string('kategori')->after('user_id');
-        });
+        if (!Schema::hasColumn('reimbursements', 'kategori')) {
+            Schema::table('reimbursements', function (Blueprint $table) {
+                $table->string('kategori')->after('user_id');
+            });
+        }
     }
 
     public function down(): void
     {
-        Schema::table('reimbursements', function (Blueprint $table) {
-            $table->dropColumn('kategori');
-        });
+        if (Schema::hasColumn('reimbursements', 'kategori')) {
+            Schema::table('reimbursements', function (Blueprint $table) {
+                $table->dropColumn('kategori');
+            });
+        }
     }
 };

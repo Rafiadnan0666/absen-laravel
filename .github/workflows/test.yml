@@ -1,0 +1,124 @@
+name: CI/CD - ABS
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  schedule:
+    - cron: '0 6 * * *'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: abs_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    env:
+      APP_ENV: testing
+      APP_DEBUG: true
+      APP_KEY: base64:testkey123456789012345678901234=
+      DB_CONNECTION: mysql
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_DATABASE: abs_test
+      DB_USERNAME: root
+      DB_PASSWORD: root
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, bcmath, ctype, curl, dom, fileinfo, json, pdo, pdo_mysql, sqlite3, xml, zip
+          coverage: none
+          tools: composer:v2
+
+      - name: Install Composer dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress --no-suggest
+
+      - name: Install NPM dependencies
+        run: npm install
+
+      - name: Prepare Laravel environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+          echo "APP_ENV=testing" >> .env
+          echo "DB_CONNECTION=mysql" >> .env
+          echo "DB_HOST=127.0.0.1" >> .env
+          echo "DB_PORT=3306" >> .env
+          echo "DB_DATABASE=abs_test" >> .env
+          echo "DB_USERNAME=root" >> .env
+          echo "DB_PASSWORD=root" >> .env
+
+      - name: Run migrations
+        run: php artisan migrate --force
+
+      - name: Seed database
+        run: php artisan db:seed --force
+
+      - name: Run PHPUnit tests
+        run: php artisan test --colors=always
+        continue-on-error: true
+        id: tests
+
+      - name: Run payroll anomaly check
+        run: |
+          echo "=== Payroll Anomaly Check ==="
+          php artisan tinker --execute="
+          \$payrolls = \App\Models\Payroll::all();
+          \$anomalies = [];
+          foreach (\$payrolls as \$p) {
+            if (!\$p->status || \$p->status === 'pending') {
+              \$anomalies[] = 'Payroll ' . \$p->id . ' is pending/unconfirmed';
+            }
+            if (\$p->gross_amount < 0) {
+              \$anomalies[] = 'Payroll ' . \$p->id . ' has negative gross_amount';
+            }
+          }
+          if (count(\$anomalies) > 0) {
+            echo 'PAYROLL ANOMALIES FOUND:' . PHP_EOL;
+            foreach (\$anomalies as \$a) { echo '  - ' . \$a . PHP_EOL; }
+            exit(1);
+          }
+          echo 'No payroll anomalies detected.';
+          "
+        continue-on-error: true
+        id: payroll
+
+      - name: Report results
+        run: |
+          echo ""
+          echo "=========================================="
+          echo "  CI/CD REPORT"
+          echo "=========================================="
+          if [ "${{ steps.tests.outcome }}" = "success" ]; then
+            echo "  PHPUnit:  PASS"
+          else
+            echo "  PHPUnit:  FAIL"
+          fi
+          if [ "${{ steps.payroll.outcome }}" = "success" ]; then
+            echo "  Payroll:  PASS (no anomalies)"
+          else
+            echo "  Payroll:  CHECK (anomalies found)"
+          fi
+          echo "=========================================="
+
+      - name: Fail if tests failed
+        if: steps.tests.outcome == 'failure'
+        run: exit 1

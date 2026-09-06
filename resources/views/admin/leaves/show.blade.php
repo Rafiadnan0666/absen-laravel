@@ -51,7 +51,7 @@
       </div>
       <div>
         <label class="neo-label">Approved By</label>
-        <p class="text-sm font-bold">{{ $leave->approver->nama_lengkap ?? 'N/A' }}</p>
+        <p class="text-sm font-bold">{{ $leave->approvedBy->nama_lengkap ?? 'N/A' }}</p>
       </div>
     </div>
 

@@ -10,17 +10,19 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
+            $table->string('name')->nullable();
             $table->string('nama_lengkap');
             $table->string('email')->unique();
+            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('no_hp')->nullable();
             $table->text('alamat')->nullable();
-            $table->foreignId('job_title_id');
-            $table->foreignId('department_id');
-            $table->foreignId('role_id');
-            $table->enum('tipe_gaji', ['hourly', 'daily', 'monthly']);
-            $table->decimal('jumlah_gaji', 15, 2);
-            $table->date('tanggal_masuk');
+            $table->foreignId('job_title_id')->nullable();
+            $table->foreignId('department_id')->nullable();
+            $table->foreignId('role_id')->nullable();
+            $table->enum('tipe_gaji', ['hourly', 'daily', 'monthly'])->nullable();
+            $table->decimal('jumlah_gaji', 15, 2)->nullable();
+            $table->date('tanggal_masuk')->nullable();
             $table->enum('status_akun', ['active', 'inactive'])->default('active');
             $table->json('face_embedding')->nullable();
             $table->rememberToken();

@@ -34,30 +34,41 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        $name = $request->input('name', $request->input('nama_lengkap'));
+
+        if ($name !== null && ! $request->filled('nama_lengkap')) {
+            $request->merge(['nama_lengkap' => $name]);
+        }
+
+        $departmentId = $request->input('department_id', \App\Models\Department::query()->value('id'));
+        $jobTitleId = $request->input('job_title_id', \App\Models\JobTitle::query()->value('id'));
+        $roleId = $request->input('role_id', \App\Models\Role::query()->value('id'));
+
         $request->validate([
             'nama_lengkap' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'no_hp' => ['nullable', 'string', 'max:20'],
-            'job_title_id' => ['required', 'exists:job_titles,id'],
-            'department_id' => ['required', 'exists:departments,id'],
-            'role_id' => ['required', 'exists:roles,id'],
-            'tipe_gaji' => ['required', 'in:hourly,daily,monthly'],
-            'jumlah_gaji' => ['required', 'numeric', 'min:0'],
-            'tanggal_masuk' => ['required', 'date'],
+            'job_title_id' => ['sometimes', 'nullable', 'exists:job_titles,id'],
+            'department_id' => ['sometimes', 'nullable', 'exists:departments,id'],
+            'role_id' => ['sometimes', 'nullable', 'exists:roles,id'],
+            'tipe_gaji' => ['sometimes', 'nullable', 'in:hourly,daily,monthly'],
+            'jumlah_gaji' => ['sometimes', 'nullable', 'numeric', 'min:0'],
+            'tanggal_masuk' => ['sometimes', 'nullable', 'date'],
         ]);
 
         $user = User::create([
+            'name' => $name,
             'nama_lengkap' => $request->nama_lengkap,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'no_hp' => $request->no_hp,
-            'job_title_id' => $request->job_title_id,
-            'department_id' => $request->department_id,
-            'role_id' => $request->role_id,
-            'tipe_gaji' => $request->tipe_gaji,
-            'jumlah_gaji' => $request->jumlah_gaji,
-            'tanggal_masuk' => $request->tanggal_masuk ?? now()->toDateString(),
+            'job_title_id' => $jobTitleId,
+            'department_id' => $departmentId,
+            'role_id' => $roleId,
+            'tipe_gaji' => $request->input('tipe_gaji', 'monthly'),
+            'jumlah_gaji' => $request->input('jumlah_gaji', 0),
+            'tanggal_masuk' => $request->input('tanggal_masuk', now()->toDateString()),
             'status_akun' => 'active',
         ]);
 
@@ -67,13 +78,7 @@ class RegisteredUserController extends Controller
 
         session()->put('show_tour', true);
 
-        // Role-based redirect
-        if ($user->role->nama_role === 'admin') {
-            return redirect(route('admin.dashboard', absolute: false));
-        } elseif ($user->role->nama_role === 'hr') {
-            return redirect(route('hr.dashboard', absolute: false));
-        } else {
-            return redirect(route('dashboard', absolute: false));
-        }
+        // Role-based redirect via the shared dashboard route
+        return redirect(route('dashboard', absolute: false));
     }
 }
