@@ -132,7 +132,7 @@ Visit `http://localhost:8000`
 
 | Admin Dashboard | HR Panel |
 |----------------|----------|
-| ![Admin Screen](adminscreen.png) | ![HR Screen](hrscreen.png) |
+| ![Admin Screen](screen/adminscreen.png) | ![HR Screen](screen/hrscreen.png) |
 
 | Attendance | Departments |
 |-----------|-------------|

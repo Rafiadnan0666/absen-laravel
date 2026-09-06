@@ -9,6 +9,29 @@ use Carbon\Carbon;
 
 class LeaveController extends Controller
 {
+    private function normalizeLeaveRequest(Request $request): void
+    {
+        if (!$request->filled('tipe_cuti') && $request->filled('jenis_cuti')) {
+            $request->merge([
+                'tipe_cuti' => match ($request->input('jenis_cuti')) {
+                    'sakit' => 'sakit',
+                    'izin' => 'annual',
+                    'tahunan' => 'annual',
+                    'maternity' => 'annual',
+                    'paternity' => 'annual',
+                    'other' => 'unpaid',
+                    default => $request->input('jenis_cuti'),
+                },
+            ]);
+        }
+
+        if (!$request->filled('tanggal_selesai') && $request->filled('tanggal_akhir')) {
+            $request->merge([
+                'tanggal_selesai' => $request->input('tanggal_akhir'),
+            ]);
+        }
+    }
+
     public function index(Request $request)
     {
         $query = Leave::where('user_id', auth()->id());
@@ -39,13 +62,22 @@ class LeaveController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'tipe_cuti' => 'required|in:sick,annual,unpaid',
+            'jenis_cuti' => 'required|in:sakit,izin,tahunan,maternity,paternity,other',
             'tanggal_mulai' => 'required|date|after_or_equal:today',
-            'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
-            'alasan' => 'required|string|max:500',
+            'tanggal_akhir' => 'required|date|after_or_equal:tanggal_mulai',
+            'alasan' => 'required|string|min:10',
+            'bukti' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
         ]);
 
-        Leave::create([
+        $leave = new Leave();
+        $leave->user_id = auth()->id();
+        $leave->jenis_cuti = $request->jenis_cuti;
+        $leave->tanggal_mulai = $request->tanggal_mulai;
+        $leave->tanggal_selesai = $request->tanggal_akhir;
+        $leave->alasan = $request->alasan;
+        $leave->save();
+
+        return redirect()->route('employee.leaves.index');}
             'user_id' => auth()->id(),
             'tipe_cuti' => $request->tipe_cuti,
             'tanggal_mulai' => $request->tanggal_mulai,
@@ -91,6 +123,8 @@ class LeaveController extends Controller
             return redirect()->route('employee.leaves.index')
                 ->with('error', 'Cannot edit leave that is already processed.');
         }
+
+        $this->normalizeLeaveRequest($request);
 
         $request->validate([
             'tipe_cuti' => 'required|in:sick,annual,unpaid',
