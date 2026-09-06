@@ -43,7 +43,7 @@ jobs:
 
       - name: Set up MySQL database
         run: |
-          mysql -h 127.0.0.1 -u root -psecret abs < database/migrations/0000_0000_000000_create_users_table.php
+          mysql -h 127.0.0.1 -u root -psecret abs < database/migrations/0001_01_01_000000_create_users_table.php
           mysql -h 127.0.0.1 -u root -psecret abs < database/migrations/0001_01_01_000000_create_cache_table.php
           mysql -h 127.0.0.1 -u root -psecret abs < database/migrations/0001_01_01_000001_create_jobs_table.php
           mysql -h 127.0.0.1 -u root -psecret abs < database/migrations/2026_05_01_113443_create_departments_table.php
