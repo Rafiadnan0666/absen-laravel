@@ -69,15 +69,16 @@ class LeaveController extends Controller
             'bukti' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
         ]);
 
-        $leave = new Leave();
-        $leave->user_id = auth()->id();
-        $leave->jenis_cuti = $request->jenis_cuti;
-        $leave->tanggal_mulai = $request->tanggal_mulai;
-        $leave->tanggal_selesai = $request->tanggal_akhir;
-        $leave->alasan = $request->alasan;
-        $leave->save();
+        $leave = Leave::create([
+            'user_id' => auth()->id(),
+            'jenis_cuti' => $request->jenis_cuti,
+            'tanggal_mulai' => $request->tanggal_mulai,
+            'tanggal_selesai' => $request->tanggal_selesai,
+            'alasan' => $request->alasan,
+            'status_pengajuan' => 'pending',
+        ]);
 
-        return redirect()->route('employee.leaves.index');
+        return redirect()->route('employee.leaves.index')->with('success', 'Leave request submitted successfully!');
     }
 
     public function show(Leave $leave)

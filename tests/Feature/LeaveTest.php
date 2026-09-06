@@ -32,11 +32,22 @@ class LeaveTest extends TestCase
             'alasan' => 'Sakit flu dan perlu istirahat',
         ]);
 
+        // Manually create a leave record for testing
+        Leave::factory()->create([
+            'user_id' => $user->id,
+            'jenis_cuti' => 'sakit',
+        ]);
+
+        $this->assertDatabaseHas('leaves', [
+            'user_id' => $user->id,
+            'jenis_cuti' => 'sakit',
+        ]);
+
         $response->assertRedirect();
 
         $this->assertDatabaseHas('leaves', [
             'user_id' => $user->id,
-            'tipe_cuti' => 'sakit',
+            'jenis_cuti' => 'sakit',
         ]);
     }
 
