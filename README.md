@@ -1,11 +1,6 @@
 # ABS - Attendance & Employee Management System
 
 <p align="center">
-  <img src="screen/adminscreen.png" alt="Admin Dashboard" width="600"/>
-  <img src="screen/hrscreen.png" alt="HR Panel" width="600"/>
-</p>
-
-<p align="center">
   <img src="https://img.shields.io/badge/Laravel-13.x-red?style=for-the-badge&logo=laravel" alt="Laravel Version">
   <img src="https://img.shields.io/badge/PHP-8.3-blue?style=for-the-badge&logo=php" alt="PHP Version">
   <img src="https://img.shields.io/badge/Tailwind-CSS-3.x?style=for-the-badge&logo=tailwind-css" alt="Tailwind Version">
@@ -130,17 +125,54 @@ Visit `http://localhost:8000`
 
 ## Screenshots
 
-| Admin Dashboard | HR Panel |
-|----------------|----------|
-| ![Admin Screen](screen/adminscreen.png) | ![HR Screen](screen/hrscreen.png) |
+<table>
+<tr>
+<td align="center" width="50%">
+<b>Admin Dashboard</b><br>
+<img src="screen/admin-dashboard.png" alt="Admin Dashboard" width="600">
+</td>
+<td align="center" width="50%">
+<b>HR Panel</b><br>
+<img src="screen/hr-dashboard.png" alt="HR Dashboard" width="600">
+</td>
+</tr>
+<tr>
+<td align="center" width="50%">
+<b>Attendance Tracking</b><br>
+<img src="screen/attendance-tracking.png" alt="Attendance Tracking" width="600">
+</td>
+<td align="center" width="50%">
+<b>Departments Management</b><br>
+<img src="screen/departments-management.png" alt="Departments Management" width="600">
+</td>
+</tr>
+<tr>
+<td align="center" width="50%">
+<b>Employee Panel</b><br>
+<img src="screen/employee-panel.png" alt="Employee Panel" width="600">
+</td>
+<td align="center" width="50%">
+<b>Attendance Records</b><br>
+<img src="screen/attendance-records.png" alt="Attendance Records" width="600">
+</td>
+</tr>
+<tr>
+<td align="center" width="50%">
+<b>Profile Modal</b><br>
+<img src="screen/profile-modal.png" alt="Profile Modal" width="600">
+</td>
+<td align="center" width="50%">
+<b>Settings</b><br>
+<img src="screen/settings.png" alt="Settings" width="600">
+</td>
+</tr>
+</table>
 
-| Attendance | Departments |
-|-----------|-------------|
-| ![Attendance](screen/attendance.png) | ![Departments](screen/departments.png) |
+### System Architecture
 
-| Employee Screen | Records |
-|----------------|---------|
-| ![Employee](screen/employeescreen.png) | ![Records](screen/records.png) |
+<p align="center">
+<img src="ABS_Flowchart.png" alt="System Architecture" width="800">
+</p>
 
 ## Default Roles
 
