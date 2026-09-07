@@ -4,12 +4,31 @@
   <img src="https://img.shields.io/badge/Laravel-13.x-red?style=for-the-badge&logo=laravel" alt="Laravel Version">
   <img src="https://img.shields.io/badge/PHP-8.3-blue?style=for-the-badge&logo=php" alt="PHP Version">
   <img src="https://img.shields.io/badge/Tailwind-CSS-3.x?style=for-the-badge&logo=tailwind-css" alt="Tailwind Version">
+  <img src="https://img.shields.io/badge/MySQL-8.0-4479A1?style=for-the-badge&logo=mysql" alt="MySQL">
   <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License">
 </p>
 
 ## Overview
 
 **ABS (Attendance & Employee Management System)** is a comprehensive, production-ready web application for managing employee attendance, leaves, payroll, and reimbursements. Built with Laravel 13, Tailwind CSS, Alpine.js, and Leaflet for location tracking.
+
+## Screenshots
+
+| Admin Dashboard | HR Panel |
+|----------------|----------|
+| ![Admin Screen](screen/adminscreen.png) | ![HR Screen](screen/hrscreen.png) |
+
+| Attendance | Departments |
+|-----------|-------------|
+| ![Attendance](screen/attendance.png) | ![Departments](screen/departments.png) |
+
+| Employee Screen | Records |
+|----------------|---------|
+| ![Employee](screen/employeescreen.png) | ![Records](screen/records.png) |
+
+| System Architecture |
+|---------------------|
+| ![Architecture](ABS_Flowchart.png) |
 
 ## Features
 
@@ -225,4 +244,4 @@ For issues and feature requests, please create an issue on GitHub.
 ---
 
 <p align="center">Built with Laravel</p>
-<p align="center">Version 1.0.0 | Last Updated: May 2026</p>
+<p align="center">Version 1.0.0 | Last Updated: September 2026</p>
