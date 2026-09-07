@@ -10,25 +10,24 @@
 
 ## Overview
 
-**ABS (Attendance & Employee Management System)** is a comprehensive, production-ready web application for managing employee attendance, leaves, payroll, and reimbursements. Built with Laravel 13, Tailwind CSS, Alpine.js, and Leaflet for location tracking.
+**ABS (Attendance & Employee Management System)** is a comprehensive, production-ready web application for managing employee attendance, leaves, payroll, and reimbursements. Built with Laravel 13, Tailwind CSS, Alpine.js, and Leaflet for GPS location tracking.
 
-## Screenshots
+## Table of Contents
 
-| Admin Dashboard | HR Panel |
-|----------------|----------|
-| ![Admin Screen](screen/adminscreen.png) | ![HR Screen](screen/hrscreen.png) |
-
-| Attendance | Departments |
-|-----------|-------------|
-| ![Attendance](screen/attendance.png) | ![Departments](screen/departments.png) |
-
-| Employee Screen | Records |
-|----------------|---------|
-| ![Employee](screen/employeescreen.png) | ![Records](screen/records.png) |
-
-| System Architecture |
-|---------------------|
-| ![Architecture](ABS_Flowchart.png) |
+- [Features](#features)
+- [Screenshots](#screenshots)
+- [Technology Stack](#technology-stack)
+- [Architecture](#architecture)
+- [Database Schema (ERD)](#database-schema-erd)
+- [Installation](#installation)
+- [Location Tracking](#location-tracking)
+- [Default Roles](#default-roles)
+- [Project Structure](#project-structure)
+- [Security Features](#security-features)
+- [Production Deployment](#production-deployment)
+- [CI/CD Pipeline](#cicd-pipeline)
+- [Known Limitations](#known-limitations)
+- [License](#license)
 
 ## Features
 
@@ -57,14 +56,94 @@
 - **System Settings** - Configure application settings
 - **Dashboard Analytics** - Key metrics and reports
 
+## Screenshots
+
+| Admin Dashboard | HR Panel |
+|----------------|----------|
+| ![Admin Screen](screen/admin-dashboard.png) | ![HR Screen](screen/hr-dashboard.png) |
+
+| Attendance | Departments |
+|-----------|-------------|
+| ![Attendance](screen/attendance-tracking.png) | ![Departments](screen/departments-management.png) |
+
+| Employee Screen | Records |
+|----------------|---------|
+| ![Employee](screen/employee-panel.png) | ![Records](screen/attendance-records.png) |
+
+| Profile Modal | Settings |
+|---------------|----------|
+| ![Profile](screen/profile-modal.png) | ![Settings](screen/settings.png) |
+
+| System Architecture |
+|---------------------|
+| ![Architecture](ABS_Flowchart.png) |
+
 ## Technology Stack
 
-- **Backend:** Laravel 13.x (PHP 8.3)
-- **Frontend:** Tailwind CSS 3.x, Alpine.js 3.x
-- **Maps:** Leaflet.js (OpenStreetMap)
-- **Database:** MySQL 8.0+
-- **Authentication:** Laravel Breeze + Fortify
-- **Icons:** Font Awesome 7.0.1
+| Layer | Technology |
+|-------|-----------|
+| Backend | Laravel 13.x (PHP 8.3) |
+| Frontend | Tailwind CSS 3.x, Alpine.js 3.x |
+| Maps | Leaflet.js (OpenStreetMap) |
+| Database | MySQL 8.0+ |
+| Authentication | Laravel Breeze + Fortify |
+| Icons | Font Awesome 7.0.1 |
+| Build | Vite 5.x |
+
+## Architecture
+
+```
+abs/
+├── app/
+│   ├── Http/Controllers/
+│   │   ├── Admin/       # Admin panel controllers
+│   │   ├── HR/          # HR panel controllers
+│   │   ├── Employee/    # Employee panel controllers
+│   │   └── Auth/        # Authentication controllers
+│   ├── Models/          # Eloquent models
+│   └── Providers/       # Service providers
+├── resources/views/
+│   ├── admin/           # Admin panel views (Blade)
+│   ├── hr/              # HR panel views
+│   ├── employee/        # Employee panel views
+│   └── layouts/         # Shared layouts
+├── routes/
+│   ├── web.php          # Main routes
+│   └── auth.php         # Authentication routes
+├── database/
+│   ├── migrations/      # 24 migration files
+│   └── seeders/         # Database seeders
+├── tests/               # PHPUnit tests (12 test files)
+└── public/
+    ├── assets/          # CSS, JS, images
+    └── build/           # Compiled assets
+```
+
+**Pattern:** MVC with Blade templates, resource controllers, and service-based authorization (role-based access via middleware).
+
+## Database Schema (ERD)
+
+See [ERD.md](ERD.md) for the complete Entity Relationship Diagram with Mermaid visualization.
+
+### Key Tables
+- **users** - Core user table with profile, employment, and auth info
+- **departments** - Organizational departments
+- **job_titles** - Job positions/titles
+- **roles** - User roles (Admin, HR, Employee)
+- **attendances** - Daily attendance records
+- **attendance_logs** - Detailed check-in/out logs with GPS
+- **leaves** - Leave requests and approvals
+- **payrolls** - Payroll periods and totals
+- **reimbursements** - Expense claims
+- **locations** - Office locations for GPS check-in
+- **shifts** - Work shift definitions
+
+### Relationships
+- User → Department/Job Title/Role: Many-to-One
+- User → Attendance: One-to-Many (daily records)
+- User → Leaves: One-to-Many (leave requests)
+- Payroll → Payroll Details: One-to-Many
+- Role → Permissions: Many-to-Many
 
 ## Installation
 
@@ -217,31 +296,38 @@ abs/
    chmod -R 775 storage bootstrap/cache
    ```
 
-## Troubleshooting
+## CI/CD Pipeline
 
-### Location Tracking Not Working
-- Ensure the browser has location permissions enabled
-- Use HTTPS (or localhost) for geolocation to work
-- Check browser console for errors
+GitHub Actions runs daily at 06:00 UTC and on every push to `main`:
 
-### Icons Not Displaying
-- Verify Font Awesome CDN is loading correctly
-- Clear browser cache
-- Check network tab for 404 errors
+- Install dependencies (`composer install`, `npm install`)
+- Setup MySQL database
+- Run migrations
+- Seed database
+- Run PHPUnit tests
+- Run payroll anomaly check
+- Report PASS / FAIL
 
-### Build Issues
-- Ensure Node.js 18+ is installed
-- Delete `node_modules` and reinstall: `rm -rf node_modules && npm install`
+See `.github/workflows/test.yml` for the pipeline configuration.
+
+## Known Limitations
+
+| Limitation | Impact | Workaround |
+|------------|--------|------------|
+| **No JWT/OAuth** | Session-based auth only; no API token authentication | Add API token middleware for mobile apps |
+| **No pagination** | List endpoints return all records | Add pagination to controllers |
+| **No rate limiting** | No request throttling on public routes | Add rate limiter middleware |
+| **GPS tolerance** | Location check-in uses fixed radius | Make tolerance configurable |
+| **Single-file config** | Some business logic in controllers | Extract to service classes |
+| **No email queue** | Mail sent synchronously | Configure queue worker |
+| **Neo-brutalism design** | Heavy CSS shadows may not render consistently | Test on target devices |
+| **No 2FA** | No two-factor authentication | Add 2FA package |
+| **Payroll confirmation** | Manual status changes only | Add automated workflow |
 
 ## License
 
-This project is licensed under the MIT License.
+MIT License.
 
 ## Support
 
 For issues and feature requests, please create an issue on GitHub.
-
----
-
-<p align="center">Built with Laravel</p>
-<p align="center">Version 1.0.0 | Last Updated: September 2026</p>
