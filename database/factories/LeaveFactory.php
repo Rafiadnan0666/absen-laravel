@@ -20,7 +20,7 @@ class LeaveFactory extends Factory
 
         return [
             'user_id' => User::factory(),
-            'tipe_cuti' => fake()->randomElement(['sick', 'annual', 'unpaid']),
+            'jenis_cuti' => fake()->randomElement(['sick', 'annual', 'unpaid']),
             'tanggal_mulai' => $start->format('Y-m-d'),
             'tanggal_selesai' => $end->format('Y-m-d'),
             'alasan' => fake()->sentence(8),

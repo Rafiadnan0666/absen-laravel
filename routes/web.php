@@ -95,7 +95,7 @@ Route::middleware(['auth'])->prefix('employee')->name('employee.')->group(functi
     Route::resource('announcements', App\Http\Controllers\Employee\AnnouncementController::class)->only(['index', 'show']);
 });
 
-Route::middleware(['auth'])->prefix('hr')->name('hr.')->group(function () {
+Route::middleware(['auth', 'hr'])->prefix('hr')->name('hr.')->group(function () {
     Route::get('/dashboard', [HRDashboardController::class, 'index'])->name('dashboard');
     Route::resource('attendances', HRAttendanceController::class)->only(['index']);
     Route::resource('leaves', HRLeaveController::class)->only(['index']);

@@ -61,6 +61,8 @@ class LeaveController extends Controller
 
     public function store(Request $request)
     {
+        $this->normalizeLeaveRequest($request);
+
         $request->validate([
             'jenis_cuti' => 'required|in:sakit,izin,tahunan,maternity,paternity,other',
             'tanggal_mulai' => 'required|date|after_or_equal:today',
@@ -72,6 +74,7 @@ class LeaveController extends Controller
         $leave = Leave::create([
             'user_id' => auth()->id(),
             'jenis_cuti' => $request->jenis_cuti,
+            'tipe_cuti' => $request->tipe_cuti,
             'tanggal_mulai' => $request->tanggal_mulai,
             'tanggal_selesai' => $request->tanggal_selesai,
             'alasan' => $request->alasan,

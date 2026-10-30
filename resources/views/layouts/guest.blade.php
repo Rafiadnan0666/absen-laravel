@@ -26,7 +26,7 @@
                 <h4 class="font-black text-2xl text-center mb-6 border-b-3 border-black pb-4">
                     @yield('header', 'Welcome')
                 </h4>
-                {{ $slot }}
+                @yield('content')
             </div>
             <div class="text-center mt-6">
                 <a href="/" class="neo-btn-secondary neo-btn-sm">← BACK TO HOME</a>
