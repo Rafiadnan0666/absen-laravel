@@ -182,12 +182,32 @@ Visit `http://localhost:8000`
 | HR | HR management and approvals |
 | Employee | Standard user access |
 
+## Testing
+
+Run the full test suite:
+
+```bash
+php artisan test
+```
+
+Run specific test file:
+
+```bash
+php artisan test tests/Feature/LeaveTest.php
+```
+
+Run with coverage (requires Xdebug):
+
+```bash
+php artisan test --coverage
+```
+
+Current test coverage:
+- **LeaveTest** - 12 scenarios covering leave request, approval/rejection workflow, and authorization matrix
+
 ## Known Limitations
 
 - **No JWT/OAuth** - Session-based auth only; no API token authentication
-- **No pagination** - List endpoints return all records (no pagination)
-- **No rate limiting** - No request throttling on public routes
-- **GPS tolerance** - Location check-in uses fixed radius; no configurable tolerance
 - **Single-file config** - Some business logic is in controllers rather than services
 - **No email queue** - Mail sent synchronously; no background processing
 - **Neo-brutalism design** - Heavy CSS shadows may not render consistently on all devices
