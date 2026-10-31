@@ -212,13 +212,13 @@ Run with coverage (requires Xdebug):
 php artisan test --coverage
 ```
 
-Current suite: **74 tests / 198 assertions**
+Current suite: **75 tests / 203 assertions**
 
 | Test file | Scenarios |
 |-----------|-----------|
 | `LeaveTest` | 14 — leave request, validation, HR approval/rejection, employee/HR/admin access control, audit + queued email |
 | `ReimbursementTest` | 13 — submission, validation, HR approval/rejection, ownership and role access, audit + queued email |
-| `PayrollTest` | 12 — payroll creation, confirmation workflow, paid guard, rejection, audit trail, queued email, role access |
+| `PayrollTest` | 13 — payroll creation, confirmation workflow, paid guard, rejection, audit trail, queued email, role access, paid payroll lock |
 | `AttendanceTest` | 10 — check-in, GPS geofence (inside/outside radius), validation, role access |
 | `Auth/*`, `ProfileTest` | 24 — login, registration, password reset/update, profile management |
 | `ExampleTest` | 2 — smoke tests |
