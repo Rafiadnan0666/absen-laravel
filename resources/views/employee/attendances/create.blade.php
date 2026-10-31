@@ -215,13 +215,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     var locations = @json($locationsJson);
-    var checkinLocation = @json($checkinLocation ? [
-        'id' => $checkinLocation->id,
-        'nama_lokasi' => $checkinLocation->nama_lokasi,
-        'latitude' => (float) $checkinLocation->latitude,
-        'longitude' => (float) $checkinLocation->longitude,
-        'radius_meter' => $checkinLocation->radius_meter ?? 100,
-    ] : null);
+    var checkinLocation = @json($checkinLocationJson);
 
     function fmtDistance(meters) {
         return meters >= 1000 ? (meters / 1000).toFixed(2) + ' km' : Math.round(meters) + ' m';

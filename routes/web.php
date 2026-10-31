@@ -58,10 +58,19 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/settings', [App\Http\Controllers\Admin\SettingsController::class, 'index'])->name('settings.index');
     Route::post('/settings/general', [App\Http\Controllers\Admin\SettingsController::class, 'general'])->name('settings.general');
     Route::post('/settings/clear-cache', [App\Http\Controllers\Admin\SettingsController::class, 'clearCache'])->name('settings.clearCache');
+
+    // Export & custom routes must be registered before the resource routes,
+    // otherwise e.g. "leaves/export" is matched by "leaves/{leave}".
+    Route::get('users/export', [UserController::class, 'export'])->name('users.export');
+    Route::get('attendances/export', [AttendanceController::class, 'export'])->name('attendances.export');
+    Route::get('leaves/export', [LeaveController::class, 'export'])->name('leaves.export');
+    Route::get('payrolls/calculate', [PayrollController::class, 'calculate'])->name('payrolls.calculate');
+    Route::get('payrolls/export', [PayrollController::class, 'export'])->name('payrolls.export');
+    Route::get('reimbursements/export', [ReimbursementController::class, 'export'])->name('reimbursements.export');
+
     Route::resource('users', UserController::class);
     Route::resource('attendances', AttendanceController::class);
     Route::resource('leaves', LeaveController::class);
-    Route::get('payrolls/calculate', [PayrollController::class, 'calculate'])->name('payrolls.calculate');
     Route::resource('payrolls', PayrollController::class);
     Route::resource('departments', DepartmentController::class);
     Route::resource('job-titles', JobTitleController::class);
@@ -83,17 +92,11 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('leaves/{leave}/reject', [LeaveController::class, 'reject'])->name('leaves.reject');
     Route::post('leaves/bulk/approve', [LeaveController::class, 'bulkApprove'])->name('leaves.bulkApprove');
     Route::post('leaves/bulk/reject', [LeaveController::class, 'bulkReject'])->name('leaves.bulkReject');
-    Route::get('leaves/export', [LeaveController::class, 'export'])->name('leaves.export');
 
     Route::post('reimbursements/{reimbursement}/approve', [ReimbursementController::class, 'approve'])->name('reimbursements.approve');
     Route::post('reimbursements/{reimbursement}/reject', [ReimbursementController::class, 'reject'])->name('reimbursements.reject');
     Route::post('reimbursements/bulk/approve', [ReimbursementController::class, 'bulkApprove'])->name('reimbursements.bulkApprove');
     Route::post('reimbursements/bulk/reject', [ReimbursementController::class, 'bulkReject'])->name('reimbursements.bulkReject');
-    Route::get('reimbursements/export', [ReimbursementController::class, 'export'])->name('reimbursements.export');
-
-    Route::get('attendances/export', [AttendanceController::class, 'export'])->name('attendances.export');
-    Route::get('payrolls/export', [PayrollController::class, 'export'])->name('payrolls.export');
-    Route::get('users/export', [UserController::class, 'export'])->name('users.export');
 });
 
 Route::middleware(['auth'])->prefix('employee')->name('employee.')->group(function () {

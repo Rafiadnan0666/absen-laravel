@@ -24,7 +24,7 @@
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
                         <button class="inline-flex items-center px-4 py-2 text-sm font-semibold text-slate-700 bg-white hover:bg-gray-50 rounded-lg transition-colors">
-                            <div>{{ Auth::user()->nama_lengkap ?? Auth::user()->name }}</div>
+                            <div>{{ Auth::user()?->nama_lengkap ?? Auth::user()?->name ?? 'Guest' }}</div>
                             <div class="ms-2">
                                 <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
@@ -73,8 +73,8 @@
         <!-- Responsive Settings Options -->
         <div class="pt-4 pb-1 border-t border-slate-200">
             <div class="px-4">
-                <div class="font-bold text-base text-slate-700">{{ Auth::user()->nama_lengkap ?? Auth::user()->name }}</div>
-                <div class="font-bold text-sm text-slate-500">{{ Auth::user()->email }}</div>
+                <div class="font-bold text-base text-slate-700">{{ Auth::user()?->nama_lengkap ?? Auth::user()?->name ?? 'Guest' }}</div>
+                <div class="font-bold text-sm text-slate-500">{{ Auth::user()?->email ?? '' }}</div>
             </div>
 
             <div class="mt-3 space-y-1">

@@ -59,8 +59,16 @@ class AttendanceController extends Controller
             $checkinLocation = $todayAttendance->location;
         }
 
+        $checkinLocationJson = $checkinLocation ? [
+            'id' => $checkinLocation->id,
+            'nama_lokasi' => $checkinLocation->nama_lokasi,
+            'latitude' => (float) $checkinLocation->latitude,
+            'longitude' => (float) $checkinLocation->longitude,
+            'radius_meter' => $checkinLocation->radius_meter ?? 100,
+        ] : null;
+
         return view('employee.attendances.create', compact(
-            'todayAttendance', 'userShift', 'locations', 'locationsJson', 'checkinLocation'
+            'todayAttendance', 'userShift', 'locations', 'locationsJson', 'checkinLocation', 'checkinLocationJson'
         ));
     }
 

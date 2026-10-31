@@ -12,7 +12,8 @@ class PayrollDetailController extends Controller
     public function index()
     {
         $payrollDetails = PayrollDetail::with('payroll.user')->latest()->paginate(20);
-        return view('admin.payroll-details.index', compact('payrollDetails'));
+        $payrolls = Payroll::with('user')->latest('periode_mulai')->limit(200)->get();
+        return view('admin.payroll-details.index', compact('payrollDetails', 'payrolls'));
     }
 
     public function create()
