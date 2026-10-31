@@ -66,13 +66,8 @@
         <input type="number" step="0.01" id="bonus" name="bonus" value="{{ old('bonus', $payroll->bonus) }}" placeholder="0" class="neo-input" x-model.number="bonusVal">
       </div>
 
-      <div class="mb-4">
-        <label class="neo-label" for="status_pembayaran">PAYMENT STATUS</label>
-        <select id="status_pembayaran" name="status_pembayaran" required class="neo-input">
-          <option value="">SELECT STATUS</option>
-          <option value="pending" {{ old('status_pembayaran', $payroll->status_pembayaran) == 'pending' ? 'selected' : '' }}>PENDING</option>
-          <option value="paid" {{ old('status_pembayaran', $payroll->status_pembayaran) == 'paid' ? 'selected' : '' }}>PAID</option>
-        </select>
+      <div class="neo-card-yellow p-4 mb-4">
+        <p class="font-bold text-sm">Payment status is controlled by the confirmation workflow. Use Confirm / Mark Paid on the payroll detail page.</p>
       </div>
 
       <div class="neo-card-yellow p-4 mb-4">

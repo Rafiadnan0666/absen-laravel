@@ -45,6 +45,9 @@
             <a href="{{ route('admin.payrolls.index') }}" class="{{ request()->routeIs('admin.payrolls.*') ? 'neo-sidebar-item-active' : 'neo-sidebar-item' }}">
                 💵 PAYROLLS
             </a>
+            <a href="{{ route('admin.audit-logs.index') }}" class="{{ request()->routeIs('admin.audit-logs.*') ? 'neo-sidebar-item-active' : 'neo-sidebar-item' }}">
+                📜 AUDIT TRAIL
+            </a>
             <a href="{{ route('admin.roles.index') }}" class="{{ request()->routeIs('admin.roles.*') ? 'neo-sidebar-item-active' : 'neo-sidebar-item' }}">
                 🔐 ROLES
             </a>

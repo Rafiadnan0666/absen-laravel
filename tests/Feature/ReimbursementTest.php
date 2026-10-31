@@ -2,8 +2,10 @@
 
 namespace Tests\Feature;
 
+use App\Mail\ReimbursementStatusMail;
 use App\Models\Reimbursement;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
 use Tests\Concerns\InteractsWithRoles;
 use Tests\TestCase;
 
@@ -98,6 +100,8 @@ class ReimbursementTest extends TestCase
 
     public function test_hr_can_approve_reimbursement(): void
     {
+        Mail::fake();
+
         $employee = $this->createEmployee();
         $hr = $this->createHR();
         $reimbursement = Reimbursement::factory()->create([
@@ -112,10 +116,17 @@ class ReimbursementTest extends TestCase
         $reimbursement->refresh();
         $this->assertEquals('approved', $reimbursement->status);
         $this->assertEquals($hr->id, $reimbursement->approved_by);
+        $this->assertDatabaseHas('audit_logs', [
+            'action' => 'reimbursement.approved',
+            'auditable_id' => $reimbursement->id,
+        ]);
+        Mail::assertQueued(ReimbursementStatusMail::class);
     }
 
     public function test_hr_can_reject_reimbursement(): void
     {
+        Mail::fake();
+
         $employee = $this->createEmployee();
         $hr = $this->createHR();
         $reimbursement = Reimbursement::factory()->create([
@@ -130,6 +141,11 @@ class ReimbursementTest extends TestCase
         $reimbursement->refresh();
         $this->assertEquals('rejected', $reimbursement->status);
         $this->assertEquals($hr->id, $reimbursement->approved_by);
+        $this->assertDatabaseHas('audit_logs', [
+            'action' => 'reimbursement.rejected',
+            'auditable_id' => $reimbursement->id,
+        ]);
+        Mail::assertQueued(ReimbursementStatusMail::class);
     }
 
     public function test_employee_cannot_approve_reimbursement(): void

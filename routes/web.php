@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\AttendanceLogController;
 use App\Http\Controllers\Admin\FaceLogController;
 use App\Http\Controllers\Admin\ReimbursementController;
 use App\Http\Controllers\Admin\AnnouncementController;
+use App\Http\Controllers\Admin\AuditLogController;
 use App\Http\Controllers\Admin\SalaryRuleController;
 use App\Http\Controllers\Admin\OvertimeRuleController;
 use App\Http\Controllers\HR\DashboardController as HRDashboardController;
@@ -81,6 +82,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('leaves/{leave}/reject', [LeaveController::class, 'reject'])->name('leaves.reject');
     Route::post('reimbursements/{reimbursement}/approve', [ReimbursementController::class, 'approve'])->name('reimbursements.approve');
     Route::post('reimbursements/{reimbursement}/reject', [ReimbursementController::class, 'reject'])->name('reimbursements.reject');
+    Route::post('payrolls/{payroll}/confirm', [PayrollController::class, 'confirm'])->name('payrolls.confirm');
+    Route::post('payrolls/{payroll}/reject', [PayrollController::class, 'reject'])->name('payrolls.reject');
+    Route::post('payrolls/{payroll}/mark-paid', [PayrollController::class, 'markPaid'])->name('payrolls.markPaid');
+    Route::resource('audit-logs', AuditLogController::class)->only(['index']);
 });
 
 Route::middleware(['auth'])->prefix('employee')->name('employee.')->group(function () {

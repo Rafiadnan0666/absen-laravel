@@ -18,6 +18,22 @@
       </div>
     @endif
 
+    @if(session('error'))
+      <div class="neo-alert-danger mb-4" role="alert">
+        {{ session('error') }}
+      </div>
+    @endif
+
+    @if($errors->any())
+      <div class="neo-alert-danger mb-4" role="alert">
+        <ul class="list-disc pl-4">
+          @foreach($errors->all() as $err)
+            <li>{{ $err }}</li>
+          @endforeach
+        </ul>
+      </div>
+    @endif
+
     <div class="overflow-x-auto">
       <table class="neo-table w-full">
         <thead>
@@ -44,13 +60,31 @@
             <td class="text-neo-red">- Rp {{ number_format($payroll->total_potongan ?? 0, 0, ',', '.') }}</td>
             <td class="font-bold">Rp {{ number_format($payroll->total_gaji, 0, ',', '.') }}</td>
             <td>
-              <span class="neo-badge {{ $payroll->status_pembayaran == 'paid' ? 'neo-badge-green' : 'neo-badge-yellow' }}">
-                {{ strtoupper($payroll->status_pembayaran) }}
-              </span>
+              @if($payroll->isPaid())
+                <span class="neo-badge neo-badge-green">PAID</span>
+              @elseif($payroll->isConfirmed())
+                <span class="neo-badge neo-badge-cyan">CONFIRMED</span>
+              @else
+                <span class="neo-badge neo-badge-yellow">PENDING</span>
+              @endif
             </td>
             <td class="text-center">
               <a href="{{ route('admin.payrolls.show', $payroll) }}" class="neo-btn-secondary text-sm">View</a>
-              <a href="{{ route('admin.payrolls.edit', $payroll) }}" class="neo-btn-cyan text-sm">Edit</a>
+              @if(! $payroll->isPaid())
+                <a href="{{ route('admin.payrolls.edit', $payroll) }}" class="neo-btn-cyan text-sm">Edit</a>
+              @endif
+              @if($payroll->canBeConfirmed())
+                <form action="{{ route('admin.payrolls.confirm', $payroll) }}" method="POST" class="inline">
+                  @csrf
+                  <button type="submit" class="neo-btn-primary text-sm">Confirm</button>
+                </form>
+              @endif
+              @if($payroll->canBePaid())
+                <form action="{{ route('admin.payrolls.markPaid', $payroll) }}" method="POST" class="inline">
+                  @csrf
+                  <button type="submit" class="neo-btn-primary text-sm">Mark Paid</button>
+                </form>
+              @endif
               <form action="{{ route('admin.payrolls.destroy', $payroll) }}" method="POST" class="inline" onsubmit="return confirm('Delete this payroll?')">
                 @csrf
                 @method('DELETE')

@@ -62,6 +62,7 @@ abs/
 - **Reimbursements** - Submit expense claims with approval workflow
 - **Payroll View** - View salary slips and payment history
 - **Announcements** - Stay updated with company announcements
+- **Email Notifications** - Queued emails for leave, reimbursement, and payroll status changes
 
 ### HR Panel
 - **Attendance Monitoring** - View all employee attendance records
@@ -78,6 +79,8 @@ abs/
 - **Holiday Calendar** - Set company holidays
 - **Salary Rules** - Configure salary calculation rules
 - **Overtime Rules** - Define overtime policies
+- **Payroll Confirmation Workflow** - Payroll must be confirmed before it can be marked as paid
+- **Audit Trail** - Immutable log of payroll and approval actions with actor, IP, and changed values
 - **System Settings** - Configure application settings
 - **Dashboard Analytics** - Key metrics and reports
 
@@ -117,8 +120,15 @@ php artisan migrate
 # Build frontend
 npm run build
 
+# Run migrations and seed roles
+php artisan migrate
+php artisan db:seed
+
 # Start server
 php artisan serve
+
+# In a second terminal: process queued emails
+php artisan queue:work
 ```
 
 Visit `http://localhost:8000`
@@ -202,12 +212,13 @@ Run with coverage (requires Xdebug):
 php artisan test --coverage
 ```
 
-Current suite: **62 tests / 143 assertions**
+Current suite: **74 tests / 198 assertions**
 
 | Test file | Scenarios |
 |-----------|-----------|
-| `LeaveTest` | 14 — leave request, validation, HR approval/rejection, employee/HR/admin access control |
-| `ReimbursementTest` | 13 — submission, validation, HR approval/rejection, ownership and role access |
+| `LeaveTest` | 14 — leave request, validation, HR approval/rejection, employee/HR/admin access control, audit + queued email |
+| `ReimbursementTest` | 13 — submission, validation, HR approval/rejection, ownership and role access, audit + queued email |
+| `PayrollTest` | 12 — payroll creation, confirmation workflow, paid guard, rejection, audit trail, queued email, role access |
 | `AttendanceTest` | 10 — check-in, GPS geofence (inside/outside radius), validation, role access |
 | `Auth/*`, `ProfileTest` | 24 — login, registration, password reset/update, profile management |
 | `ExampleTest` | 2 — smoke tests |
@@ -226,11 +237,10 @@ Role middleware redirects unauthorized users to `/dashboard`; record-level owner
 ## Known Limitations
 
 - **No JWT/OAuth** - Session-based auth only; no API token authentication
-- **Business logic in controllers** - Approval flow is shared via `HandlesApproval`; other flows could move to service classes
-- **No email queue** - Mail sent synchronously; no background processing
-- **Neo-brutalism design** - Heavy CSS shadows may not render consistently on all devices
+- **Business logic in controllers** - Approval and payroll workflows live in service classes; remaining CRUD is still controller-based
 - **No 2FA** - No two-factor authentication implemented
-- **Payroll confirmation** - Payroll status changes are manual; no automated confirmation workflow
+- **Neo-brutalism design** - Heavy CSS shadows may not render consistently on all devices
+- **Queue worker required** - Emails are queued in the database and need `php artisan queue:work` running in production
 
 ## CI/CD
 

@@ -5,13 +5,18 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Payroll;
 use App\Models\User;
+use App\Services\PayrollService;
 use Illuminate\Http\Request;
 
 class PayrollController extends Controller
 {
+    public function __construct(private readonly PayrollService $payrolls)
+    {
+    }
+
     public function index()
     {
-        $payrolls = Payroll::with('user')->latest('periode_mulai')->paginate(20);
+        $payrolls = Payroll::with('user', 'confirmedBy')->latest('periode_mulai')->paginate(20);
         return view('admin.payrolls.index', compact('payrolls'));
     }
 
@@ -31,36 +36,16 @@ class PayrollController extends Controller
             'total_lembur' => 'nullable|numeric|min:0',
             'total_potongan' => 'nullable|numeric|min:0',
             'bonus' => 'nullable|numeric|min:0',
-            'status_pembayaran' => 'required|in:pending,paid',
         ]);
 
-        $validated['total_lembur'] = $validated['total_lembur'] ?? 0;
-        $validated['total_potongan'] = $validated['total_potongan'] ?? 0;
-        $validated['bonus'] = $validated['bonus'] ?? 0;
-        $validated['total_gaji'] = $validated['gaji_pokok'] + $validated['total_lembur'] + $validated['bonus'] - $validated['total_potongan'];
+        $this->payrolls->create($validated);
 
-        $payroll = Payroll::create($validated);
-
-        // Create payroll details
-        if ($validated['gaji_pokok'] > 0) {
-            $payroll->details()->create(['tipe' => 'base', 'jumlah' => $validated['gaji_pokok'], 'deskripsi' => 'Basic salary']);
-        }
-        if ($validated['total_lembur'] > 0) {
-            $payroll->details()->create(['tipe' => 'overtime', 'jumlah' => $validated['total_lembur'], 'deskripsi' => 'Overtime pay']);
-        }
-        if ($validated['total_potongan'] > 0) {
-            $payroll->details()->create(['tipe' => 'penalty', 'jumlah' => -$validated['total_potongan'], 'deskripsi' => 'Deductions']);
-        }
-        if ($validated['bonus'] > 0) {
-            $payroll->details()->create(['tipe' => 'bonus', 'jumlah' => $validated['bonus'], 'deskripsi' => 'Bonus']);
-        }
-
-        return redirect()->route('admin.payrolls.index')->with('success', 'Payroll created');
+        return redirect()->route('admin.payrolls.index')->with('success', 'Payroll created and awaiting confirmation');
     }
 
     public function show(Payroll $payroll)
     {
-        $payroll->load('details');
+        $payroll->load('details', 'confirmedBy', 'auditLogs.user');
         return view('admin.payrolls.show', compact('payroll'));
     }
 
@@ -80,37 +65,42 @@ class PayrollController extends Controller
             'total_lembur' => 'nullable|numeric|min:0',
             'total_potongan' => 'nullable|numeric|min:0',
             'bonus' => 'nullable|numeric|min:0',
-            'status_pembayaran' => 'required|in:pending,paid',
         ]);
 
-        $validated['total_lembur'] = $validated['total_lembur'] ?? 0;
-        $validated['total_potongan'] = $validated['total_potongan'] ?? 0;
-        $validated['bonus'] = $validated['bonus'] ?? 0;
-        $validated['total_gaji'] = $validated['gaji_pokok'] + $validated['total_lembur'] + $validated['bonus'] - $validated['total_potongan'];
-
-        $payroll->update($validated);
-
-        // Sync details
-        $payroll->details()->delete();
-        if ($validated['gaji_pokok'] > 0) {
-            $payroll->details()->create(['tipe' => 'base', 'jumlah' => $validated['gaji_pokok'], 'deskripsi' => 'Basic salary']);
-        }
-        if ($validated['total_lembur'] > 0) {
-            $payroll->details()->create(['tipe' => 'overtime', 'jumlah' => $validated['total_lembur'], 'deskripsi' => 'Overtime pay']);
-        }
-        if ($validated['total_potongan'] > 0) {
-            $payroll->details()->create(['tipe' => 'penalty', 'jumlah' => -$validated['total_potongan'], 'deskripsi' => 'Deductions']);
-        }
-        if ($validated['bonus'] > 0) {
-            $payroll->details()->create(['tipe' => 'bonus', 'jumlah' => $validated['bonus'], 'deskripsi' => 'Bonus']);
-        }
+        $this->payrolls->update($payroll, $validated);
 
         return redirect()->route('admin.payrolls.index')->with('success', 'Payroll updated');
     }
 
+    public function confirm(Payroll $payroll)
+    {
+        $this->payrolls->confirm($payroll);
+
+        return back()->with('success', 'Payroll confirmed and ready for payment');
+    }
+
+    public function reject(Request $request, Payroll $payroll)
+    {
+        $validated = $request->validate([
+            'rejection_reason' => 'required|string|max:500',
+        ]);
+
+        $this->payrolls->reject($payroll, $validated['rejection_reason']);
+
+        return back()->with('success', 'Payroll confirmation rejected');
+    }
+
+    public function markPaid(Payroll $payroll)
+    {
+        $this->payrolls->markPaid($payroll);
+
+        return back()->with('success', 'Payroll marked as paid');
+    }
+
     public function destroy(Payroll $payroll)
     {
-        $payroll->delete();
+        $this->payrolls->delete($payroll);
+
         return redirect()->route('admin.payrolls.index')->with('success', 'Payroll deleted');
     }
 }

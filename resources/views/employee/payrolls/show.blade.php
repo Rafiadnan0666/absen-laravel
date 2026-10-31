@@ -24,7 +24,19 @@
             </div>
             <div class="text-right">
                 <p class="neo-label">Payment Status</p>
-                <span class="neo-badge neo-badge-green">{{ strtoupper($payroll->status_pembayaran) }}</span>
+                @if($payroll->isPaid())
+                    <span class="neo-badge neo-badge-green">PAID</span>
+                @elseif($payroll->isConfirmed())
+                    <span class="neo-badge neo-badge-cyan">CONFIRMED</span>
+                @else
+                    <span class="neo-badge neo-badge-yellow">PENDING</span>
+                @endif
+                @if($payroll->paid_at)
+                    <p class="text-sm mt-1">Paid on {{ $payroll->paid_at->format('d M Y') }}</p>
+                @endif
+                @if($payroll->rejection_reason)
+                    <p class="text-sm mt-1 text-neo-red">{{ $payroll->rejection_reason }}</p>
+                @endif
             </div>
         </div>
 

@@ -48,10 +48,12 @@
                             <td class="font-bold"><span class="neo-badge neo-badge-red">- Rp {{ number_format($item->total_potongan, 0, ',', '.') }}</span></td>
                             <td class="font-bold">Rp {{ number_format($item->total_gaji, 0, ',', '.') }}</td>
                             <td>
-                                @if($item->status_pembayaran == 'paid')
-                                    <span class="neo-badge neo-badge-green status-pulse">{{ strtoupper($item->status_pembayaran) }}</span>
+                                @if($item->isPaid())
+                                    <span class="neo-badge neo-badge-green status-pulse">PAID</span>
+                                @elseif($item->isConfirmed())
+                                    <span class="neo-badge neo-badge-cyan">CONFIRMED</span>
                                 @else
-                                    <span class="neo-badge neo-badge-yellow">{{ strtoupper($item->status_pembayaran) }}</span>
+                                    <span class="neo-badge neo-badge-yellow">PENDING</span>
                                 @endif
                             </td>
                         </tr>

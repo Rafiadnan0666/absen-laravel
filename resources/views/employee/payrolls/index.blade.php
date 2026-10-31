@@ -32,8 +32,10 @@
                         <td>Rp {{ number_format($payroll->bonus, 0, ',', '.') }}</td>
                         <td class="font-bold">Rp {{ number_format($payroll->total_gaji, 0, ',', '.') }}</td>
                         <td>
-                            @if($payroll->status_pembayaran == 'paid')
+                            @if($payroll->isPaid())
                                 <span class="neo-badge neo-badge-green">PAID</span>
+                            @elseif($payroll->isConfirmed())
+                                <span class="neo-badge neo-badge-cyan">CONFIRMED</span>
                             @else
                                 <span class="neo-badge neo-badge-yellow">PENDING</span>
                             @endif

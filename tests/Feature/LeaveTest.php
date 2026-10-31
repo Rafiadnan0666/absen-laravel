@@ -2,8 +2,10 @@
 
 namespace Tests\Feature;
 
+use App\Mail\LeaveStatusMail;
 use App\Models\Leave;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
 use Tests\Concerns\InteractsWithRoles;
 use Tests\TestCase;
 
@@ -83,6 +85,8 @@ class LeaveTest extends TestCase
 
     public function test_hr_can_approve_leave(): void
     {
+        Mail::fake();
+
         $employee = $this->createEmployee();
         $hr = $this->createHR();
         $leave = Leave::factory()->create([
@@ -96,10 +100,17 @@ class LeaveTest extends TestCase
         $leave->refresh();
         $this->assertEquals('approved', $leave->status_pengajuan);
         $this->assertEquals($hr->id, $leave->approved_by);
+        $this->assertDatabaseHas('audit_logs', [
+            'action' => 'leave.approved',
+            'auditable_id' => $leave->id,
+        ]);
+        Mail::assertQueued(LeaveStatusMail::class);
     }
 
     public function test_hr_can_reject_leave(): void
     {
+        Mail::fake();
+
         $employee = $this->createEmployee();
         $hr = $this->createHR();
         $leave = Leave::factory()->create([
@@ -113,6 +124,11 @@ class LeaveTest extends TestCase
         $leave->refresh();
         $this->assertEquals('rejected', $leave->status_pengajuan);
         $this->assertEquals($hr->id, $leave->approved_by);
+        $this->assertDatabaseHas('audit_logs', [
+            'action' => 'leave.rejected',
+            'auditable_id' => $leave->id,
+        ]);
+        Mail::assertQueued(LeaveStatusMail::class);
     }
 
     public function test_employee_cannot_approve_leave(): void
@@ -186,6 +202,8 @@ class LeaveTest extends TestCase
 
     public function test_admin_can_approve_leave(): void
     {
+        Mail::fake();
+
         $employee = $this->createEmployee();
         $admin = $this->createAdmin();
         $leave = Leave::factory()->create([
@@ -199,6 +217,11 @@ class LeaveTest extends TestCase
         $leave->refresh();
         $this->assertEquals('approved', $leave->status_pengajuan);
         $this->assertEquals($admin->id, $leave->approved_by);
+        $this->assertDatabaseHas('audit_logs', [
+            'action' => 'leave.approved',
+            'auditable_id' => $leave->id,
+        ]);
+        Mail::assertQueued(LeaveStatusMail::class);
     }
 
     public function test_employee_cannot_access_admin_leave_page(): void
