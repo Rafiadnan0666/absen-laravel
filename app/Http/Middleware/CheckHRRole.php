@@ -14,7 +14,7 @@ class CheckHRRole
             return redirect('/login');
         }
 
-        $role = Auth::user()->role->nama_role;
+        $role = Auth::user()->role?->nama_role;
         if ($role !== 'hr' && $role !== 'admin') {
             return redirect('/dashboard')->with('error', 'Access denied. HR only.');
         }

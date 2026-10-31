@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Concerns\HandlesApproval;
 use App\Http\Controllers\Controller;
 use App\Models\Leave;
 use App\Models\User;
@@ -9,6 +10,8 @@ use Illuminate\Http\Request;
 
 class LeaveController extends Controller
 {
+    use HandlesApproval;
+
     public function index(Request $request)
     {
         $query = Leave::with('user', 'approvedBy');
@@ -94,19 +97,13 @@ class LeaveController extends Controller
 
     public function approve(Leave $leave)
     {
-        $leave->update([
-            'status_pengajuan' => 'approved',
-            'approved_by' => auth()->id(),
-        ]);
+        $this->approveRecord($leave, 'status_pengajuan');
         return redirect()->route('admin.leaves.index')->with('success', 'Leave approved');
     }
 
     public function reject(Leave $leave)
     {
-        $leave->update([
-            'status_pengajuan' => 'rejected',
-            'approved_by' => auth()->id(),
-        ]);
+        $this->rejectRecord($leave, 'status_pengajuan');
         return redirect()->route('admin.leaves.index')->with('success', 'Leave rejected');
     }
 }

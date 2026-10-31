@@ -2,14 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-#[Fillable(['nama_department', 'deskripsi'])]
 class Department extends Model
 {
     use HasFactory;
+
+    protected $fillable = ['nama_department', 'deskripsi'];
 
     public function users()
     {

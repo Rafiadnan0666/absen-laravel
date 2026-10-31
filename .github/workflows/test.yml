@@ -11,7 +11,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    
+
     services:
       mysql:
         image: mysql:8.0
@@ -31,11 +31,23 @@ jobs:
         php-version: '8.3'
         extensions: mbstring, pdo_mysql, zip
 
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+
     - name: Copy .env
       run: php -r "file_exists('.env') || copy('.env.example', '.env');"
 
     - name: Install Composer Dependencies
       run: composer install --no-interaction --prefer-dist --optimize-autoloader
+
+    - name: Install NPM Dependencies
+      run: npm ci
+
+    - name: Build Assets
+      run: npm run build
 
     - name: Generate key
       run: php artisan key:generate
@@ -44,13 +56,6 @@ jobs:
       run: chmod -R 777 storage bootstrap/cache
 
     - name: Setup Database
-      env:
-        DB_CONNECTION: mysql
-        DB_HOST: 127.0.0.1
-        DB_PORT: 3306
-        DB_DATABASE: abs_test
-        DB_USERNAME: root
-        DB_PASSWORD: password
       run: |
         echo "DB_CONNECTION=mysql" >> .env
         echo "DB_HOST=127.0.0.1" >> .env

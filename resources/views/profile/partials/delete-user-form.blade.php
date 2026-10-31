@@ -1,6 +1,3 @@
-@extends('profile.edit')
-
-@section('content')
 <section class="neo-card neo-section space-y-6">
     <header>
         <h2 class="neo-section-title">
@@ -32,9 +29,9 @@
             </p>
 
             <div class="mt-6 neo-form-group">
-                <neo-label for="password" value="{{ __('Password') }}" class="sr-only" />
+                <x-neo-label for="password" class="sr-only">{{ __('Password') }}</x-neo-label>
 
-                <neo-input
+                <x-neo-input
                     id="password"
                     name="password"
                     type="password"
@@ -57,4 +54,3 @@
         </form>
     </x-modal>
 </section>
-@endsection

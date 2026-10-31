@@ -14,7 +14,7 @@ class CheckAdminRole
             return redirect('/login');
         }
 
-        if (Auth::user()->role->nama_role !== 'admin') {
+        if (Auth::user()->role?->nama_role !== 'admin') {
             return redirect('/dashboard')->with('error', 'Access denied. Admin only.');
         }
 

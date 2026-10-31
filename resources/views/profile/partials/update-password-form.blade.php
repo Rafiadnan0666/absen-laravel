@@ -1,6 +1,3 @@
-@extends('profile.edit')
-
-@section('content')
 <section class="neo-card neo-section">
     <header>
         <h2 class="neo-section-title">
@@ -17,20 +14,20 @@
         @method('put')
 
         <div class="neo-form-group">
-            <neo-label for="update_password_current_password" :value="__('Current Password')" />
-            <neo-input id="update_password_current_password" name="current_password" type="password" class="neo-input mt-1 block w-full" autocomplete="current-password" />
+            <x-neo-label for="update_password_current_password">{{ __('Current Password') }}</x-neo-label>
+            <x-neo-input id="update_password_current_password" name="current_password" type="password" class="neo-input mt-1 block w-full" autocomplete="current-password" />
             <x-input-error :messages="$errors->updatePassword->get('current_password')" class="mt-2" />
         </div>
 
         <div class="neo-form-group">
-            <neo-label for="update_password_password" :value="__('New Password')" />
-            <neo-input id="update_password_password" name="password" type="password" class="neo-input mt-1 block w-full" autocomplete="new-password" />
+            <x-neo-label for="update_password_password">{{ __('New Password') }}</x-neo-label>
+            <x-neo-input id="update_password_password" name="password" type="password" class="neo-input mt-1 block w-full" autocomplete="new-password" />
             <x-input-error :messages="$errors->updatePassword->get('password')" class="mt-2" />
         </div>
 
         <div class="neo-form-group">
-            <neo-label for="update_password_password_confirmation" :value="__('Confirm Password')" />
-            <neo-input id="update_password_password_confirmation" name="password_confirmation" type="password" class="neo-input mt-1 block w-full" autocomplete="new-password" />
+            <x-neo-label for="update_password_password_confirmation">{{ __('Confirm Password') }}</x-neo-label>
+            <x-neo-input id="update_password_password_confirmation" name="password_confirmation" type="password" class="neo-input mt-1 block w-full" autocomplete="new-password" />
             <x-input-error :messages="$errors->updatePassword->get('password_confirmation')" class="mt-2" />
         </div>
 
@@ -49,4 +46,3 @@
         </div>
     </form>
 </section>
-@endsection

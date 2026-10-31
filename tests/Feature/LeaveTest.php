@@ -3,40 +3,19 @@
 namespace Tests\Feature;
 
 use App\Models\Leave;
-use App\Models\Role;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Concerns\InteractsWithRoles;
 use Tests\TestCase;
 
 class LeaveTest extends TestCase
 {
     use RefreshDatabase;
+    use InteractsWithRoles;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(\Database\Seeders\RoleSeeder::class);
-        $this->seed(\Database\Seeders\DepartmentSeeder::class);
-        $this->seed(\Database\Seeders\JobTitleSeeder::class);
-        $this->seed(\Database\Seeders\PermissionSeeder::class);
-    }
-
-    private function createEmployee(): User
-    {
-        $role = Role::where('nama_role', 'employee')->first();
-        return User::factory()->create(['role_id' => $role->id]);
-    }
-
-    private function createHR(): User
-    {
-        $role = Role::where('nama_role', 'hr')->first();
-        return User::factory()->create(['role_id' => $role->id]);
-    }
-
-    private function createAdmin(): User
-    {
-        $role = Role::where('nama_role', 'admin')->first();
-        return User::factory()->create(['role_id' => $role->id]);
+        $this->seedRoles();
     }
 
     public function test_employee_can_view_leave_page(): void
@@ -116,6 +95,7 @@ class LeaveTest extends TestCase
         $response->assertRedirect();
         $leave->refresh();
         $this->assertEquals('approved', $leave->status_pengajuan);
+        $this->assertEquals($hr->id, $leave->approved_by);
     }
 
     public function test_hr_can_reject_leave(): void
@@ -132,6 +112,7 @@ class LeaveTest extends TestCase
         $response->assertRedirect();
         $leave->refresh();
         $this->assertEquals('rejected', $leave->status_pengajuan);
+        $this->assertEquals($hr->id, $leave->approved_by);
     }
 
     public function test_employee_cannot_approve_leave(): void
@@ -147,6 +128,7 @@ class LeaveTest extends TestCase
         $response->assertStatus(302);
         $leave->refresh();
         $this->assertEquals('pending', $leave->status_pengajuan);
+        $this->assertNull($leave->approved_by);
     }
 
     public function test_employee_cannot_reject_leave(): void
@@ -162,6 +144,7 @@ class LeaveTest extends TestCase
         $response->assertStatus(302);
         $leave->refresh();
         $this->assertEquals('pending', $leave->status_pengajuan);
+        $this->assertNull($leave->approved_by);
     }
 
     public function test_employee_cannot_access_hr_leave_page(): void
@@ -170,7 +153,7 @@ class LeaveTest extends TestCase
 
         $response = $this->actingAs($employee)->get(route('hr.leaves.index'));
 
-        $response->assertStatus(302);
+        $response->assertRedirect(route('dashboard'));
     }
 
     public function test_employee_cannot_access_other_employee_leave_data(): void
@@ -199,5 +182,31 @@ class LeaveTest extends TestCase
         $response = $this->actingAs($hr)->get(route('hr.leaves.index'));
 
         $response->assertStatus(200);
+    }
+
+    public function test_admin_can_approve_leave(): void
+    {
+        $employee = $this->createEmployee();
+        $admin = $this->createAdmin();
+        $leave = Leave::factory()->create([
+            'user_id' => $employee->id,
+            'status_pengajuan' => 'pending',
+        ]);
+
+        $response = $this->actingAs($admin)->post(route('admin.leaves.approve', $leave));
+
+        $response->assertRedirect(route('admin.leaves.index'));
+        $leave->refresh();
+        $this->assertEquals('approved', $leave->status_pengajuan);
+        $this->assertEquals($admin->id, $leave->approved_by);
+    }
+
+    public function test_employee_cannot_access_admin_leave_page(): void
+    {
+        $employee = $this->createEmployee();
+
+        $response = $this->actingAs($employee)->get(route('admin.leaves.index'));
+
+        $response->assertRedirect(route('dashboard'));
     }
 }

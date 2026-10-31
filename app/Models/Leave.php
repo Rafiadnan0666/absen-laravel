@@ -2,11 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-#[Fillable(['user_id', 'jenis_cuti', 'tanggal_mulai', 'tanggal_selesai', 'alasan', 'status_pengajuan', 'approved_by'])]
 class Leave extends Model
 {
     use HasFactory;

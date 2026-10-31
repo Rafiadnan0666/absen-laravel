@@ -2,14 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-#[Fillable(['user_id', 'foto_path', 'confidence_score', 'is_match'])]
 class FaceLog extends Model
 {
     use HasFactory;
+
+    protected $fillable = ['user_id', 'foto_path', 'confidence_score', 'is_match'];
 
     protected $casts = [
         'confidence_score' => 'decimal:2',

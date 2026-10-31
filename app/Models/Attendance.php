@@ -2,19 +2,19 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-#[Fillable([
-    'user_id', 'tanggal', 'check_in', 'check_out',
-    'status_hadir', 'jam_kerja', 'jam_lembur',
-    'menit_telat', 'menit_pulang_cepat',
-    'location_id', 'face_verified'
-])]
 class Attendance extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'user_id', 'tanggal', 'check_in', 'check_out',
+        'status_hadir', 'jam_kerja', 'jam_lembur',
+        'menit_telat', 'menit_pulang_cepat',
+        'location_id', 'face_verified',
+    ];
 
     protected $casts = [
         'tanggal' => 'date',

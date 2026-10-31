@@ -2,14 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-#[Fillable(['user_id', 'kategori', 'jumlah', 'deskripsi', 'status', 'approved_by'])]
 class Reimbursement extends Model
 {
     use HasFactory;
+
+    protected $fillable = ['user_id', 'kategori', 'jumlah', 'deskripsi', 'status', 'approved_by'];
 
     protected $casts = [
         'jumlah' => 'decimal:2',

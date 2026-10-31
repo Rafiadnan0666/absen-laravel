@@ -12,6 +12,7 @@ use App\Models\SalaryRule;
 use App\Models\Shift;
 use App\Models\UserShift;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
 
 class AttendanceController extends Controller

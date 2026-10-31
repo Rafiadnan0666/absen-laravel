@@ -2,18 +2,18 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-#[Fillable([
-    'user_id', 'periode_mulai', 'periode_selesai',
-    'gaji_pokok', 'total_lembur', 'total_potongan',
-    'bonus', 'total_gaji', 'status_pembayaran'
-])]
 class Payroll extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'user_id', 'periode_mulai', 'periode_selesai',
+        'gaji_pokok', 'total_lembur', 'total_potongan',
+        'bonus', 'total_gaji', 'status_pembayaran',
+    ];
 
     protected $casts = [
         'periode_mulai' => 'date',

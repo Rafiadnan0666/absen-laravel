@@ -38,7 +38,7 @@ class ProfileController extends Controller
             return response()->json(['success' => true, 'message' => 'Profile updated successfully']);
         }
 
-        return Redirect::back()->with('status', 'profile-updated');
+        return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
 
     /**

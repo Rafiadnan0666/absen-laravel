@@ -1,6 +1,3 @@
-@extends('profile.edit')
-
-@section('content')
 <section class="neo-card neo-section">
     <header>
         <h2 class="neo-section-title">
@@ -21,14 +18,14 @@
         @method('patch')
 
         <div class="neo-form-group">
-            <neo-label for="name" :value="__('Name')" />
-            <neo-input id="name" name="name" type="text" class="neo-input mt-1 block w-full" :value="old('name', $user->name)" required autofocus autocomplete="name" />
+            <x-neo-label for="name">{{ __('Name') }}</x-neo-label>
+            <x-neo-input id="name" name="name" type="text" class="neo-input mt-1 block w-full" :value="old('name', $user->name)" required autofocus autocomplete="name" />
             <x-input-error class="mt-2" :messages="$errors->get('name')" />
         </div>
 
         <div class="neo-form-group">
-            <neo-label for="email" :value="__('Email')" />
-            <neo-input id="email" name="email" type="email" class="neo-input mt-1 block w-full" :value="old('email', $user->email)" required autocomplete="username" />
+            <x-neo-label for="email">{{ __('Email') }}</x-neo-label>
+            <x-neo-input id="email" name="email" type="email" class="neo-input mt-1 block w-full" :value="old('email', $user->email)" required autocomplete="username" />
             <x-input-error class="mt-2" :messages="$errors->get('email')" />
 
             @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail())
@@ -65,4 +62,3 @@
         </div>
     </form>
 </section>
-@endsection

@@ -2,14 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-#[Fillable(['judul', 'isi', 'dibuat_oleh'])]
 class Announcement extends Model
 {
     use HasFactory;
+
+    protected $fillable = ['judul', 'isi', 'dibuat_oleh'];
 
     public function creator()
     {

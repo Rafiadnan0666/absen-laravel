@@ -2,14 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-#[Fillable(['user_id', 'tipe_log', 'waktu_log', 'latitude', 'longitude', 'jarak_meter', 'foto_path', 'device'])]
 class AttendanceLog extends Model
 {
     use HasFactory;
+
+    protected $fillable = ['user_id', 'tipe_log', 'waktu_log', 'latitude', 'longitude', 'jarak_meter', 'foto_path', 'device'];
 
     protected $casts = [
         'waktu_log' => 'datetime',

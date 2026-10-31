@@ -2,14 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-#[Fillable(['nama_lokasi', 'latitude', 'longitude', 'radius_meter'])]
 class Location extends Model
 {
     use HasFactory;
+
+    protected $fillable = ['nama_lokasi', 'latitude', 'longitude', 'radius_meter'];
 
     protected $casts = [
         'latitude' => 'decimal:8',

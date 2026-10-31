@@ -20,7 +20,7 @@ class AttendanceFactory extends Factory
 
         return [
             'user_id' => User::factory(),
-            'tanggal' => fake()->dateTimeBetween('-1 month', '+1 week')->format('Y-m-d'),
+            'tanggal' => now()->subDays(fake()->unique()->numberBetween(0, 3650))->format('Y-m-d'),
             'check_in' => $checkIn,
             'check_out' => $checkOut,
             'status_hadir' => fake()->randomElement(['present', 'late', 'absent']),

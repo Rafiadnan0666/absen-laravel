@@ -2,14 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-#[Fillable(['nama_jabatan', 'deskripsi', 'default_gaji'])]
 class JobTitle extends Model
 {
     use HasFactory;
+
+    protected $fillable = ['nama_jabatan', 'deskripsi', 'default_gaji'];
 
     protected $casts = [
         'default_gaji' => 'decimal:2',

@@ -202,13 +202,31 @@ Run with coverage (requires Xdebug):
 php artisan test --coverage
 ```
 
-Current test coverage:
-- **LeaveTest** - 12 scenarios covering leave request, approval/rejection workflow, and authorization matrix
+Current suite: **62 tests / 143 assertions**
+
+| Test file | Scenarios |
+|-----------|-----------|
+| `LeaveTest` | 14 — leave request, validation, HR approval/rejection, employee/HR/admin access control |
+| `ReimbursementTest` | 13 — submission, validation, HR approval/rejection, ownership and role access |
+| `AttendanceTest` | 10 — check-in, GPS geofence (inside/outside radius), validation, role access |
+| `Auth/*`, `ProfileTest` | 24 — login, registration, password reset/update, profile management |
+| `ExampleTest` | 2 — smoke tests |
+
+## Authorization Matrix
+
+Role middleware redirects unauthorized users to `/dashboard`; record-level ownership checks return `403`.
+
+| Area | Guest | Employee | HR | Admin |
+|------|-------|----------|----|-------|
+| `/employee/*` | → login | ✅ own records | → dashboard | → dashboard |
+| `/hr/*` | → login | → dashboard | ✅ | ✅ |
+| `/admin/*` | → login | → dashboard | → dashboard | ✅ |
+| Other employee's leave/reimbursement | → login | 403 | ✅ (HR view) | ✅ |
 
 ## Known Limitations
 
 - **No JWT/OAuth** - Session-based auth only; no API token authentication
-- **Single-file config** - Some business logic is in controllers rather than services
+- **Business logic in controllers** - Approval flow is shared via `HandlesApproval`; other flows could move to service classes
 - **No email queue** - Mail sent synchronously; no background processing
 - **Neo-brutalism design** - Heavy CSS shadows may not render consistently on all devices
 - **No 2FA** - No two-factor authentication implemented
@@ -216,8 +234,9 @@ Current test coverage:
 
 ## CI/CD
 
-GitHub Actions runs daily at 06:00 UTC and on every push to `main`:
-- Install dependencies (`composer install`, `npm install`)
+GitHub Actions runs on every push to `main` and `interface/neurobrutalism`, on pull requests to `main`, and daily at 06:00 UTC:
+- Install dependencies (`composer install`, `npm ci`)
+- Build frontend assets (`npm run build`)
 - Setup MySQL database
 - Run migrations
 - Run PHPUnit tests

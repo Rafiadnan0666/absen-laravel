@@ -2,14 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-#[Fillable(['user_id', 'shift_id', 'tanggal_shift'])]
 class UserShift extends Model
 {
     use HasFactory;
+
+    protected $fillable = ['user_id', 'shift_id', 'tanggal_shift'];
 
     protected $casts = [
         'tanggal_shift' => 'date',
