@@ -23,17 +23,29 @@ jobs:
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
-      - uses: actions/checkout@v3
-      
+      - uses: actions/checkout@v4
+
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2'
-          extensions: pdo, mbstring, ctype, fileinfo, tokenizer, dom, json
+          php-version: '8.3'
+          extensions: pdo, pdo_mysql, mbstring, ctype, fileinfo, tokenizer, dom, json
           coverage: none
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
 
       - name: Install Composer dependencies
         run: composer install -n --prefer-dist
+
+      - name: Install NPM dependencies
+        run: npm ci
+
+      - name: Build assets
+        run: npm run build
 
       - name: Copy .env
         run: cp .env.example .env
