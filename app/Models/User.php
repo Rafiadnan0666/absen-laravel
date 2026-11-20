@@ -10,7 +10,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
 #[Fillable([
-    'nama_lengkap', 'email', 'password', 'no_hp', 'alamat',
+    'name', 'nama_lengkap', 'email', 'password', 'no_hp', 'alamat',
     'job_title_id', 'department_id', 'role_id',
     'tipe_gaji', 'jumlah_gaji', 'tanggal_masuk',
     'status_akun', 'face_embedding'

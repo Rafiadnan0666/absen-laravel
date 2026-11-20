@@ -17,7 +17,7 @@ class LeaveFactory extends Factory
 
         return [
             'user_id' => User::factory(),
-            'tipe_cuti' => fake()->randomElement(['sick', 'annual', 'unpaid']),
+            'jenis_cuti' => fake()->randomElement(['sick', 'annual', 'unpaid']),
             'tanggal_mulai' => $start,
             'tanggal_selesai' => $end,
             'alasan' => fake()->sentence(),

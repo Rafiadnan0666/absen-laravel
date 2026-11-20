@@ -7,6 +7,8 @@ use App\Models\User;
 use App\Models\Department;
 use App\Models\JobTitle;
 use App\Models\Role;
+use App\Models\Shift;
+use App\Models\UserShift;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -95,6 +97,14 @@ class UserController extends Controller
             'tanggal_masuk' => $validated['tanggal_masuk'],
             'status_akun' => 'active',
         ]);
+
+        if ($defaultShift = Shift::defaultShift()) {
+            UserShift::create([
+                'user_id' => $user->id,
+                'shift_id' => $defaultShift->id,
+                'tanggal_shift' => today(),
+            ]);
+        }
 
         return redirect()->route('admin.users.index')->with('success', 'User created successfully');
     }

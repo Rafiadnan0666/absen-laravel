@@ -14,9 +14,19 @@ class ProfileUpdateRequest extends FormRequest
      *
      * @return array<string, ValidationRule|array<mixed>|string>
      */
+    protected function prepareForValidation(): void
+    {
+        $name = $this->input('name', $this->input('nama_lengkap'));
+
+        if ($name !== null && ! $this->filled('nama_lengkap')) {
+            $this->merge(['nama_lengkap' => $name]);
+        }
+    }
+
     public function rules(): array
     {
         return [
+            'name' => ['sometimes', 'nullable', 'string', 'max:255'],
             'nama_lengkap' => ['required', 'string', 'max:255'],
             'email' => [
                 'required',

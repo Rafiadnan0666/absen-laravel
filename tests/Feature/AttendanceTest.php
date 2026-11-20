@@ -6,11 +6,19 @@ use App\Models\User;
 use App\Models\Attendance;
 use App\Models\Shift;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Concerns\InteractsWithRoles;
 use Tests\TestCase;
 
 class AttendanceTest extends TestCase
 {
     use RefreshDatabase;
+    use InteractsWithRoles;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->seedRoles();
+    }
 
     public function test_employee_can_view_attendance_page(): void
     {
@@ -58,7 +66,7 @@ class AttendanceTest extends TestCase
 
     public function test_admin_can_view_all_attendances(): void
     {
-        $admin = User::factory()->create();
+        $admin = $this->createAdmin();
 
         $response = $this->actingAs($admin)
             ->get(route('admin.attendances.index'));

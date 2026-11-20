@@ -16,7 +16,7 @@ class LeaveController extends Controller
             $query->whereHas('user', fn($q) => $q->where('nama_lengkap', 'like', "%{$search}%"));
         }
         if ($request->type) {
-            $query->where('tipe_cuti', $request->type);
+            $query->where('jenis_cuti', $request->type);
         }
         if ($request->status) {
             $query->where('status_pengajuan', $request->status);
@@ -52,7 +52,7 @@ class LeaveController extends Controller
             $query->whereHas('user', fn($q) => $q->where('nama_lengkap', 'like', "%{$search}%"));
         }
         if ($request->type) {
-            $query->where('tipe_cuti', $request->type);
+            $query->where('jenis_cuti', $request->type);
         }
         if ($request->status) {
             $query->where('status_pengajuan', $request->status);
@@ -69,7 +69,7 @@ class LeaveController extends Controller
             foreach ($leaves as $l) {
                 fputcsv($handle, [
                     $l->user->nama_lengkap ?? 'N/A',
-                    $l->tipe_cuti ?? '',
+                    $l->jenis_cuti ?? '',
                     $l->tanggal_mulai ? $l->tanggal_mulai->format('d M Y') : '',
                     $l->tanggal_selesai ? $l->tanggal_selesai->format('d M Y') : '',
                     $l->alasan ?? '',

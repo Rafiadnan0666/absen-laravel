@@ -38,14 +38,8 @@ class AuthenticatedSessionController extends Controller
             return redirect()->route('login')->with('error', 'Your account is inactive. Please contact administrator.');
         }
 
-        // Role-based redirect
-        if ($user->role && $user->role->nama_role === 'admin') {
-            return redirect()->intended(route('admin.dashboard', absolute: false));
-        } elseif ($user->role && $user->role->nama_role === 'hr') {
-            return redirect()->intended(route('hr.dashboard', absolute: false));
-        } else {
-            return redirect()->intended(route('employee.dashboard', absolute: false));
-        }
+        // Role-based redirect via the standard dashboard route
+        return redirect()->intended(route('dashboard', absolute: false));
     }
 
     /**

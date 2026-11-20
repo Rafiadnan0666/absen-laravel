@@ -26,7 +26,7 @@ class LeaveController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'tipe_cuti' => 'required|in:sick,annual,unpaid',
+            'jenis_cuti' => 'required|in:sick,annual,unpaid',
             'tanggal_mulai' => 'required|date|after_or_equal:today',
             'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
             'alasan' => 'required|string|max:500',
@@ -34,7 +34,7 @@ class LeaveController extends Controller
 
         Leave::create([
             'user_id' => auth()->id(),
-            'tipe_cuti' => $request->tipe_cuti,
+            'jenis_cuti' => $request->jenis_cuti,
             'tanggal_mulai' => $request->tanggal_mulai,
             'tanggal_selesai' => $request->tanggal_selesai,
             'alasan' => $request->alasan,
@@ -80,14 +80,14 @@ class LeaveController extends Controller
         }
 
         $request->validate([
-            'tipe_cuti' => 'required|in:sick,annual,unpaid',
+            'jenis_cuti' => 'required|in:sick,annual,unpaid',
             'tanggal_mulai' => 'required|date|after_or_equal:today',
             'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
             'alasan' => 'required|string|max:500',
         ]);
 
         $leave->update([
-            'tipe_cuti' => $request->tipe_cuti,
+            'jenis_cuti' => $request->jenis_cuti,
             'tanggal_mulai' => $request->tanggal_mulai,
             'tanggal_selesai' => $request->tanggal_selesai,
             'alasan' => $request->alasan,

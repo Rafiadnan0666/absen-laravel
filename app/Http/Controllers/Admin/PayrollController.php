@@ -68,12 +68,16 @@ class PayrollController extends Controller
             'user_id' => 'required|exists:users,id',
             'periode_mulai' => 'required|date',
             'periode_selesai' => 'required|date|after_or_equal:periode_mulai',
-            'gaji_pokok' => 'required|numeric|min:0',
+            'gaji_pokok' => 'nullable|numeric|min:0',
             'total_lembur' => 'nullable|numeric|min:0',
             'total_potongan' => 'nullable|numeric|min:0',
             'bonus' => 'nullable|numeric|min:0',
             'status_pembayaran' => 'required|in:pending,paid',
         ]);
+
+        if (empty($validated['gaji_pokok'])) {
+            $validated['gaji_pokok'] = User::find($validated['user_id'])?->jumlah_gaji ?? 0;
+        }
 
         $validated['total_gaji'] = $validated['gaji_pokok']
             + ($validated['total_lembur'] ?? 0)
@@ -102,12 +106,16 @@ class PayrollController extends Controller
             'user_id' => 'required|exists:users,id',
             'periode_mulai' => 'required|date',
             'periode_selesai' => 'required|date|after_or_equal:periode_mulai',
-            'gaji_pokok' => 'required|numeric|min:0',
+            'gaji_pokok' => 'nullable|numeric|min:0',
             'total_lembur' => 'nullable|numeric|min:0',
             'total_potongan' => 'nullable|numeric|min:0',
             'bonus' => 'nullable|numeric|min:0',
             'status_pembayaran' => 'required|in:pending,paid',
         ]);
+
+        if (empty($validated['gaji_pokok'])) {
+            $validated['gaji_pokok'] = User::find($validated['user_id'])?->jumlah_gaji ?? 0;
+        }
 
         $validated['total_gaji'] = $validated['gaji_pokok']
             + ($validated['total_lembur'] ?? 0)

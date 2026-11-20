@@ -20,8 +20,8 @@ class LeaveController extends Controller
             $query->where('status_pengajuan', $request->status);
         }
 
-        if ($request->filled('tipe_cuti')) {
-            $query->where('tipe_cuti', $request->tipe_cuti);
+        if ($request->filled('jenis_cuti')) {
+            $query->where('jenis_cuti', $request->jenis_cuti);
         }
 
         if ($request->filled('date_from')) {
@@ -41,7 +41,7 @@ class LeaveController extends Controller
     {
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
-            'tipe_cuti' => 'required|in:sick,annual,unpaid',
+            'jenis_cuti' => 'required|in:sick,annual,unpaid',
             'tanggal_mulai' => 'required|date',
             'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
             'alasan' => 'required|string',

@@ -23,7 +23,7 @@ class LeaveController extends Controller
         }
 
         if ($request->filled('filterType')) {
-            $query->where('tipe_cuti', $request->filterType);
+            $query->where('jenis_cuti', $request->filterType);
         }
 
         if ($request->filled('dateFrom')) {
@@ -60,7 +60,7 @@ class LeaveController extends Controller
     {
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
-            'tipe_cuti' => 'required|in:sick,annual,unpaid',
+            'jenis_cuti' => 'required|in:sick,annual,unpaid',
             'tanggal_mulai' => 'required|date',
             'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
             'alasan' => 'required|string',
@@ -86,7 +86,7 @@ class LeaveController extends Controller
     {
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
-            'tipe_cuti' => 'required|in:sick,annual,unpaid',
+            'jenis_cuti' => 'required|in:sick,annual,unpaid',
             'tanggal_mulai' => 'required|date',
             'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
             'alasan' => 'required|string',
@@ -163,7 +163,7 @@ class LeaveController extends Controller
             $query->where('status_pengajuan', $request->filterStatus);
         }
         if ($request->filled('filterType')) {
-            $query->where('tipe_cuti', $request->filterType);
+            $query->where('jenis_cuti', $request->filterType);
         }
         if ($request->filled('dateFrom')) {
             $query->whereDate('tanggal_mulai', '>=', $request->dateFrom);
@@ -189,7 +189,7 @@ class LeaveController extends Controller
                 fputcsv($handle, [
                     $l->id,
                     $l->user->nama_lengkap ?? 'N/A',
-                    $l->tipe_cuti,
+                    $l->jenis_cuti,
                     $l->tanggal_mulai->format('Y-m-d'),
                     $l->tanggal_selesai->format('Y-m-d'),
                     $l->alasan,
