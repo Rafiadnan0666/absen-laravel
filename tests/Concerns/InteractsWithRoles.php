@@ -18,6 +18,7 @@ trait InteractsWithRoles
         $this->seed(\Database\Seeders\DepartmentSeeder::class);
         $this->seed(\Database\Seeders\JobTitleSeeder::class);
         $this->seed(\Database\Seeders\PermissionSeeder::class);
+        $this->seed(\Database\Seeders\ShiftSeeder::class);
     }
 
     protected function createUserWithRole(string $role): User

@@ -32,11 +32,15 @@ class PayrollController extends Controller
             'user_id' => 'required|exists:users,id',
             'periode_mulai' => 'required|date',
             'periode_selesai' => 'required|date|after_or_equal:periode_mulai',
-            'gaji_pokok' => 'required|numeric|min:0',
+            'gaji_pokok' => 'nullable|numeric|min:0',
             'total_lembur' => 'nullable|numeric|min:0',
             'total_potongan' => 'nullable|numeric|min:0',
             'bonus' => 'nullable|numeric|min:0',
         ]);
+
+        if (! array_key_exists('gaji_pokok', $validated) || $validated['gaji_pokok'] === null) {
+            $validated['gaji_pokok'] = User::find($validated['user_id'])?->jumlah_gaji ?? 0;
+        }
 
         $this->payrolls->create($validated);
 
@@ -61,11 +65,15 @@ class PayrollController extends Controller
             'user_id' => 'required|exists:users,id',
             'periode_mulai' => 'required|date',
             'periode_selesai' => 'required|date|after_or_equal:periode_mulai',
-            'gaji_pokok' => 'required|numeric|min:0',
+            'gaji_pokok' => 'nullable|numeric|min:0',
             'total_lembur' => 'nullable|numeric|min:0',
             'total_potongan' => 'nullable|numeric|min:0',
             'bonus' => 'nullable|numeric|min:0',
         ]);
+
+        if (! array_key_exists('gaji_pokok', $validated) || $validated['gaji_pokok'] === null) {
+            $validated['gaji_pokok'] = User::find($validated['user_id'])?->jumlah_gaji ?? 0;
+        }
 
         $this->payrolls->update($payroll, $validated);
 
@@ -95,6 +103,41 @@ class PayrollController extends Controller
         $this->payrolls->markPaid($payroll);
 
         return back()->with('success', 'Payroll marked as paid');
+    }
+
+    public function bulkCreate()
+    {
+        $users = User::where('status_akun', 'active')->get();
+        return view('admin.payrolls.bulk-create', compact('users'));
+    }
+
+    public function bulkStore(Request $request)
+    {
+        $validated = $request->validate([
+            'user_ids' => 'required|array',
+            'user_ids.*' => 'exists:users,id',
+            'periode_mulai' => 'required|date',
+            'periode_selesai' => 'required|date|after_or_equal:periode_mulai',
+            'total_lembur' => 'nullable|numeric|min:0',
+            'total_potongan' => 'nullable|numeric|min:0',
+            'bonus' => 'nullable|numeric|min:0',
+        ]);
+
+        foreach ($validated['user_ids'] as $userId) {
+            $user = User::find($userId);
+            $data = [
+                'user_id' => $userId,
+                'periode_mulai' => $validated['periode_mulai'],
+                'periode_selesai' => $validated['periode_selesai'],
+                'gaji_pokok' => $user?->jumlah_gaji ?? 0,
+                'total_lembur' => $validated['total_lembur'] ?? 0,
+                'total_potongan' => $validated['total_potongan'] ?? 0,
+                'bonus' => $validated['bonus'] ?? 0,
+            ];
+            $this->payrolls->create($data);
+        }
+
+        return redirect()->route('admin.payrolls.index')->with('success', 'Payrolls created for selected employees');
     }
 
     public function destroy(Payroll $payroll)

@@ -96,6 +96,11 @@ class PayrollService
 
     private function normalize(array $data): array
     {
+        if (empty($data['gaji_pokok']) && ! empty($data['user_id'])) {
+            $user = \App\Models\User::find($data['user_id']);
+            $data['gaji_pokok'] = $user?->jumlah_gaji ?? 0;
+        }
+
         $data['total_lembur'] = $data['total_lembur'] ?? 0;
         $data['total_potongan'] = $data['total_potongan'] ?? 0;
         $data['bonus'] = $data['bonus'] ?? 0;

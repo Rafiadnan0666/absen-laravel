@@ -27,9 +27,13 @@ class UserShiftController extends Controller
     {
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
-            'shift_id' => 'required|exists:shifts,id',
+            'shift_id' => 'nullable|exists:shifts,id',
             'tanggal_shift' => 'required|date|unique:user_shifts,user_id,tanggal_shift',
         ]);
+
+        if (empty($validated['shift_id'])) {
+            $validated['shift_id'] = \App\Models\Shift::defaultShift()?->id;
+        }
 
         UserShift::create($validated);
         return redirect()->route('admin.user-shifts.index')->with('success', 'User Shift created');
@@ -51,9 +55,13 @@ class UserShiftController extends Controller
     {
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
-            'shift_id' => 'required|exists:shifts,id',
+            'shift_id' => 'nullable|exists:shifts,id',
             'tanggal_shift' => 'required|date|unique:user_shifts,tanggal_shift,' . $userShift->id . ',id,user_id,' . $request->user_id,
         ]);
+
+        if (empty($validated['shift_id'])) {
+            $validated['shift_id'] = \App\Models\Shift::defaultShift()?->id;
+        }
 
         $userShift->update($validated);
         return redirect()->route('admin.user-shifts.index')->with('success', 'User Shift updated');

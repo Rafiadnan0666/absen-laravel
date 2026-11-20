@@ -26,7 +26,12 @@ class ShiftController extends Controller
             'jam_masuk' => 'required|date_format:H:i',
             'jam_pulang' => 'required|date_format:H:i',
             'toleransi_telat_menit' => 'required|integer|min:0',
+            'is_default' => 'nullable|boolean',
         ]);
+
+        if (! empty($validated['is_default'])) {
+            Shift::where('is_default', true)->update(['is_default' => false]);
+        }
 
         Shift::create($validated);
         return redirect()->route('admin.shifts.index')->with('success', 'Shift created');
@@ -50,7 +55,12 @@ class ShiftController extends Controller
             'jam_masuk' => 'required|date_format:H:i',
             'jam_pulang' => 'required|date_format:H:i',
             'toleransi_telat_menit' => 'required|integer|min:0',
+            'is_default' => 'nullable|boolean',
         ]);
+
+        if (! empty($validated['is_default'])) {
+            Shift::where('is_default', true)->where('id', '!=', $shift->id)->update(['is_default' => false]);
+        }
 
         $shift->update($validated);
         return redirect()->route('admin.shifts.index')->with('success', 'Shift updated');

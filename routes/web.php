@@ -85,6 +85,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('payrolls/{payroll}/confirm', [PayrollController::class, 'confirm'])->name('payrolls.confirm');
     Route::post('payrolls/{payroll}/reject', [PayrollController::class, 'reject'])->name('payrolls.reject');
     Route::post('payrolls/{payroll}/mark-paid', [PayrollController::class, 'markPaid'])->name('payrolls.markPaid');
+    Route::get('payrolls/bulk-create', [PayrollController::class, 'bulkCreate'])->name('payrolls.bulkCreate');
+    Route::post('payrolls/bulk-store', [PayrollController::class, 'bulkStore'])->name('payrolls.bulkStore');
     Route::resource('audit-logs', AuditLogController::class)->only(['index']);
 });
 
