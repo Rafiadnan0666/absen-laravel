@@ -29,27 +29,31 @@
 abs/
 ├── app/
 │   ├── Http/Controllers/
-│   │   ├── Admin/       # Admin panel controllers
-│   │   ├── HR/          # HR panel controllers
-│   │   ├── Employee/    # Employee panel controllers
-│   │   └── Auth/        # Authentication controllers
-│   ├── Models/          # Eloquent models
-│   └── Providers/       # Service providers
+│   │   ├── Admin/           # Admin panel controllers
+│   │   ├── HR/              # HR panel controllers
+│   │   ├── Employee/        # Employee panel controllers
+│   │   ├── Api/V1/          # API controllers (Sanctum auth)
+│   │   └── Auth/            # Authentication controllers
+│   ├── Models/              # Eloquent models
+│   ├── Services/            # Business logic services
+│   ├── Middleware/          # Custom middleware
+│   └── Providers/           # Service providers
 ├── resources/views/
-│   ├── admin/           # Admin panel views (Blade)
-│   ├── hr/              # HR panel views
-│   ├── employee/        # Employee panel views
-│   └── layouts/         # Shared layouts
+│   ├── admin/               # Admin panel views (Blade)
+│   ├── hr/                  # HR panel views
+│   ├── employee/            # Employee panel views
+│   └── layouts/             # Shared layouts
 ├── routes/
-│   ├── web.php          # Main routes
-│   └── auth.php         # Authentication routes
+│   ├── web.php              # Main routes
+│   ├── api.php              # API routes (Sanctum)
+│   └── auth.php             # Authentication routes
 ├── database/
-│   ├── migrations/      # 28 migration files
-│   └── seeders/         # Database seeders
-├── tests/               # PHPUnit tests
+│   ├── migrations/          # 31 migration files
+│   └── seeders/             # Database seeders
+├── tests/                   # PHPUnit tests (95 tests)
 └── public/
-    ├── assets/          # CSS, JS, images
-    └── build/           # Compiled assets
+    ├── assets/              # CSS, JS, images
+    └── build/               # Compiled assets
 ```
 
 **Architecture pattern:** MVC with Blade templates, resource controllers, and service-based authorization (role-based access via middleware).
@@ -83,6 +87,13 @@ abs/
 - **Audit Trail** - Immutable log of payroll and approval actions with actor, IP, and changed values
 - **System Settings** - Configure application settings
 - **Dashboard Analytics** - Key metrics and reports
+
+### REST API (Sanctum Authentication)
+- **Attendance API** - Employee check-in/check-out with GPS validation, duplicate prevention, overnight shift support, ownership enforcement
+- **Payroll Calculation API** - Calculate payroll with attendance, overtime, reimbursements, late penalties; bulk calculate; generate payrolls from calculations
+- **Role-based Access** - `admin`, `hr`, `employee` middleware; employees only access own records
+- **Active Account Check** - Rejects inactive accounts on all API routes
+- **Payroll Lock** - Paid payrolls cannot be modified or deleted
 
 ## Setup Instructions
 
@@ -212,7 +223,7 @@ Run with coverage (requires Xdebug):
 php artisan test --coverage
 ```
 
-Current suite: **75 tests / 203 assertions**
+Current suite: **95 tests / 251 assertions**
 
 | Test file | Scenarios |
 |-----------|-----------|
@@ -220,8 +231,9 @@ Current suite: **75 tests / 203 assertions**
 | `ReimbursementTest` | 13 — submission, validation, HR approval/rejection, ownership and role access, audit + queued email |
 | `PayrollTest` | 13 — payroll creation, confirmation workflow, paid guard, rejection, audit trail, queued email, role access, paid payroll lock |
 | `AttendanceTest` | 10 — check-in, GPS geofence (inside/outside radius), validation, role access |
+| `ApiAuthorizationTest` | 14 — API auth, ownership, duplicate prevention, overnight shifts, payroll calc, inactive users |
 | `Auth/*`, `ProfileTest` | 24 — login, registration, password reset/update, profile management |
-| `ExampleTest` | 2 — smoke tests |
+| `ShiftTest`, `UserDefaultShiftTest`, `PayrollBulkTest`, `ExampleTest` | 7 — shifts, bulk payroll, smoke tests |
 
 ## Authorization Matrix
 
@@ -233,10 +245,12 @@ Role middleware redirects unauthorized users to `/dashboard`; record-level owner
 | `/hr/*` | → login | → dashboard | ✅ | ✅ |
 | `/admin/*` | → login | → dashboard | → dashboard | ✅ |
 | Other employee's leave/reimbursement | → login | 403 | ✅ (HR view) | ✅ |
+| `/api/employee/*` | 401 | ✅ own records | 403 | 403 |
+| `/api/admin/*` | 401 | 403 | 403 | ✅ |
+| `/api/admin/payroll-calculations/*` | 401 | 403 | 403 | ✅ |
 
 ## Known Limitations
 
-- **No JWT/OAuth** - Session-based auth only; no API token authentication
 - **Business logic in controllers** - Approval and payroll workflows live in service classes; remaining CRUD is still controller-based
 - **No 2FA** - No two-factor authentication implemented
 - **Neo-brutalism design** - Heavy CSS shadows may not render consistently on all devices
