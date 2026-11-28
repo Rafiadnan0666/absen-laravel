@@ -10,11 +10,12 @@
 
 ## Overview
 
-**ABS (Attendance & Employee Management System)** is a comprehensive, production-ready web application for managing employee attendance, leaves, payroll, and reimbursements. Built with Laravel 13, Tailwind CSS, Alpine.js, and Leaflet for GPS location tracking.
+**ABS (Attendance & Employee Management System)** is a comprehensive, production-ready web application for managing employee attendance, leaves, payroll, and reimbursements. Built with Laravel 13, Tailwind CSS, Alpine.js, and Leaflet for GPS location tracking, with a Sanctum-authenticated REST API for mobile clients.
 
 ## Table of Contents
 
 - [Features](#features)
+- [Screenshots](#screenshots)
 - [Quick Start](#quick-start)
 - [Setup Workflow](#setup-workflow)
 - [Admin Panel Setup Guide](#admin-panel-setup-guide)
@@ -22,10 +23,13 @@
 - [Database Schema (ERD)](#database-schema-erd)
 - [Installation](#installation)
 - [Default Roles](#default-roles)
+- [Default Accounts](#default-accounts)
 - [Project Structure](#project-structure)
 - [Security Features](#security-features)
+- [REST API](#rest-api-sanctum-authentication)
 - [Production Deployment](#production-deployment)
 - [Known Limitations](#known-limitations)
+- [Test Suite](#test-suite)
 - [License](#license)
 
 ## Features
@@ -54,6 +58,56 @@
 - **Overtime Rules** - Define overtime policies
 - **System Settings** - Configure application settings
 - **Dashboard Analytics** - Key metrics and reports
+
+### REST API (Sanctum Authentication)
+- **Token Login / Registration** - `POST /api/login` and `POST /api/register` return a Sanctum bearer token
+- **Resource Endpoints** - Users, attendances, leaves, payrolls, reimbursements, and departments
+- **Protected Routes** - All resource endpoints require a valid `Authorization: Bearer <token>` header
+
+## Screenshots
+
+<table>
+<tr>
+<td align="center" width="50%">
+<b>Admin Dashboard</b><br>
+<img src="screen/admin-dashboard.png" alt="Admin Dashboard" width="600">
+</td>
+<td align="center" width="50%">
+<b>HR Panel</b><br>
+<img src="screen/hr-dashboard.png" alt="HR Dashboard" width="600">
+</td>
+</tr>
+<tr>
+<td align="center" width="50%">
+<b>Attendance Tracking</b><br>
+<img src="screen/attendance-tracking.png" alt="Attendance Tracking" width="600">
+</td>
+<td align="center" width="50%">
+<b>Departments Management</b><br>
+<img src="screen/departments-management.png" alt="Departments Management" width="600">
+</td>
+</tr>
+<tr>
+<td align="center" width="50%">
+<b>Employee Panel</b><br>
+<img src="screen/employee-panel.png" alt="Employee Panel" width="600">
+</td>
+<td align="center" width="50%">
+<b>Attendance Records</b><br>
+<img src="screen/attendance-records.png" alt="Attendance Records" width="600">
+</td>
+</tr>
+<tr>
+<td align="center" width="50%">
+<b>Profile Modal</b><br>
+<img src="screen/profile-modal.png" alt="Profile Modal" width="600">
+</td>
+<td align="center" width="50%">
+<b>Settings</b><br>
+<img src="screen/settings.png" alt="Settings" width="600">
+</td>
+</tr>
+</table>
 
 ## Quick Start
 
@@ -427,6 +481,18 @@ See [ERD.md](ERD.md) for the complete Entity Relationship Diagram with Mermaid v
 | HR | HR operations | Approve leaves, reimbursements, view payroll, manage attendance |
 | Employee | Standard user | Check-in/out, request leave, submit reimbursement, view payroll |
 
+## Default Accounts
+
+`UserSeeder` creates these demo accounts when you run `php artisan db:seed`. All of them use the password `password`.
+
+| Email | Role |
+|-------|------|
+| `admin@example.com` | Admin |
+| `hr@example.com` | HR |
+| `employee@example.com` | Employee |
+
+> Change these passwords before deploying to production.
+
 ## Project Structure
 
 ```
@@ -436,7 +502,9 @@ abs/
 │   │   ├── Admin/       # Admin panel controllers
 │   │   ├── HR/          # HR panel controllers
 │   │   ├── Employee/    # Employee panel controllers
+│   │   ├── Api/         # REST API controllers (Sanctum)
 │   │   └── Auth/        # Authentication controllers
+│   ├── Http/Middleware/ # Admin, HR, and HTTPS middleware
 │   ├── Models/          # Eloquent models
 │   └── Providers/       # Service providers
 ├── resources/views/
@@ -447,11 +515,12 @@ abs/
 │   └── layouts/         # Shared layouts
 ├── routes/
 │   ├── web.php          # Main routes
+│   ├── api.php          # API routes (Sanctum)
 │   └── auth.php         # Authentication routes
 ├── database/
 │   ├── migrations/      # Database migrations (24 files)
 │   └── seeders/         # Database seeders
-├── tests/               # PHPUnit tests (12 test files, 66+ passing)
+├── tests/               # PHPUnit tests (17 test files)
 └── public/
     ├── assets/          # CSS, JS, images
     └── build/           # Compiled assets (Vite)
@@ -467,9 +536,34 @@ abs/
 - XSS protection via Blade escaping
 - SQL injection prevention via Eloquent ORM
 - Account status management (active/inactive)
-- Session-based authentication
+- Session-based web authentication plus Sanctum API tokens
 - Location-based attendance verification
 - Audit logging for sensitive operations
+
+## REST API (Sanctum Authentication)
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/login` | Authenticate and receive a bearer token |
+| `POST` | `/api/register` | Register a new account |
+| `POST` | `/api/logout` | Revoke the current token (auth required) |
+| `GET` | `/api/user` | Current user with role, department, job title (auth required) |
+| `GET/POST/PUT/DELETE` | `/api/users`, `/api/attendances`, `/api/leaves`, `/api/reimbursements` | CRUD (auth required) |
+| `GET` | `/api/payrolls`, `/api/payrolls/{id}` | Payroll list and detail (auth required) |
+| `GET` | `/api/departments`, `/api/departments/{id}` | Department list and detail (auth required) |
+
+```bash
+# Login and get a token
+curl -X POST http://localhost:8000/api/login \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -d '{"email":"admin@example.com","password":"password"}'
+
+# Use the token
+curl http://localhost:8000/api/user \
+  -H "Authorization: Bearer <token>" \
+  -H "Accept: application/json"
+```
 
 ## Production Deployment
 
@@ -509,12 +603,9 @@ abs/
 
 | Limitation | Impact | Workaround |
 |------------|--------|------------|
-| **No JWT/OAuth** | Session-based auth only; no API token authentication | Add API token middleware for mobile apps |
-| **No pagination** | List endpoints return all records | Add pagination to controllers |
-| **No rate limiting** | No request throttling on public routes | Add rate limiter middleware |
+| **No rate limiting** | No request throttling on public API routes | Add a `throttle` middleware to auth endpoints |
 | **GPS tolerance** | Location check-in uses fixed radius | Make tolerance configurable per location |
-| **Single-file config** | Some business logic in controllers | Extract to service classes |
-| **No email queue** | Mail sent synchronously | Configure queue worker with Redis |
+| **Business logic in controllers** | Some workflows still live in controllers | Extract to service classes |
 | **Neo-brutalism design** | Heavy CSS shadows may not render consistently | Test on target devices/browsers |
 | **No 2FA** | No two-factor authentication | Add 2FA package (Fortify supports this) |
 | **Payroll confirmation** | Manual status changes only | Add automated workflow trigger |
@@ -534,7 +625,18 @@ php artisan test tests/Feature/PayrollCalculationTest.php
 php artisan test --coverage
 ```
 
-**Current Status:** 66 passing, 8 failing (pre-existing Breeze tests for email verification)
+**Current suite:** 17 test files / 74 test cases covering authentication, API tokens, attendance, leaves, payroll, reimbursements, admin middleware, and profile management.
+
+| Test file | Area |
+|-----------|------|
+| `ApiAuthTest`, `ApiAttendanceTest` | Sanctum login/register/logout, attendance API |
+| `AttendanceTest`, `LeaveTest`, `ReimbursementTest` | Core employee workflows and role access |
+| `PayrollCalculationTest` | Payroll calculation and components |
+| `AdminMiddlewareTest`, `UserFilterTest` | Admin access control and user filtering |
+| `Auth/*`, `ProfileTest` | Breeze authentication and profile management |
+| `ExampleTest` | Smoke tests |
+
+CI runs the suite through the GitHub Actions workflow in `.github/workflows/laravel.yml`.
 
 ## License
 
@@ -546,6 +648,6 @@ For issues and feature requests, please create an issue on GitHub.
 
 ---
 
-**Last Updated:** November 1, 2026
+**Last Updated:** November 28, 2026
 **Version:** 1.0.0
 **Branches:** `main` (standard UI), `interface/neurobrutalism` (neo-brutalism design)
