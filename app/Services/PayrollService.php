@@ -5,11 +5,16 @@ namespace App\Services;
 use App\Mail\PayrollStatusMail;
 use App\Models\AuditLog;
 use App\Models\Payroll;
+use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 
 class PayrollService
 {
+    public function __construct(
+        private readonly PayrollCalculationService $calculationService
+    ) {}
+
     public function create(array $data): Payroll
     {
         $data = $this->normalize($data);
@@ -89,9 +94,44 @@ class PayrollService
 
     public function delete(Payroll $payroll): void
     {
+        $this->ensure(! $payroll->isPaid(), 'Paid payrolls are locked and cannot be deleted.');
+
         AuditLog::record('payroll.deleted', $payroll, $payroll->toArray(), []);
 
         $payroll->delete();
+    }
+
+    public function createFromCalculation(User $user, string $periodeMulai, string $periodeSelesai, array $overrides = []): Payroll
+    {
+        $calculation = $this->calculationService->calculate($user, $periodeMulai, $periodeSelesai);
+
+        $data = array_merge([
+            'user_id' => $user->id,
+            'periode_mulai' => $periodeMulai,
+            'periode_selesai' => $periodeSelesai,
+            'gaji_pokok' => $calculation['gaji_pokok'],
+            'total_lembur' => $calculation['total_lembur'],
+            'total_potongan' => $calculation['total_potongan'],
+            'bonus' => $calculation['bonus'],
+            'total_gaji' => $calculation['total_gaji'],
+            'status_pembayaran' => 'pending',
+        ], $overrides);
+
+        return $this->create($data);
+    }
+
+    public function bulkCreateFromCalculations(array $users, string $periodeMulai, string $periodeSelesai): array
+    {
+        $results = [];
+        foreach ($users as $user) {
+            try {
+                $payroll = $this->createFromCalculation($user, $periodeMulai, $periodeSelesai);
+                $results[] = ['success' => true, 'payroll' => $payroll, 'user_id' => $user->id];
+            } catch (\Throwable $e) {
+                $results[] = ['success' => false, 'error' => $e->getMessage(), 'user_id' => $user->id];
+            }
+        }
+        return $results;
     }
 
     private function normalize(array $data): array

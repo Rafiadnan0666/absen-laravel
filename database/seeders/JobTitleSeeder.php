@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\JobTitle;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class JobTitleSeeder extends Seeder
@@ -19,7 +18,10 @@ class JobTitleSeeder extends Seeder
         ];
 
         foreach ($jobTitles as $job) {
-            JobTitle::create($job);
+            JobTitle::updateOrCreate(
+                ['nama_jabatan' => $job['nama_jabatan']],
+                $job
+            );
         }
     }
 }

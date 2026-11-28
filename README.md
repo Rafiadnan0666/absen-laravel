@@ -94,6 +94,20 @@ abs/
 - **Role-based Access** - `admin`, `hr`, `employee` middleware; employees only access own records
 - **Active Account Check** - Rejects inactive accounts on all API routes
 - **Payroll Lock** - Paid payrolls cannot be modified or deleted
+- **Token Login** - `POST /api/login` returns a Sanctum bearer token; `POST /api/logout` revokes it
+
+```bash
+# Login and get a token
+curl -X POST http://localhost:8000/api/login \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -d '{"email":"admin@example.com","password":"password"}'
+
+# Use the token
+curl http://localhost:8000/api/user \
+  -H "Authorization: Bearer <token>" \
+  -H "Accept: application/json"
+```
 
 ## Setup Instructions
 
@@ -126,14 +140,18 @@ php artisan key:generate
 # DB_PASSWORD=
 
 # Run migrations
+# Default data (roles, permissions, departments, job titles, shifts,
+# office location, salary rules, overtime rules) is seeded automatically.
 php artisan migrate
+
+# Optional: re-run the idempotent seeders at any time
+php artisan db:seed
+
+# Full reset (drops all tables, migrates and seeds)
+php artisan migrate:fresh --seed
 
 # Build frontend
 npm run build
-
-# Run migrations and seed roles
-php artisan migrate
-php artisan db:seed
 
 # Start server
 php artisan serve
@@ -202,6 +220,35 @@ Visit `http://localhost:8000`
 | Admin | Full system access |
 | HR | HR management and approvals |
 | Employee | Standard user access |
+
+## Default Accounts (local/development only)
+
+`DevUserSeeder` only runs when `APP_ENV=local` or `APP_ENV=development`. All demo accounts use the password `password`.
+
+| Email | Role |
+|-------|------|
+| `admin@example.com` | Admin |
+| `hr@example.com` | HR |
+| `employee@example.com` | Employee |
+
+> These accounts are skipped in `testing` and `production`. Create real users through the admin panel or change the passwords before deploying.
+
+## Default Seeded Data
+
+`php artisan migrate` (and `php artisan db:seed`) seeds the reference data the app needs to function:
+
+| Data | Defaults |
+|------|----------|
+| Roles | admin, hr, employee |
+| Permissions | 34 permissions mapped to each role |
+| Departments | Human Resources, Information Technology, Finance, Operations |
+| Job Titles | Software Engineer, HR Manager, Finance Analyst, Operations Staff, Admin |
+| Shifts | Regular (08:00-17:00, 15 min tolerance, default) |
+| Locations | Kantor Pusat (-6.2088, 106.8456, 100 m radius) |
+| Salary Rules | monthly, daily, hourly (overtime rate + late/absent/early-leave penalties) |
+| Overtime Rules | 1 h → 1.5x, 2 h → 2.0x |
+
+All seeders are idempotent, so running them again will not create duplicates.
 
 ## Testing
 
